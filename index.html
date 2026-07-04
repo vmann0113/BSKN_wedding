@@ -9,55 +9,57 @@
 <x-dc>
 <helmet data-dc-atomics>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&display=swap">
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
-body{font-family:'Pretendard','Pretendard Variable',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;background:#faf7f4;color:#241f1c}
+body{font-family:'Pretendard','Pretendard Variable',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;background:#f4f3f6;color:#2b2530}
 button{font-family:inherit}
 input,select,textarea{font-family:inherit}
 a{color:inherit}
 ::-webkit-scrollbar{width:10px;height:10px}
-::-webkit-scrollbar-thumb{background:#dcd2c9;border-radius:8px;border:2px solid #faf7f4}
+::-webkit-scrollbar-thumb{background:#dcd6e0;border-radius:8px;border:2px solid #f4f3f6}
+.hscroll{-ms-overflow-style:none;scrollbar-width:none}
+.hscroll::-webkit-scrollbar{display:none}
 @keyframes fadeup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
 @keyframes toastin{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes heartpop{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
 </style>
 </helmet>
 
-<div style="min-height:100vh;background:#faf7f4;color:#241f1c">
+<div style="min-height:100vh;background:#f4f3f6;color:#2b2530">
 
   <!-- ============ HEADER ============ -->
-  <header style="position:sticky;top:0;z-index:40;background:rgba(250,247,244,.9);backdrop-filter:blur(12px);border-bottom:1px solid #ece2d9">
-    <div style="max-width:1180px;margin:0 auto;padding:11px clamp(14px,4vw,40px);display:flex;align-items:center;gap:clamp(10px,2vw,22px);flex-wrap:wrap">
-      <button onClick="{{ goHome }}" style="display:flex;align-items:center;gap:9px;background:none;border:none;cursor:pointer;padding:0">
-        <span style="width:30px;height:30px;border-radius:9px;background:#c0576b;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px">W</span>
-        <span style="font-size:17px;font-weight:800;letter-spacing:-.03em;color:#241f1c">부산·경남 <span style="color:#c0576b">웨딩샵</span></span>
+  <header style="position:sticky;top:0;z-index:40;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-bottom:1px solid #ecebf0">
+    <div style="max-width:1180px;margin:0 auto;padding:11px clamp(16px,4vw,40px);display:flex;align-items:center;gap:clamp(8px,2vw,18px)">
+      <button onClick="{{ goHome }}" style="display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;padding:0">
+        <span style="width:32px;height:32px;border-radius:10px;background:#ff4d6d;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Jua',sans-serif;font-size:18px">웨</span>
+        <span style="font-family:'Jua',sans-serif;font-size:19px;letter-spacing:-.01em;color:#2b2530">부경 웨딩샵</span>
       </button>
-      <nav style="display:flex;gap:2px">
-        <sc-for list="{{ navItems }}" as="nav" hint-placeholder-count="3">
-          <button onClick="{{ nav.onClick }}" style="{{ nav.style }}">{{ nav.label }}</button>
-        </sc-for>
+      <div style="display:flex;align-items:center;gap:5px;background:#f4f3f6;border-radius:999px;padding:7px 12px;margin-left:4px">
+        <span style="font-size:14px">📍</span>
+        <select value="{{ region }}" onChange="{{ onRegionChange }}" style="border:none;background:none;font-size:13px;font-weight:700;color:#2b2530;cursor:pointer;outline:none">
+          <sc-for list="{{ regionOptions }}" as="ro" hint-placeholder-count="8">
+            <option value="{{ ro }}">{{ ro }}</option>
+          </sc-for>
+        </select>
+      </div>
+      <nav style="display:none">
+        <sc-for list="{{ navItems }}" as="nav" hint-placeholder-count="3"><button onClick="{{ nav.onClick }}">{{ nav.label }}</button></sc-for>
       </nav>
-      <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
-        <div style="display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #e7dccf;border-radius:9px;padding:6px 10px">
-          <span style="font-size:12px;color:#c0576b;font-weight:700">지역</span>
-          <select value="{{ region }}" onChange="{{ onRegionChange }}" style="border:none;background:none;font-size:13px;font-weight:600;color:#241f1c;cursor:pointer;outline:none">
-            <sc-for list="{{ regionOptions }}" as="ro" hint-placeholder-count="8">
-              <option value="{{ ro }}">{{ ro }}</option>
-            </sc-for>
-          </select>
-        </div>
-        <button onClick="{{ goCart }}" style="position:relative;background:#fff;border:1px solid #e7dccf;border-radius:9px;width:40px;height:37px;cursor:pointer;font-size:16px" title="장바구니">🛒
-          <sc-if value="{{ hasCart }}" hint-placeholder-val="{{ true }}">
-            <span style="position:absolute;top:-6px;right:-6px;background:#c0576b;color:#fff;font-size:11px;font-weight:800;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px">{{ cartCount }}</span>
-          </sc-if>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:7px">
+        <button onClick="{{ goSearch }}" style="width:40px;height:38px;background:#f4f3f6;border:none;border-radius:12px;cursor:pointer;font-size:17px" title="검색">🔍</button>
+        <button onClick="{{ goWish }}" style="position:relative;width:40px;height:38px;background:#f4f3f6;border:none;border-radius:12px;cursor:pointer;font-size:17px" title="찜">♥
+          <sc-if value="{{ hasWish }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:-5px;right:-5px;background:#ff4d6d;color:#fff;font-size:11px;font-weight:800;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px">{{ wishCount }}</span></sc-if>
         </button>
-        <sc-if value="{{ isLoggedIn }}" hint-placeholder-val="{{ false }}">
-          <button onClick="{{ goMypage }}" style="background:#241f1c;color:#fff;border:none;border-radius:9px;padding:9px 13px;font-size:13px;font-weight:700;cursor:pointer">{{ userName }}님</button>
-        </sc-if>
-        <sc-if value="{{ isGuest }}" hint-placeholder-val="{{ true }}">
-          <button onClick="{{ goLogin }}" style="background:#241f1c;color:#fff;border:none;border-radius:9px;padding:9px 15px;font-size:13px;font-weight:700;cursor:pointer">로그인</button>
-        </sc-if>
+        <button onClick="{{ goCart }}" style="position:relative;width:40px;height:38px;background:#f4f3f6;border:none;border-radius:12px;cursor:pointer;font-size:17px" title="장바구니">🛒
+          <sc-if value="{{ hasCart }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;top:-5px;right:-5px;background:#ff4d6d;color:#fff;font-size:11px;font-weight:800;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px">{{ cartCount }}</span></sc-if>
+        </button>
+        <sc-if value="{{ isLoggedIn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ goMypage }}" style="background:#2b2530;color:#fff;border:none;border-radius:12px;padding:9px 13px;font-size:13px;font-weight:700;cursor:pointer">{{ userName }}님</button></sc-if>
+        <sc-if value="{{ isGuest }}" hint-placeholder-val="{{ true }}"><button onClick="{{ goLogin }}" style="background:#2b2530;color:#fff;border:none;border-radius:12px;padding:9px 15px;font-size:13px;font-weight:700;cursor:pointer">로그인</button></sc-if>
       </div>
     </div>
   </header>
@@ -67,84 +69,53 @@ a{color:inherit}
   <!-- ============ HOME ============ -->
   <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
   <div>
-    <section style="position:relative;background:linear-gradient(120deg,#2a2320,#4a3630);color:#fff;overflow:hidden">
-      <div style="position:absolute;inset:0;background:radial-gradient(circle at 78% 30%,rgba(192,87,107,.5),transparent 55%)"></div>
-      <div style="position:relative;max-width:1180px;margin:0 auto;padding:clamp(44px,7vw,88px) clamp(16px,4vw,40px)">
-        <div style="font-size:13px;font-weight:700;letter-spacing:.12em;color:#e6b6c1;text-transform:uppercase">Busan · Gyeongnam Wedding</div>
-        <h1 style="font-size:clamp(30px,5vw,54px);font-weight:800;letter-spacing:-.03em;line-height:1.12;margin:14px 0 0;max-width:15ch">부산·경남에서 시작하는<br>단 한 번의 웨딩</h1>
-        <p style="font-size:clamp(15px,1.8vw,19px);color:#e8ddd6;margin:18px 0 0;max-width:42ch;line-height:1.6">웨딩홀부터 스드메·혼수까지, 우리 동네 업체를 한눈에 비교하고 상담·예약까지 한 번에.</p>
-        <div style="display:flex;gap:10px;margin-top:28px;flex-wrap:wrap">
-          <button onClick="{{ goHall }}" style="background:#c0576b;color:#fff;border:none;border-radius:11px;padding:14px 24px;font-size:15px;font-weight:700;cursor:pointer" style-hover="background:#a5445a">웨딩홀 둘러보기</button>
-          <button onClick="{{ goSdm }}" style="background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:11px;padding:14px 24px;font-size:15px;font-weight:700;cursor:pointer">스드메 보기</button>
-        </div>
+    <!-- greeting + search -->
+    <div style="background:#fff;padding:clamp(22px,3vw,34px) clamp(16px,4vw,40px) 22px">
+      <div style="max-width:1180px;margin:0 auto">
+        <div style="font-family:'Jua',sans-serif;font-size:clamp(22px,3.2vw,30px);color:#2b2530;line-height:1.25">{{ greetName }} 결혼 준비,<br>오늘은 뭐부터 해볼까요? 💍</div>
+        <button onClick="{{ goSearch }}" style="width:100%;margin-top:16px;display:flex;align-items:center;gap:10px;background:#f4f3f6;border:1.5px solid #ecebf0;border-radius:16px;padding:15px 18px;cursor:pointer;text-align:left" style-hover="border-color:#ff4d6d">
+          <span style="font-size:18px">🔍</span><span style="font-size:15px;color:#8b8592;font-weight:500">웨딩홀, 스드메, 혼수… 검색해 보세요</span>
+        </button>
       </div>
-    </section>
+    </div>
 
-    <div style="max-width:1180px;margin:0 auto;padding:clamp(28px,4vw,52px) clamp(16px,4vw,40px)">
-      <!-- region quick -->
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:34px">
-        <span style="font-size:14px;font-weight:700;color:#8b8178">지역 바로가기</span>
-        <sc-for list="{{ regionQuick }}" as="rq" hint-placeholder-count="7">
-          <button onClick="{{ rq.onClick }}" style="background:#fff;border:1px solid #e7dccf;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600;color:#4a3f38;cursor:pointer" style-hover="border-color:#c0576b;color:#c0576b">{{ rq.name }}</button>
-        </sc-for>
-      </div>
-
-      <!-- category cards -->
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px">
-        <sc-for list="{{ categoryCards }}" as="cc" hint-placeholder-count="3">
-          <button onClick="{{ cc.onClick }}" style="text-align:left;background:#fff;border:1px solid #ece2d9;border-radius:18px;overflow:hidden;cursor:pointer;padding:0;box-shadow:0 6px 26px rgba(60,45,35,.06)" style-hover="transform:translateY(-4px)">
-            <div style="height:172px;background:linear-gradient(135deg,#efe1da,#e3d0c6);position:relative;overflow:hidden">
-              <sc-if value="{{ cc.showImg }}" hint-placeholder-val="{{ true }}">
-                <img src="{{ cc.img }}" loading="lazy" style="width:100%;height:100%;object-fit:cover" alt=""/>
-              </sc-if>
-              <span style="position:absolute;left:16px;bottom:14px;background:rgba(36,31,28,.7);color:#fff;font-size:12px;font-weight:700;padding:5px 11px;border-radius:999px;backdrop-filter:blur(4px)">{{ cc.count }}</span>
-            </div>
-            <div style="padding:20px 22px 24px">
-              <div style="font-size:21px;font-weight:800;letter-spacing:-.02em">{{ cc.title }}</div>
-              <div style="font-size:14px;color:#8b8178;margin-top:7px;line-height:1.5">{{ cc.desc }}</div>
-              <div style="margin-top:16px;color:#c0576b;font-size:14px;font-weight:700">둘러보기 →</div>
-            </div>
+    <!-- categories -->
+    <div style="background:#fff;border-bottom:1px solid #ecebf0">
+      <div style="max-width:1180px;margin:0 auto;padding:8px clamp(16px,4vw,40px) 26px;display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:20px 6px">
+        <sc-for list="{{ categoryCircles }}" as="cc" hint-placeholder-count="8">
+          <button onClick="{{ cc.onClick }}" style="display:flex;flex-direction:column;align-items:center;gap:9px;background:none;border:none;cursor:pointer;padding:0" style-hover="opacity:.82">
+            <span style="{{ cc.iconStyle }}">{{ cc.icon }}</span>
+            <span style="font-size:12.5px;font-weight:700;color:#4a4550">{{ cc.label }}</span>
           </button>
         </sc-for>
       </div>
+    </div>
 
-      <!-- promo -->
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:34px">
-        <div style="background:linear-gradient(120deg,#c0576b,#9a3b52);color:#fff;border-radius:16px;padding:26px 28px">
-          <div style="font-size:12px;font-weight:800;letter-spacing:.08em;opacity:.85">FIRST ORDER</div>
-          <div style="font-size:22px;font-weight:800;margin-top:8px;letter-spacing:-.02em">첫 예약 5만원 할인</div>
-          <div style="font-size:14px;opacity:.9;margin-top:6px">회원가입 후 첫 계약 시 자동 적용</div>
+    <!-- promo + masonry feed -->
+    <div style="max-width:1180px;margin:0 auto;padding:22px clamp(16px,4vw,40px) 44px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px">
+        <div style="background:linear-gradient(120deg,#ff4d6d,#ff8095);color:#fff;border-radius:20px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+          <div><div style="font-family:'Jua',sans-serif;font-size:20px">첫 예약, 5만원 할인 🎁</div><div style="font-size:13px;opacity:.92;margin-top:4px">가입하면 3만 적립까지 자동으로</div></div><span style="font-size:32px">💒</span>
         </div>
-        <div style="background:#fff;border:1px solid #ece2d9;border-radius:16px;padding:26px 28px">
-          <div style="font-size:12px;font-weight:800;letter-spacing:.08em;color:#b9985a">POINTS</div>
-          <div style="font-size:22px;font-weight:800;margin-top:8px;letter-spacing:-.02em;color:#241f1c">가입 즉시 3만 적립금</div>
-          <div style="font-size:14px;color:#8b8178;margin-top:6px">스드메·혼수 결제 시 사용 가능</div>
-        </div>
-        <div style="background:#241f1c;color:#fff;border-radius:16px;padding:26px 28px">
-          <div style="font-size:12px;font-weight:800;letter-spacing:.08em;color:#e6b6c1">CONSULT</div>
-          <div style="font-size:22px;font-weight:800;margin-top:8px;letter-spacing:-.02em">빠른상담 콜백 요청</div>
-          <div style="font-size:14px;opacity:.8;margin-top:6px">전화 어려운 시간엔 편한 시간에 연락드려요</div>
+        <div style="background:#2b2530;color:#fff;border-radius:20px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+          <div><div style="font-family:'Jua',sans-serif;font-size:20px">빠른상담 콜백 📞</div><div style="font-size:13px;opacity:.8;margin-top:4px">전화 어려운 시간엔 편하게 신청</div></div><span style="font-size:32px">💬</span>
         </div>
       </div>
 
-      <!-- featured -->
-      <div style="display:flex;align-items:baseline;justify-content:space-between;margin:46px 0 18px">
-        <h2 style="font-size:clamp(20px,2.4vw,26px);font-weight:800;letter-spacing:-.02em;margin:0">인기 스드메·혼수</h2>
-        <button onClick="{{ goSdm }}" style="background:none;border:none;color:#8b8178;font-size:14px;font-weight:600;cursor:pointer">전체보기 →</button>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px">
-        <sc-for list="{{ featured }}" as="v" hint-placeholder-count="4">
-          <div onClick="{{ v.onOpen }}" style="background:#fff;border:1px solid #ece2d9;border-radius:15px;overflow:hidden;cursor:pointer;box-shadow:0 4px 20px rgba(60,45,35,.05)" style-hover="transform:translateY(-3px)">
-            <div style="height:158px;background:linear-gradient(135deg,#efe1da,#e3d0c6);position:relative;overflow:hidden">
-              <sc-if value="{{ v.showImg }}" hint-placeholder-val="{{ true }}">
-                <img src="{{ v.thumb }}" loading="lazy" style="width:100%;height:100%;object-fit:cover" alt=""/>
-              </sc-if>
-              <span style="position:absolute;left:11px;top:11px;background:rgba(255,255,255,.92);color:#c0576b;font-size:11px;font-weight:800;padding:4px 9px;border-radius:999px">{{ v.sub }}</span>
+      <h2 style="font-family:'Jua',sans-serif;font-size:clamp(20px,2.4vw,25px);color:#2b2530;margin:30px 0 16px">✨ 부산·경남 웨딩 피드</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px;align-items:stretch">
+        <sc-for list="{{ feedCards }}" as="c" hint-placeholder-count="10">
+          <div onClick="{{ c.onOpen }}" style="display:flex;flex-direction:column;background:#fff;border:1px solid #ecebf0;border-radius:18px;overflow:hidden;cursor:pointer;box-shadow:0 4px 16px rgba(30,20,40,.06)" style-hover="transform:translateY(-3px)">
+            <div style="position:relative;aspect-ratio:4/5;background:linear-gradient(135deg,#efe6ee,#e3d6dd)">
+              <sc-if value="{{ c.showImg }}" hint-placeholder-val="{{ true }}"><img src="{{ c.bigThumb }}" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" alt=""/></sc-if>
+              <button onClick="{{ c.onWish }}" style="{{ c.heartCorner }}">♥</button>
+              <span style="position:absolute;left:12px;top:12px;background:rgba(255,255,255,.92);color:#ff4d6d;font-size:11px;font-weight:800;padding:5px 10px;border-radius:999px">{{ c.tag }}</span>
             </div>
-            <div style="padding:14px 15px 16px">
-              <div style="font-size:12px;color:#a89a8e;font-weight:600">{{ v.region }}</div>
-              <div style="font-size:16px;font-weight:800;letter-spacing:-.02em;margin-top:3px">{{ v.name }}</div>
-              <div style="font-size:14px;color:#c0576b;font-weight:700;margin-top:9px">{{ v.fromLabel }}</div>
+            <div style="padding:13px 15px 15px;flex:1;display:flex;flex-direction:column">
+              <div style="font-size:12px;color:#a49dae;font-weight:600">📍 {{ c.region }}</div>
+              <div style="font-size:16px;font-weight:800;letter-spacing:-.02em;margin-top:3px">{{ c.name }}</div>
+              <div style="font-size:12.5px;color:#8b8592;margin-top:4px;line-height:1.4;flex:1">{{ c.summary }}</div>
+              <div style="font-family:'Jua',sans-serif;font-size:17px;color:#ff4d6d;margin-top:9px">{{ c.price }}</div>
             </div>
           </div>
         </sc-for>
@@ -153,41 +124,108 @@ a{color:inherit}
   </div>
   </sc-if>
 
-  <!-- ============ HALL LIST ============ -->
-  <sc-if value="{{ isHallList }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width:1180px;margin:0 auto;padding:clamp(22px,3.5vw,40px) clamp(16px,4vw,40px)">
-    <div style="font-size:13px;color:#a89a8e;font-weight:600">HOME / 웨딩홀</div>
-    <h1 style="font-size:clamp(24px,3vw,34px);font-weight:800;letter-spacing:-.03em;margin:8px 0 2px">웨딩홀</h1>
-    <p style="color:#8b8178;font-size:15px;margin:0 0 20px">지역별 웨딩홀을 비교하고 상담·예약을 신청하세요.</p>
-    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:22px">
-      <sc-for list="{{ regionTabs }}" as="rt" hint-placeholder-count="8">
-        <button onClick="{{ rt.onClick }}" style="{{ rt.style }}">{{ rt.name }}</button>
+  <!-- ============ SEARCH ============ -->
+  <sc-if value="{{ isSearch }}" hint-placeholder-val="{{ false }}">
+  <div style="max-width:1180px;margin:0 auto;padding:clamp(18px,3vw,32px) clamp(16px,4vw,40px)">
+    <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid #ff4d6d;border-radius:16px;padding:14px 18px">
+      <span style="font-size:18px">🔍</span>
+      <input value="{{ searchQuery }}" onChange="{{ onSearch }}" placeholder="업체명·지역으로 검색" autoFocus="{{ true }}" style="flex:1;border:none;outline:none;font-size:15px;background:none;color:#2b2530"/>
+    </div>
+    <sc-if value="{{ searchEmpty }}" hint-placeholder-val="{{ true }}">
+      <div style="margin-top:22px">
+        <div style="font-size:13px;font-weight:700;color:#8b8592;margin-bottom:10px">추천 검색어</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <sc-for list="{{ searchSuggest }}" as="sg" hint-placeholder-count="5"><button onClick="{{ sg.onClick }}" style="background:#fff;border:1px solid #ecebf0;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:600;color:#2b2530;cursor:pointer">{{ sg.label }}</button></sc-for>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ searchHasQuery }}" hint-placeholder-val="{{ false }}">
+      <div style="font-size:14px;color:#8b8592;margin:20px 0 14px"><b style="color:#2b2530">{{ searchCount }}</b>건의 검색 결과</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(264px,1fr));gap:18px">
+        <sc-for list="{{ searchResults }}" as="v" hint-placeholder-count="4">
+          <div onClick="{{ v.onOpen }}" style="background:#fff;border:1px solid #ecebf0;border-radius:20px;overflow:hidden;cursor:pointer;box-shadow:0 4px 18px rgba(30,20,40,.05)">
+            <div style="position:relative;aspect-ratio:4/3;background:linear-gradient(135deg,#efe6ee,#e3d6dd);overflow:hidden">
+              <sc-if value="{{ v.showImg }}" hint-placeholder-val="{{ true }}"><img src="{{ v.thumb }}" loading="lazy" style="width:100%;height:100%;object-fit:cover" alt=""/></sc-if>
+              <button onClick="{{ v.onWish }}" style="{{ v.heartStyle }}">♥</button>
+              <span style="position:absolute;left:11px;top:11px;background:rgba(255,255,255,.94);color:#ff4d6d;font-size:11px;font-weight:800;padding:5px 10px;border-radius:999px">{{ v.tag }}</span>
+            </div>
+            <div style="padding:14px 16px 16px">
+              <div style="font-size:12px;color:#a49dae;font-weight:600">{{ v.region }}</div>
+              <div style="font-size:16px;font-weight:800;margin-top:3px">{{ v.name }}</div>
+              <div style="font-family:'Jua',sans-serif;font-size:16px;color:#ff4d6d;margin-top:8px">{{ v.price }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <!-- ============ WISHLIST ============ -->
+  <sc-if value="{{ isWish }}" hint-placeholder-val="{{ false }}">
+  <div style="max-width:1180px;margin:0 auto;padding:clamp(20px,3.5vw,40px) clamp(16px,4vw,40px)">
+    <h1 style="font-family:'Jua',sans-serif;font-size:clamp(24px,3vw,32px);color:#2b2530;margin:0 0 6px">내 찜 ♥</h1>
+    <p style="color:#8b8592;font-size:15px;margin:0 0 22px">마음에 든 업체를 모아뒀어요. 상담·예약은 언제든지.</p>
+    <sc-if value="{{ wishEmpty }}" hint-placeholder-val="{{ true }}">
+      <div style="background:#fff;border:1px solid #ecebf0;border-radius:20px;padding:60px 20px;text-align:center">
+        <div style="font-size:42px">💛</div>
+        <div style="font-family:'Jua',sans-serif;font-size:19px;margin-top:12px;color:#2b2530">아직 찜한 곳이 없어요</div>
+        <div style="color:#8b8592;font-size:14px;margin-top:6px">사진 카드의 ♥를 눌러 담아보세요.</div>
+        <button onClick="{{ goHome }}" style="margin-top:18px;background:#ff4d6d;color:#fff;border:none;border-radius:14px;padding:13px 26px;font-size:14px;font-weight:700;cursor:pointer">둘러보러 가기</button>
+      </div>
+    </sc-if>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(264px,1fr));gap:18px">
+      <sc-for list="{{ wishItems }}" as="v" hint-placeholder-count="0">
+        <div onClick="{{ v.onOpen }}" style="background:#fff;border:1px solid #ecebf0;border-radius:20px;overflow:hidden;cursor:pointer;box-shadow:0 4px 18px rgba(30,20,40,.05)">
+          <div style="position:relative;aspect-ratio:4/3;background:linear-gradient(135deg,#efe6ee,#e3d6dd);overflow:hidden">
+            <sc-if value="{{ v.showImg }}" hint-placeholder-val="{{ true }}"><img src="{{ v.thumb }}" loading="lazy" style="width:100%;height:100%;object-fit:cover" alt=""/></sc-if>
+            <button onClick="{{ v.onWish }}" style="{{ v.heartStyle }}">♥</button>
+            <span style="position:absolute;left:11px;top:11px;background:rgba(255,255,255,.94);color:#ff4d6d;font-size:11px;font-weight:800;padding:5px 10px;border-radius:999px">{{ v.tag }}</span>
+          </div>
+          <div style="padding:14px 16px 16px">
+            <div style="font-size:12px;color:#a49dae;font-weight:600">{{ v.region }}</div>
+            <div style="font-size:16px;font-weight:800;margin-top:3px">{{ v.name }}</div>
+            <div style="font-family:'Jua',sans-serif;font-size:16px;color:#ff4d6d;margin-top:8px">{{ v.price }}</div>
+          </div>
+        </div>
       </sc-for>
     </div>
-    <div style="font-size:14px;color:#8b8178;margin-bottom:14px">총 <b style="color:#241f1c">{{ hallCount }}</b>개 웨딩홀</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px">
+  </div>
+  </sc-if>
+
+  <!-- ============ HALL LIST ============ -->
+  <sc-if value="{{ isHallList }}" hint-placeholder-val="{{ false }}">
+  <div style="max-width:1180px;margin:0 auto;padding:clamp(20px,3.5vw,40px) clamp(16px,4vw,40px)">
+    <h1 style="font-family:'Jua',sans-serif;font-size:clamp(24px,3vw,32px);color:#2b2530;margin:0 0 4px">웨딩홀 🏛️</h1>
+    <p style="color:#8b8592;font-size:15px;margin:0 0 18px">지역별로 비교하고, 상담·예약을 신청하세요.</p>
+    <div class="hscroll" style="display:flex;gap:7px;overflow-x:auto;margin-bottom:14px;padding-bottom:4px">
+      <sc-for list="{{ regionTabs }}" as="rt" hint-placeholder-count="8"><button onClick="{{ rt.onClick }}" style="{{ rt.style }}">{{ rt.name }}</button></sc-for>
+    </div>
+    <div style="display:flex;gap:7px;margin-bottom:20px">
+      <sc-for list="{{ sortChips }}" as="sc" hint-placeholder-count="3"><button onClick="{{ sc.onClick }}" style="{{ sc.style }}">{{ sc.label }}</button></sc-for>
+    </div>
+    <div style="font-size:14px;color:#8b8592;margin-bottom:14px">총 <b style="color:#2b2530">{{ hallCount }}</b>개 웨딩홀</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(264px,1fr));gap:18px">
       <sc-for list="{{ halls }}" as="h" hint-placeholder-count="6">
-        <div style="background:#fff;border:1px solid #ece2d9;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(60,45,35,.05);display:flex;flex-direction:column">
-          <div onClick="{{ h.onOpen }}" style="height:180px;background:linear-gradient(135deg,#e8ddd4,#dcc9bd);position:relative;overflow:hidden;cursor:pointer">
-            <sc-if value="{{ h.showImg }}" hint-placeholder-val="{{ true }}">
-              <img src="{{ h.thumb }}" loading="lazy" style="width:100%;height:100%;object-fit:cover" alt=""/>
-            </sc-if>
-            <span style="position:absolute;left:12px;top:12px;background:rgba(36,31,28,.72);color:#fff;font-size:12px;font-weight:700;padding:5px 11px;border-radius:999px;backdrop-filter:blur(4px)">{{ h.region }}</span>
+        <div style="background:#fff;border:1px solid #ecebf0;border-radius:20px;overflow:hidden;box-shadow:0 4px 18px rgba(30,20,40,.05);display:flex;flex-direction:column">
+          <div onClick="{{ h.onOpen }}" style="position:relative;aspect-ratio:4/3;background:linear-gradient(135deg,#e9e0e6,#dccdca);overflow:hidden;cursor:pointer">
+            <sc-if value="{{ h.showImg }}" hint-placeholder-val="{{ true }}"><img src="{{ h.thumb }}" loading="lazy" style="width:100%;height:100%;object-fit:cover" alt=""/></sc-if>
+            <button onClick="{{ h.onWish }}" style="{{ h.heartStyle }}">♥</button>
+            <span style="position:absolute;left:12px;top:12px;background:rgba(0,0,0,.5);color:#fff;font-size:12px;font-weight:700;padding:5px 11px;border-radius:999px;backdrop-filter:blur(4px)">{{ h.region }}</span>
           </div>
           <div style="padding:16px 18px 18px;flex:1;display:flex;flex-direction:column">
             <div onClick="{{ h.onOpen }}" style="cursor:pointer">
               <div style="font-size:18px;font-weight:800;letter-spacing:-.02em">{{ h.name }}</div>
-              <div style="font-size:13px;color:#a89a8e;margin-top:4px">{{ h.floor }} · {{ h.addr }}</div>
+              <div style="font-size:13px;color:#a49dae;margin-top:4px">{{ h.floor }} · {{ h.addr }}</div>
             </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px">
-              <div style="background:#f7f1ec;border-radius:9px;padding:9px 11px"><div style="font-size:11px;color:#a89a8e;font-weight:600">대관 시작가</div><div style="font-size:14px;font-weight:800;color:#241f1c;margin-top:2px">{{ h.rentalLabel }}</div></div>
-              <div style="background:#f7f1ec;border-radius:9px;padding:9px 11px"><div style="font-size:11px;color:#a89a8e;font-weight:600">뷔페 (1인)</div><div style="font-size:14px;font-weight:800;color:#241f1c;margin-top:2px">{{ h.buffetLabel }}</div></div>
-              <div style="background:#f7f1ec;border-radius:9px;padding:9px 11px"><div style="font-size:11px;color:#a89a8e;font-weight:600">보증인원</div><div style="font-size:14px;font-weight:800;color:#241f1c;margin-top:2px">{{ h.guaranteeLabel }}</div></div>
-              <div style="background:#f7f1ec;border-radius:9px;padding:9px 11px"><div style="font-size:11px;color:#a89a8e;font-weight:600">주차</div><div style="font-size:14px;font-weight:800;color:#241f1c;margin-top:2px">{{ h.parkingShort }}</div></div>
+            <div style="display:flex;gap:14px;margin-top:14px;flex-wrap:wrap">
+              <div><div style="font-size:11px;color:#a49dae;font-weight:600">대관 시작</div><div style="font-family:'Jua',sans-serif;font-size:16px;color:#2b2530;margin-top:1px">{{ h.rentalLabel }}</div></div>
+              <div><div style="font-size:11px;color:#a49dae;font-weight:600">뷔페</div><div style="font-family:'Jua',sans-serif;font-size:16px;color:#2b2530;margin-top:1px">{{ h.buffetLabel }}</div></div>
+              <div><div style="font-size:11px;color:#a49dae;font-weight:600">보증</div><div style="font-family:'Jua',sans-serif;font-size:16px;color:#2b2530;margin-top:1px">{{ h.guaranteeLabel }}</div></div>
             </div>
-            <div style="display:flex;gap:8px;margin-top:14px">
-              <a href="{{ h.telHref }}" style="flex:1;text-align:center;text-decoration:none;background:#fff;color:#c0576b;border:1px solid #e3b9c3;border-radius:10px;padding:11px 0;font-size:13px;font-weight:700">전화상담</a>
-              <button onClick="{{ h.onConsult }}" style="flex:1;background:#c0576b;color:#fff;border:none;border-radius:10px;padding:11px 0;font-size:13px;font-weight:700;cursor:pointer">빠른상담</button>
+            <div style="display:flex;gap:8px;margin-top:16px">
+              <a href="{{ h.telHref }}" style="flex:1;text-align:center;text-decoration:none;background:#fff;color:#ff4d6d;border:1.5px solid #ffd0d9;border-radius:12px;padding:11px 0;font-size:13px;font-weight:700">전화상담</a>
+              <button onClick="{{ h.onConsult }}" style="flex:1;background:#ff4d6d;color:#fff;border:none;border-radius:12px;padding:11px 0;font-size:13px;font-weight:700;cursor:pointer">빠른상담</button>
             </div>
           </div>
         </div>
@@ -198,104 +236,86 @@ a{color:inherit}
 
   <!-- ============ HALL DETAIL ============ -->
   <sc-if value="{{ isHallDetail }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width:1180px;margin:0 auto;padding:clamp(18px,3vw,32px) clamp(16px,4vw,40px)">
-    <button onClick="{{ goHall }}" style="background:none;border:none;color:#8b8178;font-size:14px;font-weight:600;cursor:pointer;padding:0;margin-bottom:14px">← 웨딩홀 목록</button>
+  <div style="max-width:1180px;margin:0 auto;padding:clamp(16px,3vw,32px) clamp(16px,4vw,40px)">
+    <button onClick="{{ goHall }}" style="background:none;border:none;color:#8b8592;font-size:14px;font-weight:600;cursor:pointer;padding:0;margin-bottom:14px">← 웨딩홀 목록</button>
     <div style="display:grid;grid-template-columns:minmax(0,1.7fr) minmax(280px,1fr);gap:26px;align-items:start">
       <div>
-        <div style="height:clamp(240px,34vw,420px);border-radius:18px;overflow:hidden;background:linear-gradient(135deg,#e8ddd4,#d6c1b3);position:relative">
-          <sc-if value="{{ hall.showImg }}" hint-placeholder-val="{{ true }}">
-            <img src="{{ hall.hero }}" style="width:100%;height:100%;object-fit:cover" alt=""/>
-          </sc-if>
+        <div style="position:relative;height:clamp(240px,34vw,420px);border-radius:22px;overflow:hidden;background:linear-gradient(135deg,#e9e0e6,#d8c6c2)">
+          {{ hall.heroImgEl }}
+          <button onClick="{{ hall.onWish }}" style="{{ hall.heartStyle }}">♥</button>
         </div>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-top:10px">
-          <sc-for list="{{ hall.gallery }}" as="g" hint-placeholder-count="4">
-            <div onClick="{{ g.onClick }}" style="aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:linear-gradient(135deg,#ece0d7,#ddccc0);cursor:pointer">
-              <sc-if value="{{ g.showImg }}" hint-placeholder-val="{{ true }}">
-                <img src="{{ g.thumb }}" loading="lazy" style="width:100%;height:100%;object-fit:cover" alt=""/>
-              </sc-if>
-            </div>
-          </sc-for>
+          <sc-for list="{{ hall.gallery }}" as="g" hint-placeholder-count="4"><div onClick="{{ g.onClick }}" style="aspect-ratio:4/3;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,#ece4e9,#ddd0cd);cursor:pointer"><sc-if value="{{ g.showImg }}" hint-placeholder-val="{{ true }}"><img src="{{ g.thumb }}" loading="lazy" style="width:100%;height:100%;object-fit:cover" alt=""/></sc-if></div></sc-for>
         </div>
-
-        <h1 style="font-size:clamp(24px,3vw,32px);font-weight:800;letter-spacing:-.03em;margin:22px 0 4px">{{ hall.name }}</h1>
-        <div style="color:#8b8178;font-size:14px">{{ hall.region }} · {{ hall.floor }}</div>
-
+        <h1 style="font-family:'Jua',sans-serif;font-size:clamp(24px,3vw,32px);color:#2b2530;margin:22px 0 4px">{{ hall.name }}</h1>
+        <div style="color:#8b8592;font-size:14px">{{ hall.region }} · {{ hall.floor }}</div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:20px">
-          <div style="background:#fff;border:1px solid #ece2d9;border-radius:12px;padding:14px 16px"><div style="font-size:12px;color:#a89a8e;font-weight:600">대관가격</div><div style="font-size:17px;font-weight:800;margin-top:4px">{{ hall.rentalLabel }}</div></div>
-          <div style="background:#fff;border:1px solid #ece2d9;border-radius:12px;padding:14px 16px"><div style="font-size:12px;color:#a89a8e;font-weight:600">뷔페 (성인 1인)</div><div style="font-size:17px;font-weight:800;margin-top:4px">{{ hall.buffetLabel }}</div></div>
-          <div style="background:#fff;border:1px solid #ece2d9;border-radius:12px;padding:14px 16px"><div style="font-size:12px;color:#a89a8e;font-weight:600">지불보증 인원</div><div style="font-size:17px;font-weight:800;margin-top:4px">{{ hall.guaranteeLabel }}</div></div>
+          <div style="background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:15px 16px"><div style="font-size:12px;color:#a49dae;font-weight:600">대관가격</div><div style="font-family:'Jua',sans-serif;font-size:18px;margin-top:4px">{{ hall.rentalLabel }}</div></div>
+          <div style="background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:15px 16px"><div style="font-size:12px;color:#a49dae;font-weight:600">뷔페 (1인)</div><div style="font-family:'Jua',sans-serif;font-size:18px;margin-top:4px">{{ hall.buffetLabel }}</div></div>
+          <div style="background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:15px 16px"><div style="font-size:12px;color:#a49dae;font-weight:600">지불보증</div><div style="font-family:'Jua',sans-serif;font-size:18px;margin-top:4px">{{ hall.guaranteeLabel }}</div></div>
         </div>
-
-        <h3 style="font-size:17px;font-weight:800;margin:26px 0 10px">위치</h3>
-        <div style="border:1px solid #ece2d9;border-radius:14px;overflow:hidden;background:#fff">
-          <sc-if value="{{ showMap }}" hint-placeholder-val="{{ true }}">
-            <iframe src="{{ hall.mapSrc }}" style="width:100%;height:280px;border:0;display:block" loading="lazy"></iframe>
-          </sc-if>
-          <div style="padding:13px 16px;font-size:14px;color:#4a3f38;border-top:1px solid #f0e8e0">📍 {{ hall.addr }}</div>
+        <h3 style="font-family:'Jua',sans-serif;font-size:18px;margin:26px 0 10px">위치</h3>
+        <div style="border:1px solid #ecebf0;border-radius:16px;overflow:hidden;background:#fff">
+          <sc-if value="{{ showMap }}" hint-placeholder-val="{{ true }}"><iframe src="{{ hall.mapSrc }}" style="width:100%;height:280px;border:0;display:block" loading="lazy"></iframe></sc-if>
+          <div style="padding:13px 16px;font-size:14px;color:#4a4550;border-top:1px solid #f2f0f5">📍 {{ hall.addr }}</div>
         </div>
-
-        <h3 style="font-size:17px;font-weight:800;margin:26px 0 10px">시설 안내</h3>
-        <div style="background:#fff;border:1px solid #ece2d9;border-radius:14px;padding:6px 18px">
-          <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f3ece5"><span style="color:#8b8178;font-size:14px">주차</span><span style="font-weight:700;font-size:14px">{{ hall.parking }}</span></div>
-          <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f3ece5"><span style="color:#8b8178;font-size:14px">홀 구성</span><span style="font-weight:700;font-size:14px">{{ hall.floor }}</span></div>
-          <div style="display:flex;justify-content:space-between;padding:12px 0"><span style="color:#8b8178;font-size:14px">전화번호</span><span style="font-weight:700;font-size:14px">{{ hall.phone }}</span></div>
+        <h3 style="font-family:'Jua',sans-serif;font-size:18px;margin:26px 0 10px">시설 안내</h3>
+        <div style="background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:6px 18px">
+          <div style="display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid #f4f2f6"><span style="color:#8b8592;font-size:14px">주차</span><span style="font-weight:700;font-size:14px">{{ hall.parking }}</span></div>
+          <div style="display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid #f4f2f6"><span style="color:#8b8592;font-size:14px">홀 구성</span><span style="font-weight:700;font-size:14px">{{ hall.floor }}</span></div>
+          <div style="display:flex;justify-content:space-between;padding:13px 0"><span style="color:#8b8592;font-size:14px">전화번호</span><span style="font-weight:700;font-size:14px">{{ hall.phone }}</span></div>
         </div>
       </div>
-
-      <!-- action rail -->
-      <div style="position:sticky;top:84px;background:#fff;border:1px solid #ece2d9;border-radius:16px;padding:22px;box-shadow:0 8px 30px rgba(60,45,35,.08)">
-        <div style="font-size:13px;color:#a89a8e;font-weight:600">대관 시작가</div>
-        <div style="font-size:26px;font-weight:800;letter-spacing:-.02em;margin-top:2px">{{ hall.rentalLabel }}</div>
-        <div style="font-size:13px;color:#8b8178;margin-top:6px;line-height:1.5">웨딩홀은 견적·계약 상품으로, 상담 후 날짜·홀·견적을 확정합니다.</div>
-        <div style="height:1px;background:#f0e8e0;margin:18px 0"></div>
-        <a href="{{ hall.telHref }}" style="display:block;text-align:center;text-decoration:none;background:#241f1c;color:#fff;border-radius:11px;padding:14px 0;font-size:15px;font-weight:700">📞 전화상담 {{ hall.phone }}</a>
-        <button onClick="{{ hall.onConsult }}" style="width:100%;margin-top:9px;background:#c0576b;color:#fff;border:none;border-radius:11px;padding:14px 0;font-size:15px;font-weight:700;cursor:pointer">빠른상담 신청</button>
-        <div style="font-size:12px;color:#a89a8e;text-align:center;margin-top:10px">평균 응답 10분 이내 · 상담 무료</div>
+      <div style="position:sticky;top:84px;background:#fff;border:1px solid #ecebf0;border-radius:22px;padding:22px;box-shadow:0 8px 28px rgba(30,20,40,.07)">
+        <div style="font-size:13px;color:#a49dae;font-weight:600">대관 시작가</div>
+        <div style="font-family:'Jua',sans-serif;font-size:28px;color:#2b2530;margin-top:2px">{{ hall.rentalLabel }}</div>
+        <div style="font-size:13px;color:#8b8592;margin-top:6px;line-height:1.5">웨딩홀은 견적·계약 상품이라, 상담 후 날짜·홀·견적을 확정해요.</div>
+        <div style="height:1px;background:#f2f0f5;margin:18px 0"></div>
+        <a href="{{ hall.telHref }}" style="display:block;text-align:center;text-decoration:none;background:#2b2530;color:#fff;border-radius:14px;padding:14px 0;font-size:15px;font-weight:700">📞 전화상담</a>
+        <button onClick="{{ hall.onConsult }}" style="width:100%;margin-top:9px;background:#ff4d6d;color:#fff;border:none;border-radius:14px;padding:14px 0;font-size:15px;font-weight:700;cursor:pointer">빠른상담 신청</button>
+        <div style="font-size:12px;color:#a49dae;text-align:center;margin-top:10px">평균 응답 10분 이내 · 상담 무료</div>
       </div>
     </div>
   </div>
   </sc-if>
 
-  <!-- ============ VENDOR LIST (스드메 / 혼수) ============ -->
+  <!-- ============ VENDOR LIST ============ -->
   <sc-if value="{{ isVendorList }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width:1180px;margin:0 auto;padding:clamp(22px,3.5vw,40px) clamp(16px,4vw,40px)">
-    <div style="font-size:13px;color:#a89a8e;font-weight:600">HOME / {{ catTitle }}</div>
-    <h1 style="font-size:clamp(24px,3vw,34px);font-weight:800;letter-spacing:-.03em;margin:8px 0 2px">{{ catTitle }}</h1>
-    <p style="color:#8b8178;font-size:15px;margin:0 0 18px">{{ catDesc }}</p>
-    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px">
-      <sc-for list="{{ subTabs }}" as="st" hint-placeholder-count="4">
-        <button onClick="{{ st.onClick }}" style="{{ st.style }}">{{ st.name }}</button>
-      </sc-for>
+  <div style="max-width:1180px;margin:0 auto;padding:clamp(20px,3.5vw,40px) clamp(16px,4vw,40px)">
+    <h1 style="font-family:'Jua',sans-serif;font-size:clamp(24px,3vw,32px);color:#2b2530;margin:0 0 4px">{{ catTitle }}</h1>
+    <p style="color:#8b8592;font-size:15px;margin:0 0 16px">{{ catDesc }}</p>
+    <div class="hscroll" style="display:flex;gap:7px;overflow-x:auto;margin-bottom:10px;padding-bottom:4px">
+      <sc-for list="{{ subTabs }}" as="st" hint-placeholder-count="4"><button onClick="{{ st.onClick }}" style="{{ st.style }}">{{ st.name }}</button></sc-for>
     </div>
-    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:22px">
-      <sc-for list="{{ regionTabs }}" as="rt" hint-placeholder-count="8">
-        <button onClick="{{ rt.onClick }}" style="{{ rt.style }}">{{ rt.name }}</button>
-      </sc-for>
+    <div class="hscroll" style="display:flex;gap:7px;overflow-x:auto;margin-bottom:12px;padding-bottom:4px">
+      <sc-for list="{{ regionTabs }}" as="rt" hint-placeholder-count="8"><button onClick="{{ rt.onClick }}" style="{{ rt.style }}">{{ rt.name }}</button></sc-for>
     </div>
-    <div style="font-size:14px;color:#8b8178;margin-bottom:14px">총 <b style="color:#241f1c">{{ vendorCount }}</b>개 업체</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(272px,1fr));gap:18px">
+    <div style="display:flex;gap:7px;margin-bottom:20px">
+      <sc-for list="{{ sortChips }}" as="sc" hint-placeholder-count="3"><button onClick="{{ sc.onClick }}" style="{{ sc.style }}">{{ sc.label }}</button></sc-for>
+    </div>
+    <div style="font-size:14px;color:#8b8592;margin-bottom:14px">총 <b style="color:#2b2530">{{ vendorCount }}</b>개 업체</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(264px,1fr));gap:18px">
       <sc-for list="{{ vendors }}" as="v" hint-placeholder-count="6">
-        <div style="background:#fff;border:1px solid #ece2d9;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(60,45,35,.05);display:flex;flex-direction:column">
-          <div onClick="{{ v.onOpen }}" style="height:172px;background:linear-gradient(135deg,#efe1da,#e3d0c6);position:relative;overflow:hidden;cursor:pointer">
-            <sc-if value="{{ v.showImg }}" hint-placeholder-val="{{ true }}">
-              <img src="{{ v.thumb }}" loading="lazy" style="width:100%;height:100%;object-fit:cover" alt=""/>
-            </sc-if>
-            <span style="position:absolute;left:12px;top:12px;background:rgba(255,255,255,.92);color:#c0576b;font-size:11px;font-weight:800;padding:5px 10px;border-radius:999px">{{ v.sub }}</span>
-            <span style="position:absolute;right:12px;top:12px;background:rgba(36,31,28,.66);color:#fff;font-size:11px;font-weight:700;padding:5px 10px;border-radius:999px;backdrop-filter:blur(4px)">{{ v.region }}</span>
+        <div style="background:#fff;border:1px solid #ecebf0;border-radius:20px;overflow:hidden;box-shadow:0 4px 18px rgba(30,20,40,.05);display:flex;flex-direction:column">
+          <div onClick="{{ v.onOpen }}" style="position:relative;aspect-ratio:4/3;background:linear-gradient(135deg,#efe6ee,#e3d6dd);overflow:hidden;cursor:pointer">
+            <sc-if value="{{ v.showImg }}" hint-placeholder-val="{{ true }}"><img src="{{ v.thumb }}" loading="lazy" style="width:100%;height:100%;object-fit:cover" alt=""/></sc-if>
+            <button onClick="{{ v.onWish }}" style="{{ v.heartStyle }}">♥</button>
+            <span style="position:absolute;left:12px;top:12px;background:rgba(255,255,255,.94);color:#ff4d6d;font-size:11px;font-weight:800;padding:5px 10px;border-radius:999px">{{ v.sub }}</span>
+            <span style="position:absolute;right:12px;bottom:12px;background:rgba(0,0,0,.5);color:#fff;font-size:11px;font-weight:700;padding:5px 10px;border-radius:999px;backdrop-filter:blur(4px)">{{ v.region }}</span>
           </div>
           <div style="padding:16px 18px 18px;flex:1;display:flex;flex-direction:column">
             <div onClick="{{ v.onOpen }}" style="cursor:pointer;flex:1">
               <div style="font-size:18px;font-weight:800;letter-spacing:-.02em">{{ v.name }}</div>
-              <div style="font-size:13px;color:#a89a8e;margin-top:4px;line-height:1.4">{{ v.summary }}</div>
+              <div style="font-size:13px;color:#a49dae;margin-top:4px;line-height:1.4">{{ v.summary }}</div>
               <div style="display:flex;align-items:baseline;gap:6px;margin-top:12px">
-                <span style="font-size:12px;color:#a89a8e">A상품</span>
-                <span style="font-size:18px;font-weight:800;color:#c0576b">{{ v.fromLabel }}</span>
+                <span style="font-size:12px;color:#a49dae">A상품</span>
+                <span style="font-family:'Jua',sans-serif;font-size:19px;color:#ff4d6d">{{ v.fromLabel }}</span>
               </div>
-              <div style="font-size:12px;color:#a89a8e;margin-top:3px">사진샘플 {{ v.galleryCount }}장</div>
+              <div style="font-size:12px;color:#a49dae;margin-top:3px">사진샘플 {{ v.galleryCount }}장</div>
             </div>
             <div style="display:flex;gap:8px;margin-top:14px">
-              <a href="{{ v.telHref }}" style="flex:1;text-align:center;text-decoration:none;background:#fff;color:#c0576b;border:1px solid #e3b9c3;border-radius:10px;padding:11px 0;font-size:13px;font-weight:700">전화상담</a>
-              <button onClick="{{ v.onConsult }}" style="flex:1;background:#c0576b;color:#fff;border:none;border-radius:10px;padding:11px 0;font-size:13px;font-weight:700;cursor:pointer">빠른상담</button>
+              <a href="{{ v.telHref }}" style="flex:1;text-align:center;text-decoration:none;background:#fff;color:#ff4d6d;border:1.5px solid #ffd0d9;border-radius:12px;padding:11px 0;font-size:13px;font-weight:700">전화상담</a>
+              <button onClick="{{ v.onConsult }}" style="flex:1;background:#ff4d6d;color:#fff;border:none;border-radius:12px;padding:11px 0;font-size:13px;font-weight:700;cursor:pointer">빠른상담</button>
             </div>
           </div>
         </div>
@@ -306,95 +326,70 @@ a{color:inherit}
 
   <!-- ============ VENDOR DETAIL ============ -->
   <sc-if value="{{ isVendorDetail }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width:1180px;margin:0 auto;padding:clamp(18px,3vw,32px) clamp(16px,4vw,40px)">
-    <button onClick="{{ vendor.onBack }}" style="background:none;border:none;color:#8b8178;font-size:14px;font-weight:600;cursor:pointer;padding:0;margin-bottom:14px">← {{ vendor.catTitle }} 목록</button>
+  <div style="max-width:1180px;margin:0 auto;padding:clamp(16px,3vw,32px) clamp(16px,4vw,40px)">
+    <button onClick="{{ vendor.onBack }}" style="background:none;border:none;color:#8b8592;font-size:14px;font-weight:600;cursor:pointer;padding:0;margin-bottom:14px">← {{ vendor.catTitle }} 목록</button>
     <div style="display:grid;grid-template-columns:minmax(0,1.7fr) minmax(300px,1fr);gap:26px;align-items:start">
       <div>
-        <div style="height:clamp(240px,34vw,420px);border-radius:18px;overflow:hidden;background:linear-gradient(135deg,#efe1da,#dcc4b8);position:relative">
-          <sc-if value="{{ vendor.showImg }}" hint-placeholder-val="{{ true }}">
-            <img src="{{ vendor.hero }}" style="width:100%;height:100%;object-fit:cover" alt=""/>
-          </sc-if>
-          <span style="position:absolute;left:14px;top:14px;background:rgba(255,255,255,.94);color:#c0576b;font-size:12px;font-weight:800;padding:6px 12px;border-radius:999px">{{ vendor.sub }}</span>
+        <div style="position:relative;height:clamp(240px,34vw,420px);border-radius:22px;overflow:hidden;background:linear-gradient(135deg,#efe6ee,#dcc9d3)">
+          {{ vendor.heroImgEl }}
+          <button onClick="{{ vendor.onWish }}" style="{{ vendor.heartStyle }}">♥</button>
+          <span style="position:absolute;left:14px;top:14px;background:rgba(255,255,255,.94);color:#ff4d6d;font-size:12px;font-weight:800;padding:6px 12px;border-radius:999px">{{ vendor.sub }}</span>
         </div>
         <div style="display:flex;align-items:center;justify-content:space-between;margin:10px 2px 6px">
-          <div style="font-size:14px;font-weight:700;color:#4a3f38">사진샘플 <span style="color:#c0576b">{{ vendor.galleryCount }}</span>장</div>
-          <button onClick="{{ vendor.onOpenGallery }}" style="background:none;border:none;color:#8b8178;font-size:13px;font-weight:600;cursor:pointer">전체보기 →</button>
+          <div style="font-size:14px;font-weight:700;color:#4a4550">사진샘플 <span style="color:#ff4d6d">{{ vendor.galleryCount }}</span>장</div>
+          <button onClick="{{ vendor.onOpenGallery }}" style="background:none;border:none;color:#8b8592;font-size:13px;font-weight:600;cursor:pointer">전체보기 →</button>
         </div>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px">
-          <sc-for list="{{ vendor.gallery }}" as="g" hint-placeholder-count="8">
-            <div onClick="{{ g.onClick }}" style="aspect-ratio:1/1;border-radius:10px;overflow:hidden;background:linear-gradient(135deg,#ece0d7,#ddccc0);cursor:pointer">
-              <sc-if value="{{ g.showImg }}" hint-placeholder-val="{{ true }}">
-                <img src="{{ g.thumb }}" loading="lazy" style="width:100%;height:100%;object-fit:cover" alt=""/>
-              </sc-if>
-            </div>
-          </sc-for>
+          <sc-for list="{{ vendor.gallery }}" as="g" hint-placeholder-count="8"><div onClick="{{ g.onClick }}" style="aspect-ratio:1/1;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,#ece4e9,#ddd0cd);cursor:pointer"><sc-if value="{{ g.showImg }}" hint-placeholder-val="{{ true }}"><img src="{{ g.thumb }}" loading="lazy" style="width:100%;height:100%;object-fit:cover" alt=""/></sc-if></div></sc-for>
         </div>
-
-        <h1 style="font-size:clamp(24px,3vw,32px);font-weight:800;letter-spacing:-.03em;margin:24px 0 4px">{{ vendor.name }}</h1>
-        <div style="color:#8b8178;font-size:14px">{{ vendor.region }} · {{ vendor.sub }}</div>
-        <sc-if value="{{ vendor.hasTravel }}" hint-placeholder-val="{{ false }}">
-          <div style="display:inline-block;margin-top:10px;background:#f3ece5;border-radius:999px;padding:6px 13px;font-size:13px;font-weight:600;color:#4a3f38">🧳 여행지: {{ vendor.travel }}</div>
-        </sc-if>
-
-        <h3 style="font-size:18px;font-weight:800;margin:28px 0 12px">상품 구성</h3>
+        <h1 style="font-family:'Jua',sans-serif;font-size:clamp(24px,3vw,32px);color:#2b2530;margin:24px 0 4px">{{ vendor.name }}</h1>
+        <div style="color:#8b8592;font-size:14px">{{ vendor.region }} · {{ vendor.sub }}</div>
+        <sc-if value="{{ vendor.hasTravel }}" hint-placeholder-val="{{ false }}"><div style="display:inline-block;margin-top:10px;background:#f4f3f6;border-radius:999px;padding:6px 13px;font-size:13px;font-weight:600;color:#4a4550">🧳 여행지: {{ vendor.travel }}</div></sc-if>
+        <h3 style="font-family:'Jua',sans-serif;font-size:19px;margin:28px 0 12px">상품 구성</h3>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px">
           <sc-for list="{{ vendor.packages }}" as="p" hint-placeholder-count="3">
             <button onClick="{{ p.onSelect }}" style="{{ p.cardStyle }}">
               <div style="display:flex;align-items:center;justify-content:space-between">
-                <span style="font-size:12px;font-weight:800;letter-spacing:.04em;color:#c0576b;background:#fbeef1;border-radius:6px;padding:3px 8px">{{ p.id }}</span>
-                <sc-if value="{{ p.selected }}" hint-placeholder-val="{{ false }}">
-                  <span style="width:20px;height:20px;border-radius:50%;background:#c0576b;color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;font-weight:800">✓</span>
-                </sc-if>
+                <span style="font-family:'Jua',sans-serif;font-size:13px;color:#ff4d6d;background:#ffe9ee;border-radius:8px;padding:3px 10px">{{ p.id }}</span>
+                <sc-if value="{{ p.selected }}" hint-placeholder-val="{{ false }}"><span style="width:20px;height:20px;border-radius:50%;background:#ff4d6d;color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;font-weight:800">✓</span></sc-if>
               </div>
-              <div style="font-size:15px;font-weight:800;margin-top:12px;letter-spacing:-.01em">{{ p.tier }}</div>
-              <div style="font-size:20px;font-weight:800;color:#241f1c;margin-top:2px">{{ p.priceLabel }}</div>
-              <div style="height:1px;background:#f0e8e0;margin:12px 0"></div>
-              <sc-for list="{{ p.comps }}" as="c" hint-placeholder-count="4">
-                <div style="display:flex;gap:7px;font-size:13px;color:#4a3f38;line-height:1.5;margin-bottom:6px"><span style="color:#c0576b;font-weight:800">·</span><span>{{ c }}</span></div>
-              </sc-for>
+              <div style="font-size:15px;font-weight:800;margin-top:12px">{{ p.tier }}</div>
+              <div style="font-family:'Jua',sans-serif;font-size:21px;color:#2b2530;margin-top:2px">{{ p.priceLabel }}</div>
+              <div style="height:1px;background:#f2f0f5;margin:12px 0"></div>
+              <sc-for list="{{ p.comps }}" as="c" hint-placeholder-count="4"><div style="display:flex;gap:7px;font-size:13px;color:#4a4550;line-height:1.5;margin-bottom:6px"><span style="color:#ff4d6d;font-weight:800">·</span><span>{{ c }}</span></div></sc-for>
             </button>
           </sc-for>
         </div>
-
-        <h3 style="font-size:18px;font-weight:800;margin:28px 0 12px">추가금 (선택)</h3>
-        <div style="background:#fff;border:1px solid #ece2d9;border-radius:14px;padding:6px 18px">
+        <h3 style="font-family:'Jua',sans-serif;font-size:19px;margin:28px 0 12px">추가금 (선택)</h3>
+        <div style="background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:6px 18px">
           <sc-for list="{{ vendor.options }}" as="o" hint-placeholder-count="3">
-            <button onClick="{{ o.onToggle }}" style="width:100%;display:flex;align-items:center;gap:12px;background:none;border:none;padding:14px 0;border-bottom:1px solid #f3ece5;cursor:pointer;text-align:left">
+            <button onClick="{{ o.onToggle }}" style="width:100%;display:flex;align-items:center;gap:12px;background:none;border:none;padding:14px 0;border-bottom:1px solid #f4f2f6;cursor:pointer;text-align:left">
               <span style="{{ o.boxStyle }}"><sc-if value="{{ o.checked }}" hint-placeholder-val="{{ false }}"><span style="color:#fff;font-size:13px;font-weight:800">✓</span></sc-if></span>
-              <span style="flex:1;font-size:14px;font-weight:600;color:#241f1c">{{ o.title }}</span>
-              <span style="font-size:14px;font-weight:800;color:#c0576b">+{{ o.priceLabel }}</span>
+              <span style="flex:1;font-size:14px;font-weight:600;color:#2b2530">{{ o.title }}</span>
+              <span style="font-weight:800;color:#ff4d6d;font-size:14px">+{{ o.priceLabel }}</span>
             </button>
           </sc-for>
         </div>
-
-        <h3 style="font-size:18px;font-weight:800;margin:28px 0 12px">위치</h3>
-        <div style="border:1px solid #ece2d9;border-radius:14px;overflow:hidden;background:#fff">
-          <sc-if value="{{ showMap }}" hint-placeholder-val="{{ true }}">
-            <iframe src="{{ vendor.mapSrc }}" style="width:100%;height:260px;border:0;display:block" loading="lazy"></iframe>
-          </sc-if>
-          <div style="padding:13px 16px;font-size:14px;color:#4a3f38;border-top:1px solid #f0e8e0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px"><span>📍 {{ vendor.addr }}</span><span style="color:#8b8178">주차 {{ vendor.parking }}</span></div>
+        <h3 style="font-family:'Jua',sans-serif;font-size:19px;margin:28px 0 12px">위치</h3>
+        <div style="border:1px solid #ecebf0;border-radius:16px;overflow:hidden;background:#fff">
+          <sc-if value="{{ showMap }}" hint-placeholder-val="{{ true }}"><iframe src="{{ vendor.mapSrc }}" style="width:100%;height:260px;border:0;display:block" loading="lazy"></iframe></sc-if>
+          <div style="padding:13px 16px;font-size:14px;color:#4a4550;border-top:1px solid #f2f0f5;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px"><span>📍 {{ vendor.addr }}</span><span style="color:#8b8592">주차 {{ vendor.parking }}</span></div>
         </div>
       </div>
-
-      <!-- purchase rail -->
-      <div style="position:sticky;top:84px;background:#fff;border:1px solid #ece2d9;border-radius:16px;padding:22px;box-shadow:0 8px 30px rgba(60,45,35,.08)">
-        <div style="font-size:13px;color:#a89a8e;font-weight:600">선택: {{ vendor.selName }}</div>
-        <div style="display:flex;align-items:baseline;gap:6px;margin-top:3px">
-          <div style="font-size:26px;font-weight:800;letter-spacing:-.02em">{{ vendor.selTotalLabel }}</div>
+      <div style="position:sticky;top:84px;background:#fff;border:1px solid #ecebf0;border-radius:22px;padding:22px;box-shadow:0 8px 28px rgba(30,20,40,.07)">
+        <div style="font-size:13px;color:#a49dae;font-weight:600">선택: {{ vendor.selName }}</div>
+        <div style="font-family:'Jua',sans-serif;font-size:28px;color:#2b2530;margin-top:3px">{{ vendor.selTotalLabel }}</div>
+        <div style="font-size:12px;color:#8b8592;margin-top:4px">패키지 + 선택 추가금 합계</div>
+        <div style="background:#f7f5f9;border-radius:14px;padding:13px 15px;margin-top:16px">
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span style="color:#8b8592">{{ vendor.selName }}</span><span style="font-weight:700">{{ vendor.selPkgLabel }}</span></div>
+          <sc-for list="{{ vendor.selOptList }}" as="so" hint-placeholder-count="0"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span style="color:#8b8592">+ {{ so.title }}</span><span style="font-weight:700">{{ so.priceLabel }}</span></div></sc-for>
         </div>
-        <div style="font-size:12px;color:#8b8178;margin-top:4px">패키지 + 선택 추가금 합계</div>
-        <div style="background:#f7f1ec;border-radius:11px;padding:13px 15px;margin-top:16px">
-          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span style="color:#8b8178">{{ vendor.selName }}</span><span style="font-weight:700">{{ vendor.selPkgLabel }}</span></div>
-          <sc-for list="{{ vendor.selOptList }}" as="so" hint-placeholder-count="0">
-            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span style="color:#8b8178">+ {{ so.title }}</span><span style="font-weight:700">{{ so.priceLabel }}</span></div>
-          </sc-for>
-        </div>
-        <button onClick="{{ vendor.onAddCart }}" style="width:100%;margin-top:16px;background:#c0576b;color:#fff;border:none;border-radius:11px;padding:15px 0;font-size:15px;font-weight:800;cursor:pointer" style-hover="background:#a5445a">장바구니 담기</button>
+        <button onClick="{{ vendor.onAddCart }}" style="width:100%;margin-top:16px;background:#ff4d6d;color:#fff;border:none;border-radius:14px;padding:15px 0;font-size:15px;font-weight:800;cursor:pointer" style-hover="background:#e63958">장바구니 담기</button>
         <div style="display:flex;gap:8px;margin-top:9px">
-          <a href="{{ vendor.telHref }}" style="flex:1;text-align:center;text-decoration:none;background:#fff;color:#241f1c;border:1px solid #e0d5c9;border-radius:11px;padding:13px 0;font-size:14px;font-weight:700">📞 전화</a>
-          <button onClick="{{ vendor.onConsult }}" style="flex:1;background:#241f1c;color:#fff;border:none;border-radius:11px;padding:13px 0;font-size:14px;font-weight:700;cursor:pointer">빠른상담</button>
+          <button onClick="{{ vendor.onWish }}" style="{{ vendor.wishBtnStyle }}">{{ vendor.wishBtnLabel }}</button>
+          <button onClick="{{ vendor.onConsult }}" style="flex:1;background:#2b2530;color:#fff;border:none;border-radius:14px;padding:13px 0;font-size:14px;font-weight:700;cursor:pointer">빠른상담</button>
         </div>
-        <div style="font-size:12px;color:#a89a8e;text-align:center;margin-top:10px">{{ vendor.depositHint }}</div>
+        <div style="font-size:12px;color:#a49dae;text-align:center;margin-top:10px">{{ vendor.depositHint }}</div>
       </div>
     </div>
   </div>
@@ -402,77 +397,51 @@ a{color:inherit}
 
   <!-- ============ CART ============ -->
   <sc-if value="{{ isCart }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width:1080px;margin:0 auto;padding:clamp(22px,3.5vw,40px) clamp(16px,4vw,40px)">
-    <h1 style="font-size:clamp(24px,3vw,32px);font-weight:800;letter-spacing:-.03em;margin:0 0 20px">장바구니</h1>
+  <div style="max-width:1080px;margin:0 auto;padding:clamp(20px,3.5vw,40px) clamp(16px,4vw,40px)">
+    <h1 style="font-family:'Jua',sans-serif;font-size:clamp(24px,3vw,32px);color:#2b2530;margin:0 0 20px">장바구니 🛒</h1>
     <sc-if value="{{ cartEmpty }}" hint-placeholder-val="{{ true }}">
-      <div style="background:#fff;border:1px solid #ece2d9;border-radius:16px;padding:60px 20px;text-align:center">
-        <div style="font-size:40px">🛍️</div>
-        <div style="font-size:17px;font-weight:700;margin-top:12px">장바구니가 비어 있어요</div>
-        <div style="color:#8b8178;font-size:14px;margin-top:6px">스드메·혼수 상품을 담아보세요.</div>
-        <button onClick="{{ goSdm }}" style="margin-top:18px;background:#c0576b;color:#fff;border:none;border-radius:11px;padding:13px 26px;font-size:14px;font-weight:700;cursor:pointer">상품 보러가기</button>
+      <div style="background:#fff;border:1px solid #ecebf0;border-radius:20px;padding:60px 20px;text-align:center">
+        <div style="font-size:42px">🛍️</div>
+        <div style="font-family:'Jua',sans-serif;font-size:19px;margin-top:12px">장바구니가 비어 있어요</div>
+        <div style="color:#8b8592;font-size:14px;margin-top:6px">마음에 든 스드메·혼수를 담아보세요.</div>
+        <button onClick="{{ goSdm }}" style="margin-top:18px;background:#ff4d6d;color:#fff;border:none;border-radius:14px;padding:13px 26px;font-size:14px;font-weight:700;cursor:pointer">상품 보러가기</button>
       </div>
     </sc-if>
     <sc-if value="{{ cartHasItems }}" hint-placeholder-val="{{ false }}">
     <div style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr);gap:22px;align-items:start">
       <div style="display:flex;flex-direction:column;gap:12px">
         <sc-for list="{{ cartItems }}" as="it" hint-placeholder-count="2">
-          <div style="background:#fff;border:1px solid #ece2d9;border-radius:14px;padding:18px;display:flex;gap:14px">
-            <div style="width:84px;height:84px;border-radius:11px;overflow:hidden;background:linear-gradient(135deg,#efe1da,#e0cdc0);flex:none">
-              <sc-if value="{{ it.showImg }}" hint-placeholder-val="{{ true }}">
-                <img src="{{ it.thumb }}" style="width:100%;height:100%;object-fit:cover" alt=""/>
-              </sc-if>
-            </div>
+          <div style="background:#fff;border:1px solid #ecebf0;border-radius:18px;padding:18px;display:flex;gap:14px">
+            <div style="width:84px;height:84px;border-radius:14px;overflow:hidden;background:linear-gradient(135deg,#efe6ee,#e0cdd6);flex:none">{{ it.thumbEl }}</div>
             <div style="flex:1;min-width:0">
               <div style="display:flex;justify-content:space-between;gap:10px">
-                <div>
-                  <div style="font-size:12px;color:#a89a8e;font-weight:600">{{ it.sub }} · {{ it.region }}</div>
-                  <div style="font-size:16px;font-weight:800;letter-spacing:-.01em;margin-top:2px">{{ it.vendorName }}</div>
-                  <div style="font-size:13px;color:#4a3f38;margin-top:2px">{{ it.pkgName }}</div>
-                </div>
-                <button onClick="{{ it.onRemove }}" style="background:none;border:none;color:#b8ada2;font-size:18px;cursor:pointer;height:fit-content">×</button>
+                <div><div style="font-size:12px;color:#a49dae;font-weight:600">{{ it.sub }} · {{ it.region }}</div><div style="font-size:16px;font-weight:800;margin-top:2px">{{ it.vendorName }}</div><div style="font-size:13px;color:#4a4550;margin-top:2px">{{ it.pkgName }}</div></div>
+                <button onClick="{{ it.onRemove }}" style="background:none;border:none;color:#c3bccb;font-size:18px;cursor:pointer;height:fit-content">×</button>
               </div>
-              <sc-for list="{{ it.optLabels }}" as="ol" hint-placeholder-count="0">
-                <div style="font-size:12px;color:#8b8178;margin-top:3px">+ {{ ol }}</div>
-              </sc-for>
+              <sc-for list="{{ it.optLabels }}" as="ol" hint-placeholder-count="0"><div style="font-size:12px;color:#8b8592;margin-top:3px">+ {{ ol }}</div></sc-for>
               <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">
-                <div style="display:flex;align-items:center;gap:0;border:1px solid #e0d5c9;border-radius:9px;overflow:hidden">
-                  <button onClick="{{ it.onDec }}" style="width:32px;height:32px;background:#fff;border:none;font-size:16px;cursor:pointer;color:#4a3f38">−</button>
-                  <span style="width:34px;text-align:center;font-weight:700;font-size:14px">{{ it.qty }}</span>
-                  <button onClick="{{ it.onInc }}" style="width:32px;height:32px;background:#fff;border:none;font-size:16px;cursor:pointer;color:#4a3f38">+</button>
-                </div>
-                <div style="font-size:17px;font-weight:800;color:#241f1c">{{ it.lineLabel }}</div>
+                <div style="display:flex;align-items:center;border:1px solid #e6e2ec;border-radius:10px;overflow:hidden"><button onClick="{{ it.onDec }}" style="width:32px;height:32px;background:#fff;border:none;font-size:16px;cursor:pointer;color:#4a4550">−</button><span style="width:34px;text-align:center;font-weight:700;font-size:14px">{{ it.qty }}</span><button onClick="{{ it.onInc }}" style="width:32px;height:32px;background:#fff;border:none;font-size:16px;cursor:pointer;color:#4a4550">+</button></div>
+                <div style="font-family:'Jua',sans-serif;font-size:18px;color:#2b2530">{{ it.lineLabel }}</div>
               </div>
             </div>
           </div>
         </sc-for>
       </div>
-
-      <!-- summary -->
-      <div style="position:sticky;top:84px;background:#fff;border:1px solid #ece2d9;border-radius:16px;padding:22px;box-shadow:0 8px 30px rgba(60,45,35,.08)">
-        <div style="font-size:16px;font-weight:800;margin-bottom:14px">결제 요약</div>
-        <div style="font-size:13px;font-weight:700;color:#4a3f38;margin-bottom:8px">쿠폰</div>
+      <div style="position:sticky;top:84px;background:#fff;border:1px solid #ecebf0;border-radius:22px;padding:22px;box-shadow:0 8px 28px rgba(30,20,40,.07)">
+        <div style="font-family:'Jua',sans-serif;font-size:18px;margin-bottom:14px">결제 요약</div>
+        <div style="font-size:13px;font-weight:700;color:#4a4550;margin-bottom:8px">쿠폰</div>
         <div style="display:flex;flex-direction:column;gap:8px">
-          <sc-for list="{{ couponList }}" as="cp" hint-placeholder-count="2">
-            <button onClick="{{ cp.onApply }}" style="{{ cp.style }}">
-              <span style="font-size:13px;font-weight:700">{{ cp.label }}</span>
-              <span style="font-size:12px;color:#a89a8e">{{ cp.cond }}</span>
-            </button>
-          </sc-for>
+          <sc-for list="{{ couponList }}" as="cp" hint-placeholder-count="2"><button onClick="{{ cp.onApply }}" style="{{ cp.style }}"><span style="font-size:13px;font-weight:700">{{ cp.label }}</span><span style="font-size:12px;color:#a49dae">{{ cp.cond }}</span></button></sc-for>
         </div>
-        <sc-if value="{{ isLoggedIn }}" hint-placeholder-val="{{ false }}">
-          <label style="display:flex;align-items:center;gap:9px;margin-top:14px;cursor:pointer">
-            <input type="checkbox" checked="{{ useAllPoints }}" onChange="{{ onTogglePoints }}" style="width:17px;height:17px;accent-color:#c0576b"/>
-            <span style="font-size:13px;color:#4a3f38">적립금 전액 사용 <b>({{ pointsLabel }})</b></span>
-          </label>
-        </sc-if>
-        <div style="height:1px;background:#f0e8e0;margin:16px 0"></div>
-        <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px"><span style="color:#8b8178">상품금액</span><span style="font-weight:700">{{ cartSubtotal }}</span></div>
-        <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px"><span style="color:#8b8178">쿠폰할인</span><span style="font-weight:700;color:#c0576b">{{ cartCouponLabel }}</span></div>
-        <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px"><span style="color:#8b8178">적립금 사용</span><span style="font-weight:700;color:#c0576b">{{ cartPointLabel }}</span></div>
-        <div style="height:1px;background:#f0e8e0;margin:14px 0"></div>
-        <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:15px;font-weight:800">총 결제금액</span><span style="font-size:24px;font-weight:800;color:#c0576b">{{ cartTotal }}</span></div>
-        <button onClick="{{ onCheckout }}" style="width:100%;margin-top:18px;background:#c0576b;color:#fff;border:none;border-radius:11px;padding:15px 0;font-size:15px;font-weight:800;cursor:pointer" style-hover="background:#a5445a">{{ checkoutBtnLabel }}</button>
-        <div style="font-size:12px;color:#a89a8e;text-align:center;margin-top:10px">{{ depositNote }}</div>
+        <sc-if value="{{ isLoggedIn }}" hint-placeholder-val="{{ false }}"><label style="display:flex;align-items:center;gap:9px;margin-top:14px;cursor:pointer"><input type="checkbox" checked="{{ useAllPoints }}" onChange="{{ onTogglePoints }}" style="width:17px;height:17px;accent-color:#ff4d6d"/><span style="font-size:13px;color:#4a4550">적립금 전액 사용 <b>({{ pointsLabel }})</b></span></label></sc-if>
+        <div style="height:1px;background:#f2f0f5;margin:16px 0"></div>
+        <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px"><span style="color:#8b8592">상품금액</span><span style="font-weight:700">{{ cartSubtotal }}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px"><span style="color:#8b8592">쿠폰할인</span><span style="font-weight:700;color:#ff4d6d">{{ cartCouponLabel }}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px"><span style="color:#8b8592">적립금 사용</span><span style="font-weight:700;color:#ff4d6d">{{ cartPointLabel }}</span></div>
+        <div style="height:1px;background:#f2f0f5;margin:14px 0"></div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:15px;font-weight:800">총 결제금액</span><span style="font-family:'Jua',sans-serif;font-size:25px;color:#ff4d6d">{{ cartTotal }}</span></div>
+        <button onClick="{{ onCheckout }}" style="width:100%;margin-top:18px;background:#ff4d6d;color:#fff;border:none;border-radius:14px;padding:15px 0;font-size:15px;font-weight:800;cursor:pointer" style-hover="background:#e63958">{{ checkoutBtnLabel }}</button>
+        <div style="font-size:12px;color:#a49dae;text-align:center;margin-top:10px">{{ depositNote }}</div>
       </div>
     </div>
     </sc-if>
@@ -481,51 +450,41 @@ a{color:inherit}
 
   <!-- ============ CHECKOUT ============ -->
   <sc-if value="{{ isCheckout }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width:940px;margin:0 auto;padding:clamp(22px,3.5vw,40px) clamp(16px,4vw,40px)">
-    <button onClick="{{ goCart }}" style="background:none;border:none;color:#8b8178;font-size:14px;font-weight:600;cursor:pointer;padding:0;margin-bottom:12px">← 장바구니</button>
-    <h1 style="font-size:clamp(24px,3vw,32px);font-weight:800;letter-spacing:-.03em;margin:0 0 20px">주문 / 결제</h1>
+  <div style="max-width:940px;margin:0 auto;padding:clamp(20px,3.5vw,40px) clamp(16px,4vw,40px)">
+    <button onClick="{{ goCart }}" style="background:none;border:none;color:#8b8592;font-size:14px;font-weight:600;cursor:pointer;padding:0;margin-bottom:12px">← 장바구니</button>
+    <h1 style="font-family:'Jua',sans-serif;font-size:clamp(24px,3vw,32px);color:#2b2530;margin:0 0 20px">주문 / 결제</h1>
     <div style="display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr);gap:22px;align-items:start">
       <div style="display:flex;flex-direction:column;gap:16px">
-        <div style="background:#fff;border:1px solid #ece2d9;border-radius:14px;padding:20px">
-          <div style="font-size:15px;font-weight:800;margin-bottom:12px">주문자 정보</div>
+        <div style="background:#fff;border:1px solid #ecebf0;border-radius:18px;padding:20px">
+          <div style="font-family:'Jua',sans-serif;font-size:16px;margin-bottom:12px">주문자 정보</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-            <div><div style="font-size:12px;color:#a89a8e;font-weight:600;margin-bottom:5px">이름</div><div style="background:#f7f1ec;border-radius:9px;padding:11px 13px;font-size:14px;font-weight:700">{{ orderName }}</div></div>
-            <div><div style="font-size:12px;color:#a89a8e;font-weight:600;margin-bottom:5px">연락처</div><div style="background:#f7f1ec;border-radius:9px;padding:11px 13px;font-size:14px;font-weight:700">{{ orderPhone }}</div></div>
+            <div><div style="font-size:12px;color:#a49dae;font-weight:600;margin-bottom:5px">이름</div><div style="background:#f7f5f9;border-radius:10px;padding:11px 13px;font-size:14px;font-weight:700">{{ orderName }}</div></div>
+            <div><div style="font-size:12px;color:#a49dae;font-weight:600;margin-bottom:5px">연락처</div><div style="background:#f7f5f9;border-radius:10px;padding:11px 13px;font-size:14px;font-weight:700">{{ orderPhone }}</div></div>
           </div>
         </div>
-        <div style="background:#fff;border:1px solid #ece2d9;border-radius:14px;padding:20px">
-          <div style="font-size:15px;font-weight:800;margin-bottom:12px">주문 상품 <span style="color:#a89a8e;font-weight:600">({{ cartCount }})</span></div>
+        <div style="background:#fff;border:1px solid #ecebf0;border-radius:18px;padding:20px">
+          <div style="font-family:'Jua',sans-serif;font-size:16px;margin-bottom:12px">주문 상품 <span style="color:#a49dae;font-weight:400;font-family:Pretendard">({{ cartCount }})</span></div>
           <div style="display:flex;flex-direction:column;gap:10px">
-            <sc-for list="{{ cartItems }}" as="it" hint-placeholder-count="2">
-              <div style="display:flex;justify-content:space-between;gap:10px;padding-bottom:10px;border-bottom:1px solid #f3ece5">
-                <div><div style="font-size:14px;font-weight:700">{{ it.vendorName }}</div><div style="font-size:12px;color:#8b8178">{{ it.pkgName }} · 수량 {{ it.qty }}</div></div>
-                <div style="font-size:14px;font-weight:800;white-space:nowrap">{{ it.lineLabel }}</div>
-              </div>
-            </sc-for>
+            <sc-for list="{{ cartItems }}" as="it" hint-placeholder-count="2"><div style="display:flex;justify-content:space-between;gap:10px;padding-bottom:10px;border-bottom:1px solid #f4f2f6"><div><div style="font-size:14px;font-weight:700">{{ it.vendorName }}</div><div style="font-size:12px;color:#8b8592">{{ it.pkgName }} · 수량 {{ it.qty }}</div></div><div style="font-size:14px;font-weight:800;white-space:nowrap">{{ it.lineLabel }}</div></div></sc-for>
           </div>
         </div>
-        <div style="background:#fff;border:1px solid #ece2d9;border-radius:14px;padding:20px">
-          <div style="font-size:15px;font-weight:800;margin-bottom:12px">결제 수단</div>
+        <div style="background:#fff;border:1px solid #ecebf0;border-radius:18px;padding:20px">
+          <div style="font-family:'Jua',sans-serif;font-size:16px;margin-bottom:12px">결제 수단</div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px">
-            <sc-for list="{{ payMethods }}" as="pm" hint-placeholder-count="4">
-              <button onClick="{{ pm.onSelect }}" style="{{ pm.style }}">{{ pm.label }}</button>
-            </sc-for>
+            <sc-for list="{{ payMethods }}" as="pm" hint-placeholder-count="4"><button onClick="{{ pm.onSelect }}" style="{{ pm.style }}">{{ pm.label }}</button></sc-for>
           </div>
-          <sc-if value="{{ depositMode }}" hint-placeholder-val="{{ true }}">
-            <div style="background:#fbeef1;border-radius:10px;padding:12px 14px;margin-top:14px;font-size:13px;color:#a5445a;line-height:1.5">🔒 <b>예약금 결제 모드</b> · 오늘은 총액의 10%를 예약금으로 결제하고, 잔금은 업체 계약 시 정산합니다.</div>
-          </sc-if>
+          <sc-if value="{{ depositMode }}" hint-placeholder-val="{{ true }}"><div style="background:#ffe9ee;border-radius:12px;padding:12px 14px;margin-top:14px;font-size:13px;color:#c62d4a;line-height:1.5">🔒 <b>예약금 결제 모드</b> · 오늘은 총액의 10%를 예약금으로 결제하고, 잔금은 업체 계약 시 정산해요.</div></sc-if>
         </div>
       </div>
-
-      <div style="position:sticky;top:84px;background:#fff;border:1px solid #ece2d9;border-radius:16px;padding:22px;box-shadow:0 8px 30px rgba(60,45,35,.08)">
-        <div style="font-size:16px;font-weight:800;margin-bottom:14px">최종 결제</div>
-        <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px"><span style="color:#8b8178">상품금액</span><span style="font-weight:700">{{ cartSubtotal }}</span></div>
-        <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px"><span style="color:#8b8178">쿠폰·적립 할인</span><span style="font-weight:700;color:#c0576b">{{ totalDiscountLabel }}</span></div>
-        <div style="height:1px;background:#f0e8e0;margin:14px 0"></div>
-        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px"><span style="font-size:14px;font-weight:700">주문 총액</span><span style="font-size:18px;font-weight:800">{{ cartTotal }}</span></div>
-        <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:15px;font-weight:800;color:#c0576b">{{ payTodayLabel }}</span><span style="font-size:24px;font-weight:800;color:#c0576b">{{ payTodayAmount }}</span></div>
-        <button onClick="{{ onPlaceOrder }}" style="width:100%;margin-top:18px;background:#c0576b;color:#fff;border:none;border-radius:11px;padding:16px 0;font-size:16px;font-weight:800;cursor:pointer" style-hover="background:#a5445a">{{ payTodayAmount }} 결제하기</button>
-        <div style="font-size:12px;color:#a89a8e;text-align:center;margin-top:10px;line-height:1.5">주문 내용 확인 및 결제 진행에 동의합니다.</div>
+      <div style="position:sticky;top:84px;background:#fff;border:1px solid #ecebf0;border-radius:22px;padding:22px;box-shadow:0 8px 28px rgba(30,20,40,.07)">
+        <div style="font-family:'Jua',sans-serif;font-size:18px;margin-bottom:14px">최종 결제</div>
+        <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px"><span style="color:#8b8592">상품금액</span><span style="font-weight:700">{{ cartSubtotal }}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px"><span style="color:#8b8592">쿠폰·적립 할인</span><span style="font-weight:700;color:#ff4d6d">{{ totalDiscountLabel }}</span></div>
+        <div style="height:1px;background:#f2f0f5;margin:14px 0"></div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px"><span style="font-size:14px;font-weight:700">주문 총액</span><span style="font-weight:800;font-size:17px">{{ cartTotal }}</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:15px;font-weight:800;color:#ff4d6d">{{ payTodayLabel }}</span><span style="font-family:'Jua',sans-serif;font-size:25px;color:#ff4d6d">{{ payTodayAmount }}</span></div>
+        <button onClick="{{ onPlaceOrder }}" style="width:100%;margin-top:18px;background:#ff4d6d;color:#fff;border:none;border-radius:14px;padding:16px 0;font-size:16px;font-weight:800;cursor:pointer" style-hover="background:#e63958">{{ payTodayAmount }} 결제하기</button>
+        <div style="font-size:12px;color:#a49dae;text-align:center;margin-top:10px;line-height:1.5">주문 내용 확인 및 결제 진행에 동의합니다.</div>
       </div>
     </div>
   </div>
@@ -534,18 +493,18 @@ a{color:inherit}
   <!-- ============ ORDER DONE ============ -->
   <sc-if value="{{ isOrderDone }}" hint-placeholder-val="{{ false }}">
   <div style="max-width:560px;margin:0 auto;padding:clamp(40px,6vw,80px) clamp(16px,4vw,40px);text-align:center">
-    <div style="width:74px;height:74px;border-radius:50%;background:#c0576b;color:#fff;font-size:36px;display:flex;align-items:center;justify-content:center;margin:0 auto;animation:pop .4s ease">✓</div>
-    <h1 style="font-size:26px;font-weight:800;letter-spacing:-.02em;margin:22px 0 6px">예약금 결제가 완료되었어요</h1>
-    <p style="color:#8b8178;font-size:15px;margin:0">담당 매니저가 순차적으로 연락드려 계약을 도와드립니다.</p>
-    <div style="background:#fff;border:1px solid #ece2d9;border-radius:14px;padding:20px;margin-top:26px;text-align:left">
-      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:9px"><span style="color:#8b8178">주문번호</span><span style="font-weight:800">{{ lastOrderId }}</span></div>
-      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:9px"><span style="color:#8b8178">주문일</span><span style="font-weight:700">{{ lastOrderDate }}</span></div>
-      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:9px"><span style="color:#8b8178">결제금액</span><span style="font-weight:800;color:#c0576b">{{ lastOrderPaid }}</span></div>
-      <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#8b8178">주문상태</span><span style="font-weight:700">{{ lastOrderStatus }}</span></div>
+    <div style="width:76px;height:76px;border-radius:50%;background:#ff4d6d;color:#fff;font-size:38px;display:flex;align-items:center;justify-content:center;margin:0 auto;animation:pop .4s ease">✓</div>
+    <h1 style="font-family:'Jua',sans-serif;font-size:26px;color:#2b2530;margin:22px 0 6px">예약금 결제 완료! 🎉</h1>
+    <p style="color:#8b8592;font-size:15px;margin:0">담당 매니저가 순차적으로 연락드려 계약을 도와드릴게요.</p>
+    <div style="background:#fff;border:1px solid #ecebf0;border-radius:18px;padding:20px;margin-top:26px;text-align:left">
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:9px"><span style="color:#8b8592">주문번호</span><span style="font-weight:800">{{ lastOrderId }}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:9px"><span style="color:#8b8592">주문일</span><span style="font-weight:700">{{ lastOrderDate }}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:9px"><span style="color:#8b8592">결제금액</span><span style="font-weight:800;color:#ff4d6d">{{ lastOrderPaid }}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#8b8592">주문상태</span><span style="font-weight:700">{{ lastOrderStatus }}</span></div>
     </div>
     <div style="display:flex;gap:10px;margin-top:22px">
-      <button onClick="{{ goMypage }}" style="flex:1;background:#241f1c;color:#fff;border:none;border-radius:11px;padding:14px 0;font-size:14px;font-weight:700;cursor:pointer">주문내역 보기</button>
-      <button onClick="{{ goHome }}" style="flex:1;background:#fff;color:#241f1c;border:1px solid #e0d5c9;border-radius:11px;padding:14px 0;font-size:14px;font-weight:700;cursor:pointer">홈으로</button>
+      <button onClick="{{ goMypage }}" style="flex:1;background:#2b2530;color:#fff;border:none;border-radius:14px;padding:14px 0;font-size:14px;font-weight:700;cursor:pointer">주문내역 보기</button>
+      <button onClick="{{ goHome }}" style="flex:1;background:#fff;color:#2b2530;border:1px solid #e6e2ec;border-radius:14px;padding:14px 0;font-size:14px;font-weight:700;cursor:pointer">홈으로</button>
     </div>
   </div>
   </sc-if>
@@ -553,96 +512,51 @@ a{color:inherit}
   <!-- ============ LOGIN ============ -->
   <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ false }}">
   <div style="max-width:420px;margin:0 auto;padding:clamp(30px,5vw,64px) clamp(16px,4vw,40px)">
-    <h1 style="font-size:26px;font-weight:800;letter-spacing:-.03em;margin:0 0 4px;text-align:center">로그인 / 회원가입</h1>
-    <p style="color:#8b8178;font-size:14px;text-align:center;margin:0 0 26px">이름과 연락처만 있으면 바로 시작할 수 있어요.</p>
+    <h1 style="font-family:'Jua',sans-serif;font-size:27px;color:#2b2530;margin:0 0 4px;text-align:center">반가워요! 👋</h1>
+    <p style="color:#8b8592;font-size:14px;text-align:center;margin:0 0 26px">이름과 연락처만 있으면 바로 시작할 수 있어요.</p>
     <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px">
-      <button onClick="{{ onKakao }}" style="display:flex;align-items:center;justify-content:center;gap:9px;background:#FEE500;color:#3c1e1e;border:none;border-radius:11px;padding:14px 0;font-size:15px;font-weight:800;cursor:pointer">💬 카카오톡으로 시작</button>
-      <button onClick="{{ onNaver }}" style="display:flex;align-items:center;justify-content:center;gap:9px;background:#03C75A;color:#fff;border:none;border-radius:11px;padding:14px 0;font-size:15px;font-weight:800;cursor:pointer">N 네이버로 시작</button>
+      <button onClick="{{ onKakao }}" style="display:flex;align-items:center;justify-content:center;gap:9px;background:#FEE500;color:#3c1e1e;border:none;border-radius:14px;padding:14px 0;font-size:15px;font-weight:800;cursor:pointer">💬 카카오톡으로 시작</button>
+      <button onClick="{{ onNaver }}" style="display:flex;align-items:center;justify-content:center;gap:9px;background:#03C75A;color:#fff;border:none;border-radius:14px;padding:14px 0;font-size:15px;font-weight:800;cursor:pointer">N 네이버로 시작</button>
     </div>
-    <div style="display:flex;align-items:center;gap:12px;margin:18px 0"><div style="flex:1;height:1px;background:#e7dccf"></div><span style="font-size:12px;color:#a89a8e">또는 직접 입력</span><div style="flex:1;height:1px;background:#e7dccf"></div></div>
-    <div style="background:#fff;border:1px solid #ece2d9;border-radius:16px;padding:22px">
-      <div style="margin-bottom:14px"><div style="font-size:13px;font-weight:700;color:#4a3f38;margin-bottom:6px">이름</div><input value="{{ loginName }}" onChange="{{ onLoginName }}" placeholder="이름을 입력하세요" style="width:100%;border:1px solid #e0d5c9;border-radius:10px;padding:12px 13px;font-size:14px;outline:none"/></div>
-      <div style="margin-bottom:14px"><div style="font-size:13px;font-weight:700;color:#4a3f38;margin-bottom:6px">전화번호</div><input value="{{ loginPhone }}" onChange="{{ onLoginPhone }}" placeholder="010-0000-0000" style="width:100%;border:1px solid #e0d5c9;border-radius:10px;padding:12px 13px;font-size:14px;outline:none"/></div>
+    <div style="display:flex;align-items:center;gap:12px;margin:18px 0"><div style="flex:1;height:1px;background:#e6e2ec"></div><span style="font-size:12px;color:#a49dae">또는 직접 입력</span><div style="flex:1;height:1px;background:#e6e2ec"></div></div>
+    <div style="background:#fff;border:1px solid #ecebf0;border-radius:20px;padding:22px">
+      <div style="margin-bottom:14px"><div style="font-size:13px;font-weight:700;color:#4a4550;margin-bottom:6px">이름</div><input value="{{ loginName }}" onChange="{{ onLoginName }}" placeholder="이름을 입력하세요" style="width:100%;border:1px solid #e6e2ec;border-radius:12px;padding:12px 13px;font-size:14px;outline:none"/></div>
+      <div style="margin-bottom:14px"><div style="font-size:13px;font-weight:700;color:#4a4550;margin-bottom:6px">전화번호</div><input value="{{ loginPhone }}" onChange="{{ onLoginPhone }}" placeholder="010-0000-0000" style="width:100%;border:1px solid #e6e2ec;border-radius:12px;padding:12px 13px;font-size:14px;outline:none"/></div>
       <div style="margin-bottom:16px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-          <span style="font-size:13px;font-weight:700;color:#4a3f38">결혼 예정일</span>
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" checked="{{ loginTbd }}" onChange="{{ onToggleTbd }}" style="accent-color:#c0576b;width:15px;height:15px"/><span style="font-size:12px;color:#8b8178">미정</span></label>
-        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px;font-weight:700;color:#4a4550">결혼 예정일</span><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" checked="{{ loginTbd }}" onChange="{{ onToggleTbd }}" style="accent-color:#ff4d6d;width:15px;height:15px"/><span style="font-size:12px;color:#8b8592">미정</span></label></div>
         <input type="date" value="{{ loginDate }}" onChange="{{ onLoginDate }}" disabled="{{ loginTbd }}" style="{{ dateStyle }}"/>
       </div>
-      <button onClick="{{ onLoginSubmit }}" style="width:100%;background:#c0576b;color:#fff;border:none;border-radius:11px;padding:15px 0;font-size:15px;font-weight:800;cursor:pointer" style-hover="background:#a5445a">시작하기</button>
-      <div style="font-size:12px;color:#a89a8e;text-align:center;margin-top:12px;line-height:1.5">가입 시 이용약관 및 개인정보처리방침에 동의하며,<br>전화번호 인증(SMS)이 진행됩니다.</div>
+      <button onClick="{{ onLoginSubmit }}" style="width:100%;background:#ff4d6d;color:#fff;border:none;border-radius:14px;padding:15px 0;font-size:15px;font-weight:800;cursor:pointer" style-hover="background:#e63958">시작하기</button>
+      <div style="font-size:12px;color:#a49dae;text-align:center;margin-top:12px;line-height:1.5">가입 시 이용약관 및 개인정보처리방침에 동의하며,<br>전화번호 인증(SMS)이 진행됩니다.</div>
     </div>
   </div>
   </sc-if>
 
   <!-- ============ MYPAGE ============ -->
   <sc-if value="{{ isMypage }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width:900px;margin:0 auto;padding:clamp(22px,3.5vw,40px) clamp(16px,4vw,40px)">
+  <div style="max-width:900px;margin:0 auto;padding:clamp(20px,3.5vw,40px) clamp(16px,4vw,40px)">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-      <div>
-        <h1 style="font-size:clamp(22px,3vw,30px);font-weight:800;letter-spacing:-.03em;margin:0">{{ userName }}님</h1>
-        <div style="color:#8b8178;font-size:14px;margin-top:4px">{{ userPhone }} · 예정일 {{ userDate }}</div>
-      </div>
-      <button onClick="{{ onLogout }}" style="background:#fff;color:#8b8178;border:1px solid #e0d5c9;border-radius:9px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer">로그아웃</button>
+      <div><h1 style="font-family:'Jua',sans-serif;font-size:clamp(22px,3vw,30px);color:#2b2530;margin:0">{{ userName }}님</h1><div style="color:#8b8592;font-size:14px;margin-top:4px">{{ userPhone }} · 예정일 {{ userDate }}</div></div>
+      <button onClick="{{ onLogout }}" style="background:#fff;color:#8b8592;border:1px solid #e6e2ec;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer">로그아웃</button>
     </div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0">
-      <div style="background:linear-gradient(120deg,#c0576b,#9a3b52);color:#fff;border-radius:14px;padding:20px 22px"><div style="font-size:13px;opacity:.85;font-weight:600">보유 적립금</div><div style="font-size:26px;font-weight:800;margin-top:4px">{{ pointsLabel }}</div></div>
-      <div style="background:#241f1c;color:#fff;border-radius:14px;padding:20px 22px"><div style="font-size:13px;opacity:.7;font-weight:600">보유 쿠폰</div><div style="font-size:26px;font-weight:800;margin-top:4px">{{ couponCountLabel }}</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:20px 0">
+      <div style="background:linear-gradient(120deg,#ff4d6d,#ff8095);color:#fff;border-radius:18px;padding:18px 20px"><div style="font-size:12px;opacity:.9;font-weight:600">적립금</div><div style="font-family:'Jua',sans-serif;font-size:22px;margin-top:4px">{{ pointsLabel }}</div></div>
+      <div style="background:#2b2530;color:#fff;border-radius:18px;padding:18px 20px"><div style="font-size:12px;opacity:.7;font-weight:600">쿠폰</div><div style="font-family:'Jua',sans-serif;font-size:22px;margin-top:4px">{{ couponCountLabel }}</div></div>
+      <div style="background:#fff;border:1px solid #ecebf0;border-radius:18px;padding:18px 20px"><div style="font-size:12px;color:#a49dae;font-weight:600">찜</div><div style="font-family:'Jua',sans-serif;font-size:22px;margin-top:4px;color:#ff4d6d">{{ wishCountLabel }}</div></div>
     </div>
-
-    <div style="display:flex;gap:6px;border-bottom:1px solid #ece2d9;margin-bottom:18px">
-      <sc-for list="{{ myTabs }}" as="mt" hint-placeholder-count="3">
-        <button onClick="{{ mt.onClick }}" style="{{ mt.style }}">{{ mt.label }}</button>
-      </sc-for>
-    </div>
-
-    <!-- orders tab -->
+    <div style="display:flex;gap:6px;border-bottom:1px solid #ecebf0;margin-bottom:18px"><sc-for list="{{ myTabs }}" as="mt" hint-placeholder-count="3"><button onClick="{{ mt.onClick }}" style="{{ mt.style }}">{{ mt.label }}</button></sc-for></div>
     <sc-if value="{{ myOrdersTab }}" hint-placeholder-val="{{ true }}">
-      <sc-if value="{{ ordersEmpty }}" hint-placeholder-val="{{ false }}">
-        <div style="background:#fff;border:1px solid #ece2d9;border-radius:14px;padding:44px;text-align:center;color:#8b8178;font-size:14px">아직 주문 내역이 없어요.</div>
-      </sc-if>
+      <sc-if value="{{ ordersEmpty }}" hint-placeholder-val="{{ false }}"><div style="background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:44px;text-align:center;color:#8b8592;font-size:14px">아직 주문 내역이 없어요.</div></sc-if>
       <div style="display:flex;flex-direction:column;gap:12px">
-        <sc-for list="{{ orders }}" as="od" hint-placeholder-count="1">
-          <div style="background:#fff;border:1px solid #ece2d9;border-radius:14px;padding:18px 20px">
-            <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:center">
-              <div><span style="font-size:12px;color:#a89a8e">{{ od.date }}</span><span style="font-size:12px;font-weight:800;color:#c0576b;background:#fbeef1;border-radius:6px;padding:3px 9px;margin-left:8px">{{ od.status }}</span></div>
-              <div style="font-size:12px;color:#a89a8e">{{ od.id }}</div>
-            </div>
-            <div style="margin-top:12px;font-size:15px;font-weight:700">{{ od.summary }}</div>
-            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:10px;padding-top:12px;border-top:1px solid #f3ece5"><span style="font-size:13px;color:#8b8178">결제금액</span><span style="font-size:17px;font-weight:800;color:#241f1c">{{ od.totalLabel }}</span></div>
-          </div>
-        </sc-for>
+        <sc-for list="{{ orders }}" as="od" hint-placeholder-count="1"><div style="background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:18px 20px"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:center"><div><span style="font-size:12px;color:#a49dae">{{ od.date }}</span><span style="font-size:12px;font-weight:800;color:#ff4d6d;background:#ffe9ee;border-radius:6px;padding:3px 9px;margin-left:8px">{{ od.status }}</span></div><div style="font-size:12px;color:#a49dae">{{ od.id }}</div></div><div style="margin-top:12px;font-size:15px;font-weight:700">{{ od.summary }}</div><div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:10px;padding-top:12px;border-top:1px solid #f4f2f6"><span style="font-size:13px;color:#8b8592">결제금액</span><span style="font-family:'Jua',sans-serif;font-size:17px;color:#2b2530">{{ od.totalLabel }}</span></div></div></sc-for>
       </div>
     </sc-if>
-
-    <!-- consults tab -->
     <sc-if value="{{ myConsultsTab }}" hint-placeholder-val="{{ false }}">
-      <sc-if value="{{ consultsEmpty }}" hint-placeholder-val="{{ false }}">
-        <div style="background:#fff;border:1px solid #ece2d9;border-radius:14px;padding:44px;text-align:center;color:#8b8178;font-size:14px">상담 요청 내역이 없어요.</div>
-      </sc-if>
-      <div style="display:flex;flex-direction:column;gap:12px">
-        <sc-for list="{{ consults }}" as="cs" hint-placeholder-count="1">
-          <div style="background:#fff;border:1px solid #ece2d9;border-radius:14px;padding:18px 20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
-            <div><div style="font-size:15px;font-weight:700">{{ cs.target }}</div><div style="font-size:13px;color:#8b8178;margin-top:3px">희망시간 {{ cs.wishTime }} · {{ cs.phone }}</div></div>
-            <span style="font-size:12px;font-weight:800;color:#b9985a;background:#f7f0e2;border-radius:6px;padding:5px 10px;height:fit-content">{{ cs.status }}</span>
-          </div>
-        </sc-for>
-      </div>
+      <sc-if value="{{ consultsEmpty }}" hint-placeholder-val="{{ false }}"><div style="background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:44px;text-align:center;color:#8b8592;font-size:14px">상담 요청 내역이 없어요.</div></sc-if>
+      <div style="display:flex;flex-direction:column;gap:12px"><sc-for list="{{ consults }}" as="cs" hint-placeholder-count="1"><div style="background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:18px 20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px"><div><div style="font-size:15px;font-weight:700">{{ cs.target }}</div><div style="font-size:13px;color:#8b8592;margin-top:3px">희망시간 {{ cs.wishTime }} · {{ cs.phone }}</div></div><span style="font-size:12px;font-weight:800;color:#b9985a;background:#f7f0e2;border-radius:6px;padding:5px 10px;height:fit-content">{{ cs.status }}</span></div></sc-for></div>
     </sc-if>
-
-    <!-- rewards tab -->
     <sc-if value="{{ myRewardsTab }}" hint-placeholder-val="{{ false }}">
-      <div style="display:flex;flex-direction:column;gap:12px">
-        <sc-for list="{{ myCoupons }}" as="mc" hint-placeholder-count="2">
-          <div style="background:#fff;border:1px dashed #d8bcc4;border-radius:14px;padding:18px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-            <div><div style="font-size:16px;font-weight:800;color:#c0576b">{{ mc.label }}</div><div style="font-size:12px;color:#8b8178;margin-top:3px">{{ mc.cond }} · 코드 {{ mc.code }}</div></div>
-            <span style="font-size:12px;color:#a89a8e">~ 2026.12.31</span>
-          </div>
-        </sc-for>
-        <div style="background:#f7f1ec;border-radius:12px;padding:16px 18px;font-size:13px;color:#8b8178;line-height:1.5">적립금은 스드메·혼수 결제 시 1원 단위로 사용할 수 있으며, 웨딩홀 상담·예약에는 적용되지 않습니다.</div>
-      </div>
+      <div style="display:flex;flex-direction:column;gap:12px"><sc-for list="{{ myCoupons }}" as="mc" hint-placeholder-count="2"><div style="background:#fff;border:1px dashed #ffc2ce;border-radius:16px;padding:18px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><div><div style="font-family:'Jua',sans-serif;font-size:17px;color:#ff4d6d">{{ mc.label }}</div><div style="font-size:12px;color:#8b8592;margin-top:3px">{{ mc.cond }} · 코드 {{ mc.code }}</div></div><span style="font-size:12px;color:#a49dae">~ 2026.12.31</span></div></sc-for><div style="background:#f7f5f9;border-radius:14px;padding:16px 18px;font-size:13px;color:#8b8592;line-height:1.5">적립금은 스드메·혼수 결제 시 1원 단위로 사용할 수 있으며, 웨딩홀 상담·예약에는 적용되지 않습니다.</div></div>
     </sc-if>
   </div>
   </sc-if>
@@ -650,70 +564,48 @@ a{color:inherit}
   </main>
 
   <!-- ============ FOOTER ============ -->
-  <footer style="background:#241f1c;color:#cdbfb5;margin-top:40px">
+  <footer style="background:#231f29;color:#b7b0c0;margin-top:40px">
     <div style="max-width:1180px;margin:0 auto;padding:40px clamp(16px,4vw,40px);display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:24px">
       <div>
-        <div style="display:flex;align-items:center;gap:8px;color:#fff"><span style="width:26px;height:26px;border-radius:8px;background:#c0576b;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px">W</span><span style="font-weight:800;font-size:15px">부산·경남 웨딩샵</span></div>
-        <p style="font-size:13px;line-height:1.7;margin:12px 0 0;color:#a89a8e">부산·창원·마산·김해·양산·진주·울산<br>웨딩홀 · 스드메 · 혼수 통합 플랫폼</p>
+        <div style="display:flex;align-items:center;gap:8px;color:#fff"><span style="width:28px;height:28px;border-radius:9px;background:#ff4d6d;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:15px">웨</span><span style="font-family:'Jua',sans-serif;font-size:16px">부경 웨딩샵</span></div>
+        <p style="font-size:13px;line-height:1.7;margin:12px 0 0;color:#8b8496">부산·창원·마산·김해·양산·진주·울산<br>웨딩홀 · 스드메 · 혼수 통합 플랫폼</p>
       </div>
-      <div><div style="color:#fff;font-weight:700;font-size:14px;margin-bottom:12px">카테고리</div><div style="display:flex;flex-direction:column;gap:8px;font-size:13px"><button onClick="{{ goHall }}" style="background:none;border:none;color:#a89a8e;text-align:left;cursor:pointer;padding:0;font-size:13px">웨딩홀</button><button onClick="{{ goSdm }}" style="background:none;border:none;color:#a89a8e;text-align:left;cursor:pointer;padding:0;font-size:13px">스드메</button><button onClick="{{ goHonsu }}" style="background:none;border:none;color:#a89a8e;text-align:left;cursor:pointer;padding:0;font-size:13px">혼수</button></div></div>
-      <div><div style="color:#fff;font-weight:700;font-size:14px;margin-bottom:12px">고객센터</div><div style="font-size:22px;font-weight:800;color:#fff">1668-0000</div><div style="font-size:12px;color:#a89a8e;margin-top:6px;line-height:1.6">평일 10:00–19:00<br>주말·공휴일 10:00–17:00</div></div>
-      <div style="font-size:12px;color:#8b7d72;line-height:1.7">(주)부산경남웨딩 | 대표 김태현<br>사업자등록 000-00-00000<br>부산광역시 부산진구 자유평화로 17, 3층<br style="margin-bottom:8px">© 2026 Busan·Gyeongnam Wedding</div>
+      <div><div style="color:#fff;font-weight:700;font-size:14px;margin-bottom:12px">카테고리</div><div style="display:flex;flex-direction:column;gap:8px;font-size:13px"><button onClick="{{ goHall }}" style="background:none;border:none;color:#8b8496;text-align:left;cursor:pointer;padding:0;font-size:13px">웨딩홀</button><button onClick="{{ goSdm }}" style="background:none;border:none;color:#8b8496;text-align:left;cursor:pointer;padding:0;font-size:13px">스드메</button><button onClick="{{ goHonsu }}" style="background:none;border:none;color:#8b8496;text-align:left;cursor:pointer;padding:0;font-size:13px">혼수</button></div></div>
+      <div><div style="color:#fff;font-weight:700;font-size:14px;margin-bottom:12px">고객센터</div><div style="font-family:'Jua',sans-serif;font-size:22px;color:#fff">1668-0000</div><div style="font-size:12px;color:#8b8496;margin-top:6px;line-height:1.6">평일 10:00–19:00<br>주말·공휴일 10:00–17:00</div></div>
+      <div style="font-size:12px;color:#6f6a7a;line-height:1.7">(주)부산경남웨딩 | 대표 김태현<br>사업자등록 000-00-00000<br>부산광역시 부산진구 자유평화로 17, 3층<br style="margin-bottom:8px">© 2026 Busan·Gyeongnam Wedding</div>
     </div>
   </footer>
 
   <!-- ============ CONSULT MODAL ============ -->
   <sc-if value="{{ consultOpen }}" hint-placeholder-val="{{ false }}">
-  <div onClick="{{ closeConsult }}" style="position:fixed;inset:0;z-index:80;background:rgba(30,24,20,.55);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:20px">
-    <div onClick="{{ stop }}" style="width:100%;max-width:400px;background:#fff;border-radius:18px;padding:26px;animation:pop .25s ease">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div><div style="font-size:20px;font-weight:800;letter-spacing:-.02em">빠른상담 신청</div><div style="font-size:13px;color:#8b8178;margin-top:4px">편한 시간을 남겨주시면 연락드려요.</div></div>
-        <button onClick="{{ closeConsult }}" style="background:none;border:none;font-size:22px;color:#b8ada2;cursor:pointer">×</button>
-      </div>
-      <div style="background:#f7f1ec;border-radius:10px;padding:11px 14px;margin:16px 0;font-size:13px;color:#4a3f38">문의 대상 · <b>{{ consultTarget }}</b></div>
-      <div style="margin-bottom:12px"><div style="font-size:13px;font-weight:700;margin-bottom:6px">이름</div><input value="{{ consultName }}" onChange="{{ onConsultName }}" placeholder="이름" style="width:100%;border:1px solid #e0d5c9;border-radius:10px;padding:11px 13px;font-size:14px;outline:none"/></div>
-      <div style="margin-bottom:12px"><div style="font-size:13px;font-weight:700;margin-bottom:6px">연락처</div><input value="{{ consultPhone }}" onChange="{{ onConsultPhone }}" placeholder="010-0000-0000" style="width:100%;border:1px solid #e0d5c9;border-radius:10px;padding:11px 13px;font-size:14px;outline:none"/></div>
-      <div style="margin-bottom:18px"><div style="font-size:13px;font-weight:700;margin-bottom:6px">희망 통화시간</div>
-        <select value="{{ consultTime }}" onChange="{{ onConsultTime }}" style="width:100%;border:1px solid #e0d5c9;border-radius:10px;padding:11px 13px;font-size:14px;outline:none;background:#fff">
-          <sc-for list="{{ timeSlots }}" as="ts" hint-placeholder-count="4">
-            <option value="{{ ts }}">{{ ts }}</option>
-          </sc-for>
-        </select>
-      </div>
-      <button onClick="{{ submitConsult }}" style="width:100%;background:#c0576b;color:#fff;border:none;border-radius:11px;padding:15px 0;font-size:15px;font-weight:800;cursor:pointer" style-hover="background:#a5445a">상담 신청하기</button>
+  <div onClick="{{ closeConsult }}" style="position:fixed;inset:0;z-index:80;background:rgba(30,24,32,.55);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:20px">
+    <div onClick="{{ stop }}" style="width:100%;max-width:400px;background:#fff;border-radius:22px;padding:26px;animation:pop .25s ease">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font-family:'Jua',sans-serif;font-size:21px;color:#2b2530">빠른상담 신청</div><div style="font-size:13px;color:#8b8592;margin-top:4px">편한 시간을 남겨주시면 연락드려요.</div></div><button onClick="{{ closeConsult }}" style="background:none;border:none;font-size:22px;color:#c3bccb;cursor:pointer">×</button></div>
+      <div style="background:#f7f5f9;border-radius:12px;padding:11px 14px;margin:16px 0;font-size:13px;color:#4a4550">문의 대상 · <b>{{ consultTarget }}</b></div>
+      <div style="margin-bottom:12px"><div style="font-size:13px;font-weight:700;margin-bottom:6px">이름</div><input value="{{ consultName }}" onChange="{{ onConsultName }}" placeholder="이름" style="width:100%;border:1px solid #e6e2ec;border-radius:12px;padding:11px 13px;font-size:14px;outline:none"/></div>
+      <div style="margin-bottom:12px"><div style="font-size:13px;font-weight:700;margin-bottom:6px">연락처</div><input value="{{ consultPhone }}" onChange="{{ onConsultPhone }}" placeholder="010-0000-0000" style="width:100%;border:1px solid #e6e2ec;border-radius:12px;padding:11px 13px;font-size:14px;outline:none"/></div>
+      <div style="margin-bottom:18px"><div style="font-size:13px;font-weight:700;margin-bottom:6px">희망 통화시간</div><select value="{{ consultTime }}" onChange="{{ onConsultTime }}" style="width:100%;border:1px solid #e6e2ec;border-radius:12px;padding:11px 13px;font-size:14px;outline:none;background:#fff"><sc-for list="{{ timeSlots }}" as="ts" hint-placeholder-count="4"><option value="{{ ts }}">{{ ts }}</option></sc-for></select></div>
+      <button onClick="{{ submitConsult }}" style="width:100%;background:#ff4d6d;color:#fff;border:none;border-radius:14px;padding:15px 0;font-size:15px;font-weight:800;cursor:pointer" style-hover="background:#e63958">상담 신청하기</button>
     </div>
   </div>
   </sc-if>
 
   <!-- ============ LIGHTBOX ============ -->
   <sc-if value="{{ lightboxOpen }}" hint-placeholder-val="{{ false }}">
-  <div onClick="{{ closeLightbox }}" style="position:fixed;inset:0;z-index:90;background:rgba(20,16,14,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px">
+  <div onClick="{{ closeLightbox }}" style="position:fixed;inset:0;z-index:90;background:rgba(20,16,22,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px">
     <div style="color:#fff;font-size:13px;margin-bottom:14px;opacity:.7">{{ lightboxTitle }} · {{ lightboxIndex }} / {{ lightboxTotal }}</div>
-    <div onClick="{{ stop }}" style="max-width:min(900px,92vw);max-height:74vh;border-radius:12px;overflow:hidden;background:#2a2320">
-      <img src="{{ lightboxImg }}" style="width:100%;height:100%;object-fit:contain;display:block;max-height:74vh" alt=""/>
-    </div>
-    <div style="display:flex;gap:12px;margin-top:18px">
-      <button onClick="{{ lightboxPrev }}" style="background:rgba(255,255,255,.14);color:#fff;border:none;border-radius:10px;padding:12px 22px;font-size:14px;font-weight:700;cursor:pointer">← 이전</button>
-      <button onClick="{{ closeLightbox }}" style="background:#fff;color:#241f1c;border:none;border-radius:10px;padding:12px 22px;font-size:14px;font-weight:700;cursor:pointer">닫기</button>
-      <button onClick="{{ lightboxNext }}" style="background:rgba(255,255,255,.14);color:#fff;border:none;border-radius:10px;padding:12px 22px;font-size:14px;font-weight:700;cursor:pointer">다음 →</button>
-    </div>
+    <div onClick="{{ stop }}" style="max-width:min(900px,92vw);max-height:74vh;border-radius:14px;overflow:hidden;background:#2a2430">{{ lightboxImgEl }}</div>
+    <div style="display:flex;gap:12px;margin-top:18px"><button onClick="{{ lightboxPrev }}" style="background:rgba(255,255,255,.14);color:#fff;border:none;border-radius:12px;padding:12px 22px;font-size:14px;font-weight:700;cursor:pointer">← 이전</button><button onClick="{{ closeLightbox }}" style="background:#fff;color:#2b2530;border:none;border-radius:12px;padding:12px 22px;font-size:14px;font-weight:700;cursor:pointer">닫기</button><button onClick="{{ lightboxNext }}" style="background:rgba(255,255,255,.14);color:#fff;border:none;border-radius:12px;padding:12px 22px;font-size:14px;font-weight:700;cursor:pointer">다음 →</button></div>
   </div>
   </sc-if>
 
   <!-- ============ TOAST ============ -->
   <sc-if value="{{ toastShow }}" hint-placeholder-val="{{ false }}">
-    <div style="position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:95;background:#241f1c;color:#fff;padding:14px 22px;border-radius:12px;font-size:14px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.25);animation:toastin .3s ease">{{ toast }}</div>
+    <div style="position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:95;background:#231f29;color:#fff;padding:14px 22px;border-radius:14px;font-size:14px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.25);animation:toastin .3s ease">{{ toast }}</div>
   </sc-if>
 
   <template id="__bundler_thumbnail">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-      <rect width="100" height="100" fill="#c0576b"/>
-      <g fill="none" stroke="#fff" stroke-width="4.5">
-        <circle cx="42" cy="58" r="15"/>
-        <circle cx="60" cy="58" r="15"/>
-      </g>
-      <path d="M51 32 l6 10 h-12 z" fill="#fff"/>
-    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#ff4d6d"/><g fill="none" stroke="#fff" stroke-width="4.5"><circle cx="42" cy="58" r="15"/><circle cx="60" cy="58" r="15"/></g><path d="M51 32 l6 10 h-12 z" fill="#fff"/></svg>
   </template>
 
 </div>
@@ -727,7 +619,6 @@ class Component extends DCLogic {
     this.COORD = {'부산':[35.157,129.059],'창원':[35.227,128.681],'마산':[35.199,128.569],'김해':[35.234,128.889],'양산':[35.335,129.037],'진주':[35.180,128.108],'울산':[35.538,129.311]};
     const area = {'부산':'051','울산':'052','창원':'055','마산':'055','김해':'055','양산':'055','진주':'055'};
 
-    // ---- halls ----
     const rawHalls = [
       ['h1','그랜디스 웨딩홀','부산','부산 부산진구 중앙대로 668','5F 채플홀',1500000,59000,250,'건물 300대 · 발렛 가능'],
       ['h2','라움 컨벤션','부산','부산 해운대구 센텀남대로 35','3F 그랜드볼룸',2000000,68000,300,'지하 500대 · 발렛 무료'],
@@ -737,9 +628,8 @@ class Component extends DCLogic {
       ['h6','진주 라비아채플','진주','진주 진주대로 1350','1F 가든채플',1100000,48000,170,'180대 · 발렛'],
       ['h7','울산 메종드루체','울산','울산 남구 삼산로 280','5F 루체홀',1300000,55000,220,'250대 · 발렛 가능'],
     ];
-    this.HALLS = rawHalls.map(a=>({id:a[0],name:a[1],region:a[2],addr:a[3],floor:a[4],rental:a[5],buffet:a[6],guarantee:a[7],parking:a[8],phone:area[a[2]]+'-'+(300+rawHalls.indexOf(a))+'-'+(1200+rawHalls.indexOf(a)*11)}));
+    this.HALLS = rawHalls.map((a,i)=>({id:a[0],name:a[1],region:a[2],addr:a[3],floor:a[4],rental:a[5],buffet:a[6],guarantee:a[7],parking:a[8],phone:area[a[2]]+'-'+(300+i)+'-'+(1200+i*11)}));
 
-    // ---- package/option dictionaries ----
     const COMP = {
       '스튜디오':{A:['원본 300컷 제공','액자 1개 (11x14)','실내 촬영 2시간'],B:['원본 500컷','수정본 30컷','액자 2개','실내+야외 스냅','촬영 3시간'],C:['원본 800컷','수정본 60컷','액자 3개','고급 앨범 제작','반일 촬영','헤어·메이크업 연계']},
       '드레스':{A:['본식 드레스 1벌','촬영 드레스 1벌','기본 피팅'],B:['본식 2벌','촬영 2벌','헤드피스 대여','전담 실장 피팅'],C:['본식 3벌','촬영 3벌','프리미엄 임포트 라인','부케 포함','VIP 룸 피팅']},
@@ -766,7 +656,6 @@ class Component extends DCLogic {
       {id:'B',tier:'스탠다드',price:rnd(BASE[sub]*1.6),comps:COMP[sub].B},
       {id:'C',tier:'프리미엄',price:rnd(BASE[sub]*2.4),comps:COMP[sub].C},
     ];
-
     const rawV = [
       ['sd1','세렌디피티 스튜디오','스튜디오','부산','부산 수영구 광안해변로 200','따뜻한 감성의 자연광 스튜디오'],
       ['sd2','모먼트필름 스튜디오','스튜디오','창원','창원 성산구 상남로 45','필름 감성 원판 전문'],
@@ -790,10 +679,8 @@ class Component extends DCLogic {
       id:a[0],name:a[1],sub:a[2],region:a[3],addr:a[4],summary:a[5],
       phone:area[a[3]]+'-'+(500+i)+'-'+(2000+i*7),
       parking:'인근 공영주차 · 방문 시 2시간 무료',
-      galleryCount:GCOUNT[a[2]],
-      travel:a[2]==='신혼여행'?'다낭 · 발리 · 몰디브 · 하와이':'',
-      packages:mkPkgs(a[2]),
-      options:OPT[a[2]].map((o,j)=>({id:a[0]+'-o'+j,title:o[0],price:o[1]})),
+      galleryCount:GCOUNT[a[2]], travel:a[2]==='신혼여행'?'다낭 · 발리 · 몰디브 · 하와이':'',
+      packages:mkPkgs(a[2]), options:OPT[a[2]].map((o,j)=>({id:a[0]+'-o'+j,title:o[0],price:o[1]})),
     }));
 
     this.COUPONS = [
@@ -804,33 +691,32 @@ class Component extends DCLogic {
     this.PAYS = [['card','신용/체크카드'],['kakao','카카오페이'],['toss','토스페이'],['bank','무통장입금']];
 
     this.state = {
-      screen:'home', region:'전체', category:null, sub:'전체',
-      vendorId:null, hallId:null,
-      sel:{pkgId:'A', optIds:[]},
-      cart:[], user:null, orders:[], consults:[],
+      screen:'home', region:'전체', category:null, sub:'전체', sort:'popular', search:'',
+      vendorId:null, hallId:null, sel:{pkgId:'A', optIds:[]},
+      cart:[], wish:[], user:null, orders:[], consults:[],
       couponCode:null, useAllPoints:false, pay:'card',
       consult:{open:false,target:'',name:'',phone:'',time:'가능한 빨리'},
       lightbox:{open:false,seeds:[],i:0,title:''},
-      toast:'', mytab:'orders',
-      lastOrder:null,
+      toast:'', mytab:'orders', lastOrder:null,
       login:{name:'',phone:'',date:'',tbd:false},
     };
   }
 
-  // ---------- helpers ----------
   fmt(n){ return Number(n||0).toLocaleString('ko-KR')+'원'; }
   priceLabel(n){ return this.props.priceDisplay==='확정가' ? this.fmt(n) : this.fmt(n)+'~'; }
   img(seed,w,h){ return 'https://picsum.photos/seed/'+encodeURIComponent(seed)+'/'+w+'/'+h; }
   showToast(m){ this.setState({toast:m}); clearTimeout(this._t); this._t=setTimeout(()=>this.setState({toast:''}),2600); }
   mapSrc(region){ const c=this.COORD[region]||[35.18,129.07]; const d=0.012; return 'https://www.openstreetmap.org/export/embed.html?bbox='+(c[1]-d)+'%2C'+(c[0]-d*0.75)+'%2C'+(c[1]+d)+'%2C'+(c[0]+d*0.75)+'&layer=mapnik&marker='+c[0]+'%2C'+c[1]; }
   useReal(){ return this.props.useRealPhotos ?? true; }
-
+  imgEl(src, style){ return React.createElement('img',{src, loading:'lazy', alt:'', style}); }
   vendorById(id){ return this.VENDORS.find(v=>v.id===id); }
   hallById(id){ return this.HALLS.find(h=>h.id===id); }
   vendorsForCat(cat){ const subs = cat==='sdm'?['스튜디오','드레스','메이크업']:['한복','예복','예물','신혼여행']; return this.VENDORS.filter(v=>subs.includes(v.sub)); }
+  catOf(sub){ return ['스튜디오','드레스','메이크업'].includes(sub)?'sdm':'honsu'; }
   availPoints(){ return this.state.user? this.state.user.points : 0; }
-
   itemUnit(it){ return it.pkgPrice + it.opts.reduce((s,o)=>s+o.price,0); }
+  isWished(k){ return this.state.wish.includes(k); }
+
   totals(){
     const sub = this.state.cart.reduce((s,it)=>s+this.itemUnit(it)*it.qty,0);
     let couponAmt=0, couponLabel='적용된 쿠폰 없음';
@@ -838,34 +724,36 @@ class Component extends DCLogic {
     if(cp && sub>=cp.min){ couponAmt = cp.type==='percent'? Math.floor(sub*cp.value/100) : cp.value; couponLabel=cp.label; }
     const afterCoupon = sub-couponAmt;
     const pts = this.state.useAllPoints? Math.min(this.availPoints(), afterCoupon) : 0;
-    const total = Math.max(0, afterCoupon-pts);
-    return {sub,couponAmt,couponLabel,pts,total};
+    return {sub,couponAmt,couponLabel,pts,total:Math.max(0, afterCoupon-pts)};
   }
 
-  // ---------- navigation ----------
   nav = (patch)=>{ this.setState(patch); try{ requestAnimationFrame(()=>window.scrollTo(0,0)); }catch(e){} };
   goHome = ()=> this.nav({screen:'home'});
   goHall = ()=> this.nav({screen:'hallList', category:'hall'});
   goSdm = ()=> this.nav({screen:'vendorList', category:'sdm', sub:'전체'});
   goHonsu = ()=> this.nav({screen:'vendorList', category:'honsu', sub:'전체'});
+  openSub = (cat,sub)=> this.nav({screen:'vendorList', category:cat, sub});
   goCart = ()=> this.nav({screen:'cart'});
+  goWish = ()=> this.nav({screen:'wish'});
+  goSearch = ()=> this.nav({screen:'search'});
   goLogin = ()=> this.nav({screen:'login'});
   goMypage = ()=> this.setState(s=> s.user? {screen:'mypage'} : {screen:'login'});
   openHall = (id)=> this.nav({screen:'hallDetail', hallId:id});
   openVendor = (id)=> this.nav({screen:'vendorDetail', vendorId:id, sel:{pkgId:'A',optIds:[]}});
   onRegionChange = (e)=> this.setState({region:e.target.value});
+  onSearch = (e)=> this.setState({search:e.target.value});
+  setSort = (v)=> this.setState({sort:v});
+  toggleWish = (key)=> (e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.setState(s=>({wish: s.wish.includes(key)? s.wish.filter(x=>x!==key):[...s.wish,key]})); };
 
-  // ---------- detail selection ----------
   selectPkg = (pid)=> this.setState(s=>({sel:{...s.sel, pkgId:pid}}));
   toggleOpt = (oid)=> this.setState(s=>{ const has=s.sel.optIds.includes(oid); return {sel:{...s.sel, optIds: has? s.sel.optIds.filter(x=>x!==oid):[...s.sel.optIds,oid]}}; });
-
   addToCart = ()=>{
     const v = this.vendorById(this.state.vendorId); if(!v) return;
     const pkg = v.packages.find(p=>p.id===this.state.sel.pkgId);
     const opts = v.options.filter(o=>this.state.sel.optIds.includes(o.id)).map(o=>({title:o.title,price:o.price}));
     const item = {key:v.id+'|'+pkg.id+'|'+this.state.sel.optIds.join(','), vendorId:v.id, vendorName:v.name, sub:v.sub, region:v.region, pkgId:pkg.id, pkgName:'상품 '+pkg.id+' · '+pkg.tier, pkgPrice:pkg.price, opts, qty:1};
-    this.setState(s=>{ const ex=s.cart.find(c=>c.key===item.key); if(ex){ return {cart:s.cart.map(c=>c.key===item.key?{...c,qty:c.qty+1}:c)}; } return {cart:[...s.cart,item]}; });
-    this.showToast('장바구니에 담았어요');
+    this.setState(s=>{ const ex=s.cart.find(c=>c.key===item.key); return ex? {cart:s.cart.map(c=>c.key===item.key?{...c,qty:c.qty+1}:c)} : {cart:[...s.cart,item]}; });
+    this.showToast('장바구니에 담았어요 🛒');
   };
   incQty = (k)=> this.setState(s=>({cart:s.cart.map(c=>c.key===k?{...c,qty:c.qty+1}:c)}));
   decQty = (k)=> this.setState(s=>({cart:s.cart.map(c=>c.key===k?{...c,qty:Math.max(1,c.qty-1)}:c)}));
@@ -874,34 +762,30 @@ class Component extends DCLogic {
   togglePoints = ()=> this.setState(s=>({useAllPoints:!s.useAllPoints}));
   onCheckout = ()=>{ if(!this.state.user){ this.showToast('로그인이 필요합니다'); this.nav({screen:'login'}); return; } this.nav({screen:'checkout'}); };
   setPay = (id)=> this.setState({pay:id});
-
   placeOrder = ()=>{
     const t = this.totals();
     const deposit = (this.props.depositMode ?? true) ? Math.round(t.total*0.1) : t.total;
     const items = this.state.cart.map(it=>({vendorName:it.vendorName, pkgName:it.pkgName, qty:it.qty, line:this.itemUnit(it)*it.qty}));
     const now = new Date();
     const dstr = now.getFullYear()+'.'+String(now.getMonth()+1).padStart(2,'0')+'.'+String(now.getDate()).padStart(2,'0');
-    const order = {id:'ORD-'+(now.getFullYear()%100)+String(now.getMonth()+1).padStart(2,'0')+String(Math.floor(Math.random()*900+100)), date:dstr, items, total:deposit, orderTotal:t.total, status:(this.props.depositMode??true)?'예약금 결제완료':'결제완료', summary: items[0].vendorName + (items.length>1? ' 외 '+(items.length-1)+'건':'')};
+    const order = {id:'ORD-'+(now.getFullYear()%100)+String(now.getMonth()+1).padStart(2,'0')+String(Math.floor(Math.random()*900+100)), date:dstr, total:deposit, status:(this.props.depositMode??true)?'예약금 결제완료':'결제완료', summary: items[0].vendorName + (items.length>1? ' 외 '+(items.length-1)+'건':'')};
     this.setState(s=>({orders:[order,...s.orders], cart:[], couponCode:null, useAllPoints:false, lastOrder:order, screen:'orderDone'}));
     try{ requestAnimationFrame(()=>window.scrollTo(0,0)); }catch(e){}
   };
 
-  // ---------- consult ----------
   openConsult = (target)=> this.setState(s=>({consult:{...s.consult, open:true, target, name:s.user?s.user.name:'', phone:s.user?s.user.phone:''}}));
   closeConsult = ()=> this.setState(s=>({consult:{...s.consult, open:false}}));
-  submitConsult = ()=>{ const c=this.state.consult; const rec={target:c.target, name:c.name||'고객', phone:c.phone||'010-0000-0000', wishTime:c.time, status:'접수완료'}; this.setState(s=>({consults:[rec,...s.consults], consult:{...s.consult, open:false, name:'', phone:''}})); this.showToast('상담 신청이 접수되었어요'); };
+  submitConsult = ()=>{ const c=this.state.consult; const rec={target:c.target, name:c.name||'고객', phone:c.phone||'010-0000-0000', wishTime:c.time, status:'접수완료'}; this.setState(s=>({consults:[rec,...s.consults], consult:{...s.consult, open:false, name:'', phone:''}})); this.showToast('상담 신청이 접수되었어요 📞'); };
   onConsultName = (e)=>{ const v=e.target.value; this.setState(s=>({consult:{...s.consult,name:v}})); };
   onConsultPhone = (e)=>{ const v=e.target.value; this.setState(s=>({consult:{...s.consult,phone:v}})); };
   onConsultTime = (e)=>{ const v=e.target.value; this.setState(s=>({consult:{...s.consult,time:v}})); };
   stop = (e)=> e.stopPropagation();
 
-  // ---------- lightbox ----------
   openLightbox = (seeds,i,title)=> this.setState({lightbox:{open:true,seeds,i,title}});
   closeLightbox = ()=> this.setState(s=>({lightbox:{...s.lightbox,open:false}}));
   lbPrev = ()=> this.setState(s=>({lightbox:{...s.lightbox, i:(s.lightbox.i-1+s.lightbox.seeds.length)%s.lightbox.seeds.length}}));
   lbNext = ()=> this.setState(s=>({lightbox:{...s.lightbox, i:(s.lightbox.i+1)%s.lightbox.seeds.length}}));
 
-  // ---------- login ----------
   onLoginName = (e)=>{ const v=e.target.value; this.setState(s=>({login:{...s.login,name:v}})); };
   onLoginPhone = (e)=>{ const v=e.target.value; this.setState(s=>({login:{...s.login,phone:v}})); };
   onLoginDate = (e)=>{ const v=e.target.value; this.setState(s=>({login:{...s.login,date:v}})); };
@@ -910,9 +794,9 @@ class Component extends DCLogic {
     const f=this.state.login;
     const name = f.name || (provider==='kakao'?'카카오회원':provider==='naver'?'네이버회원':'김신부');
     const phone = f.phone || '010-1234-5678';
-    const seeded = this.state.orders.length? this.state.orders : [{id:'ORD-24518', date:'2026.05.18', status:'예약금 결제완료', summary:'끌로에 웨딩드레스', total:144000, orderTotal:1440000, items:[{vendorName:'끌로에 웨딩드레스',pkgName:'상품 B · 스탠다드',qty:1,line:1440000}]}];
+    const seeded = this.state.orders.length? this.state.orders : [{id:'ORD-24518', date:'2026.05.18', status:'예약금 결제완료', summary:'끌로에 웨딩드레스', total:144000}];
     this.setState({user:{name, phone, date:f.tbd?'미정':(f.date||'미정'), tbd:f.tbd, points:30000, provider}, orders:seeded, screen:'home'});
-    this.showToast(name+'님, 환영합니다');
+    this.showToast(name+'님, 환영합니다 👋');
   };
   onLoginSubmit = ()=> this.doLogin('local');
   onKakao = ()=> this.doLogin('kakao');
@@ -920,169 +804,174 @@ class Component extends DCLogic {
   onLogout = ()=> this.setState({user:null, orders:[], consults:[], screen:'home'});
   setMyTab = (t)=> this.setState({mytab:t});
 
-  // ---------- image error ----------
-  onImgError = (e)=>{ e.target.style.opacity='0'; };
-
-  // ---------- view models ----------
   regionFilter(list){ return this.state.region==='전체'? list : list.filter(x=>x.region===this.state.region); }
+  sortVendors(list){ const s=this.state.sort; const arr=[...list]; if(s==='priceLow') arr.sort((a,b)=>a.packages[0].price-b.packages[0].price); else if(s==='priceHigh') arr.sort((a,b)=>b.packages[0].price-a.packages[0].price); return arr; }
+  sortHalls(list){ const s=this.state.sort; const arr=[...list]; if(s==='priceLow') arr.sort((a,b)=>a.rental-b.rental); else if(s==='priceHigh') arr.sort((a,b)=>b.rental-a.rental); return arr; }
 
-  tabStyle(active){ return active
-    ? 'white-space:nowrap;background:#c0576b;color:#fff;border:1px solid #c0576b;border-radius:999px;padding:9px 17px;font-size:13px;font-weight:700;cursor:pointer'
-    : 'white-space:nowrap;background:#fff;color:#4a3f38;border:1px solid #e7dccf;border-radius:999px;padding:9px 17px;font-size:13px;font-weight:600;cursor:pointer'; }
-  navStyle(active){ return active
-    ? 'background:none;border:none;color:#c0576b;font-size:15px;font-weight:800;cursor:pointer;padding:7px 11px'
-    : 'background:none;border:none;color:#4a3f38;font-size:15px;font-weight:600;cursor:pointer;padding:7px 11px'; }
+  heartStyle(on){ const base='position:absolute;top:11px;right:11px;width:34px;height:34px;border-radius:50%;border:none;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;'; return base+(on?'background:#fff;color:#ff4d6d;box-shadow:0 2px 8px rgba(0,0,0,.15);animation:heartpop .3s ease':'background:rgba(0,0,0,.32);color:#fff'); }
+  tabStyle(active){ return 'white-space:nowrap;'+(active?'background:#ff4d6d;color:#fff;border:1px solid #ff4d6d;border-radius:999px;padding:9px 17px;font-size:13px;font-weight:700;cursor:pointer':'background:#fff;color:#4a4550;border:1px solid #e6e2ec;border-radius:999px;padding:9px 17px;font-size:13px;font-weight:600;cursor:pointer'); }
+  navStyle(){ return 'display:none'; }
+
+  feedCardVM(e, type){
+    const isHall = type==='hall'; const key=(isHall?'h:':'v:')+e.id; const on=this.isWished(key);
+    return {name:e.name, region:e.region, tag: isHall?'웨딩홀':e.sub,
+      summary: isHall? (e.floor+' · 보증 '+e.guarantee+'명') : e.summary,
+      price: isHall? this.priceLabel(e.rental) : this.priceLabel(e.packages[0].price),
+      bigThumb: this.img((isHall?'hall-'+e.id:'v-'+e.id+'-0'),640,820), showImg:this.useReal(),
+      onOpen: isHall? ()=>this.openHall(e.id) : ()=>this.openVendor(e.id),
+      onConsult: ()=>this.openConsult(e.name+(isHall?' (웨딩홀)':' ('+e.sub+')')),
+      onWish:this.toggleWish(key), heartCorner:this.heartStyle(on),
+      heartBig:(on?'width:48px;height:48px;border-radius:50%;background:#fff;color:#ff4d6d;border:none;cursor:pointer;font-size:20px;box-shadow:0 2px 10px rgba(0,0,0,.2);animation:heartpop .3s ease':'width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,.42);color:#fff;border:none;cursor:pointer;font-size:20px;backdrop-filter:blur(4px)')};
+  }
+  vendorCardVM(v, ctx){
+    const key='v:'+v.id; const on=this.isWished(key);
+    return {id:v.id, name:v.name, region:v.region, sub:v.sub, summary:v.summary, tag:v.sub, galleryCount:v.galleryCount,
+      price:this.priceLabel(v.packages[0].price), fromLabel:this.priceLabel(v.packages[0].price),
+      thumb:this.img('v-'+v.id+'-0', ctx==='feed'?500:500, ctx==='feed'?360:360), showImg:this.useReal(),
+      telHref:'tel:'+v.phone, onOpen:()=>this.openVendor(v.id), onConsult:()=>this.openConsult(v.name+' ('+v.sub+')'),
+      onWish:this.toggleWish(key), heartStyle:this.heartStyle(on)};
+  }
+  hallCardVM(h){
+    const key='h:'+h.id; const on=this.isWished(key);
+    return {id:h.id, name:h.name, region:h.region, floor:h.floor, addr:h.addr, tag:'웨딩홀',
+      rentalLabel:this.priceLabel(h.rental), buffetLabel:this.fmt(h.buffet), guaranteeLabel:h.guarantee+'명',
+      price:this.priceLabel(h.rental), thumb:this.img('hall-'+h.id,600,400), showImg:this.useReal(),
+      telHref:'tel:'+h.phone, onOpen:()=>this.openHall(h.id), onConsult:()=>this.openConsult(h.name+' (웨딩홀)'),
+      onWish:this.toggleWish(key), heartStyle:this.heartStyle(on)};
+  }
 
   renderVals(){
-    const s = this.state;
-    const useReal = this.useReal();
-    const depositMode = this.props.depositMode ?? true;
-    const showMap = this.props.showMap ?? true;
+    const s = this.state; const useReal = this.useReal();
+    const depositMode = this.props.depositMode ?? true; const showMap = this.props.showMap ?? true;
+    const tabOf = {home:'home',search:'search',wish:'wish',mypage:'my',login:'my'}; const at = tabOf[s.screen]||'';
+    const bottomTabs = [['home','홈','🏠',this.goHome],['search','검색','🔍',this.goSearch],['wish','찜','♥',this.goWish],['my','마이','👤',this.goMypage]].map(t=>({label:t[1], icon:t[2], onClick:t[3],
+      style:'flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;padding:9px 0 10px;color:'+(at===t[0]?'#ff4d6d':'#a49dae')}));
 
     const base = {
-      // header/nav
-      regionOptions:['전체',...this.R],
-      region:s.region,
-      onRegionChange:this.onRegionChange,
-      navItems:[
-        {label:'웨딩홀', onClick:this.goHall, style:this.navStyle(s.screen==='hallList'||s.screen==='hallDetail')},
-        {label:'스드메', onClick:this.goSdm, style:this.navStyle(s.category==='sdm')},
-        {label:'혼수', onClick:this.goHonsu, style:this.navStyle(s.category==='honsu')},
-      ],
+      regionOptions:['전체',...this.R], region:s.region, onRegionChange:this.onRegionChange,
+      navItems:[], 
       hasCart:s.cart.length>0, cartCount:s.cart.reduce((a,c)=>a+c.qty,0),
+      hasWish:s.wish.length>0, wishCount:s.wish.length,
       isLoggedIn:!!s.user, isGuest:!s.user, userName:s.user?s.user.name:'',
-      goHome:this.goHome, goHall:this.goHall, goSdm:this.goSdm, goHonsu:this.goHonsu, goCart:this.goCart, goLogin:this.goLogin, goMypage:this.goMypage,
-      showMap,
-      // screen flags
-      isHome:s.screen==='home', isHallList:s.screen==='hallList', isHallDetail:s.screen==='hallDetail',
+      goHome:this.goHome, goHall:this.goHall, goSdm:this.goSdm, goHonsu:this.goHonsu, goCart:this.goCart, goWish:this.goWish, goSearch:this.goSearch, goLogin:this.goLogin, goMypage:this.goMypage,
+      showMap, bottomTabs,
+      isHome:s.screen==='home', isSearch:s.screen==='search', isWish:s.screen==='wish',
+      isHallList:s.screen==='hallList', isHallDetail:s.screen==='hallDetail',
       isVendorList:s.screen==='vendorList', isVendorDetail:s.screen==='vendorDetail',
       isCart:s.screen==='cart', isCheckout:s.screen==='checkout', isOrderDone:s.screen==='orderDone',
       isLogin:s.screen==='login', isMypage:s.screen==='mypage',
-      onImgError:this.onImgError, stop:this.stop, depositMode,
-      // consult modal
+      stop:this.stop, depositMode,
       consultOpen:s.consult.open, consultTarget:s.consult.target, consultName:s.consult.name, consultPhone:s.consult.phone, consultTime:s.consult.time,
       closeConsult:this.closeConsult, submitConsult:this.submitConsult, onConsultName:this.onConsultName, onConsultPhone:this.onConsultPhone, onConsultTime:this.onConsultTime, timeSlots:this.TIMES,
-      // lightbox
       lightboxOpen:s.lightbox.open, lightboxTitle:s.lightbox.title, lightboxIndex:s.lightbox.i+1, lightboxTotal:s.lightbox.seeds.length,
-      lightboxImg: s.lightbox.seeds.length? this.img(s.lightbox.seeds[s.lightbox.i],1200,800):'',
+      lightboxImgEl: s.lightbox.seeds.length? this.imgEl(this.img(s.lightbox.seeds[s.lightbox.i],1200,800),{width:'100%',height:'100%',objectFit:'contain',display:'block',maxHeight:'74vh'}):null,
       closeLightbox:this.closeLightbox, lightboxPrev:this.lbPrev, lightboxNext:this.lbNext,
-      // toast
       toastShow:!!s.toast, toast:s.toast,
     };
 
-    // HOME
     if(s.screen==='home'){
-      base.categoryCards = [
-        {title:'웨딩홀', desc:'부산·경남 7개 지역 예식장 비교', count:this.HALLS.length+'개 웨딩홀', onClick:this.goHall, showImg:useReal, img:this.img('hall-home',600,400)},
-        {title:'스드메', desc:'스튜디오 · 드레스 · 메이크업 패키지', count:this.vendorsForCat('sdm').length+'개 업체', onClick:this.goSdm, showImg:useReal, img:this.img('sdm-home',600,400)},
-        {title:'혼수', desc:'한복 · 예복 · 예물 · 신혼여행', count:this.vendorsForCat('honsu').length+'개 업체', onClick:this.goHonsu, showImg:useReal, img:this.img('honsu-home',600,400)},
+      base.greetName = s.user? s.user.name+'님,' : '설레는';
+      const pills = [
+        ['웨딩홀','🏛️', ()=>this.goHall()],
+        ['스튜디오','📷', ()=>this.openSub('sdm','스튜디오')],
+        ['드레스','👰', ()=>this.openSub('sdm','드레스')],
+        ['메이크업','💄', ()=>this.openSub('sdm','메이크업')],
+        ['한복','👘', ()=>this.openSub('honsu','한복')],
+        ['예복','🤵', ()=>this.openSub('honsu','예복')],
+        ['예물','💍', ()=>this.openSub('honsu','예물')],
+        ['신혼여행','✈️', ()=>this.openSub('honsu','신혼여행')],
       ];
-      base.regionQuick = this.R.map(r=>({name:r, onClick:()=>{ this.setState({region:r}); this.goSdm(); }}));
-      base.featured = this.VENDORS.slice(0,8).map(v=>({name:v.name, region:v.region, sub:v.sub, fromLabel:this.priceLabel(v.packages[0].price)+' 부터', thumb:this.img('v-'+v.id+'-0',400,300), showImg:useReal, onOpen:()=>this.openVendor(v.id)}));
+      const pastels = ['#FFE3E9','#E3EEFF','#FFE9F2','#F0E7FF','#FCEBD8','#E5F1FF','#FFF3D6','#E0F5F0'];
+      base.categoryCircles = pills.map((p,i)=>({label:p[0], icon:p[1], onClick:p[2],
+        iconStyle:'width:54px;height:54px;border-radius:18px;background:'+pastels[i%pastels.length]+';display:flex;align-items:center;justify-content:center;font-size:25px;line-height:1'}));
+      const H=this.regionFilter(this.HALLS), S=this.regionFilter(this.vendorsForCat('sdm')), N=this.regionFilter(this.vendorsForCat('honsu'));
+      const pools=[H.map(x=>['hall',x]), S.map(x=>['v',x]), N.map(x=>['v',x])];
+      const feed=[]; let idx=0; while(feed.length<16){ let added=false; for(const p of pools){ if(p[idx]){ feed.push(p[idx]); added=true; } } if(!added) break; idx++; }
+      const aspects=['3/4','1/1','4/5','5/6','3/4','1/1','4/5','3/4','4/3','1/1','5/6','3/4','1/1','4/5','3/4','5/6'];
+      base.feedCards = feed.map((pair,i)=>{ const vm=this.feedCardVM(pair[1], pair[0]); vm.mediaStyle='position:relative;aspect-ratio:'+aspects[i%aspects.length]+';background:linear-gradient(135deg,#efe6ee,#e3d6dd)'; return vm; });
     }
 
-    // HALL LIST
+    if(s.screen==='search'){
+      const q = s.search.trim();
+      base.searchQuery = s.search; base.onSearch = this.onSearch;
+      base.searchEmpty = q.length===0; base.searchHasQuery = q.length>0;
+      base.searchSuggest = ['드레스','스튜디오','해운대','창원','신혼여행'].map(x=>({label:x, onClick:()=>this.setState({search:x})}));
+      if(q){
+        const vend = this.VENDORS.filter(v=>v.name.includes(q)||v.summary.includes(q)||v.region.includes(q)||v.sub.includes(q)).map(v=>this.vendorCardVM(v));
+        const halls = this.HALLS.filter(h=>h.name.includes(q)||h.region.includes(q)||'웨딩홀'.includes(q)).map(h=>({...this.hallCardVM(h), sub:'웨딩홀'}));
+        const results = [...vend, ...halls];
+        base.searchResults = results; base.searchCount = results.length;
+      } else { base.searchResults=[]; base.searchCount=0; }
+    }
+
+    if(s.screen==='wish'){
+      const items = s.wish.map(k=>{ const [t,id]=k.split(':'); return t==='v'? (this.vendorById(id)&&this.vendorCardVM(this.vendorById(id))) : (this.hallById(id)&&{...this.hallCardVM(this.hallById(id)), sub:'웨딩홀'}); }).filter(Boolean);
+      base.wishItems = items; base.wishEmpty = items.length===0;
+    }
+
     if(s.screen==='hallList'){
-      const list = this.regionFilter(this.HALLS);
       base.regionTabs = ['전체',...this.R].map(r=>({name:r, onClick:()=>this.setState({region:r}), style:this.tabStyle(s.region===r)}));
-      base.hallCount = list.length;
-      base.halls = list.map(h=>({
-        name:h.name, region:h.region, floor:h.floor, addr:h.addr,
-        rentalLabel:this.priceLabel(h.rental), buffetLabel:this.fmt(h.buffet), guaranteeLabel:h.guarantee+'명', parkingShort:h.parking.split('·')[0].trim(),
-        thumb:this.img('hall-'+h.id,600,400), showImg:useReal, telHref:'tel:'+h.phone,
-        onOpen:()=>this.openHall(h.id), onConsult:()=>this.openConsult(h.name+' (웨딩홀)'),
-      }));
+      base.sortChips = [['popular','인기순'],['priceLow','가격 낮은순'],['priceHigh','가격 높은순']].map(x=>({label:x[1], onClick:()=>this.setSort(x[0]), style:this.tabStyle(s.sort===x[0])}));
+      const list = this.sortHalls(this.regionFilter(this.HALLS));
+      base.hallCount = list.length; base.halls = list.map(h=>this.hallCardVM(h));
     }
 
-    // HALL DETAIL
     if(s.screen==='hallDetail'){
       const h = this.hallById(s.hallId);
-      if(h){
-        const seeds = Array.from({length:6},(_,i)=>'hall-'+h.id+'-'+i);
-        base.hall = {
-          name:h.name, region:h.region, floor:h.floor, addr:h.addr, parking:h.parking, phone:h.phone,
+      if(h){ const seeds = Array.from({length:6},(_,i)=>'hall-'+h.id+'-'+i); const key='h:'+h.id;
+        base.hall = {name:h.name, region:h.region, floor:h.floor, addr:h.addr, parking:h.parking, phone:h.phone,
           rentalLabel:this.priceLabel(h.rental), buffetLabel:this.fmt(h.buffet), guaranteeLabel:h.guarantee+'명',
-          hero:this.img('hall-'+h.id,1000,700), showImg:useReal, telHref:'tel:'+h.phone, mapSrc:this.mapSrc(h.region),
+          hero:this.img('hall-'+h.id,1000,700), showImg:useReal, heroImgEl: useReal? this.imgEl(this.img('hall-'+h.id,1000,700),{width:'100%',height:'100%',objectFit:'cover'}):null, telHref:'tel:'+h.phone, mapSrc:this.mapSrc(h.region),
           gallery: seeds.map((sd,i)=>({thumb:this.img(sd,300,225), showImg:useReal, onClick:()=>this.openLightbox(seeds,i,h.name)})),
-          onConsult:()=>this.openConsult(h.name+' (웨딩홀)'),
-        };
+          onConsult:()=>this.openConsult(h.name+' (웨딩홀)'), onWish:this.toggleWish(key), heartStyle:this.heartStyle(this.isWished(key))};
       }
     }
 
-    // VENDOR LIST
     if(s.screen==='vendorList'){
       const cat = s.category;
-      base.catTitle = cat==='sdm'?'스드메':'혼수';
+      base.catTitle = (cat==='sdm'?'스드메':'혼수');
       base.catDesc = cat==='sdm'?'스튜디오·드레스·메이크업을 지역별로 비교하세요.':'한복·예복·예물·신혼여행을 한 곳에서.';
       const subOpts = cat==='sdm'?['전체','스튜디오','드레스','메이크업']:['전체','한복','예복','예물','신혼여행'];
       base.subTabs = subOpts.map(x=>({name:x, onClick:()=>this.setState({sub:x}), style:this.tabStyle(s.sub===x)}));
       base.regionTabs = ['전체',...this.R].map(r=>({name:r, onClick:()=>this.setState({region:r}), style:this.tabStyle(s.region===r)}));
-      let list = this.vendorsForCat(cat);
-      if(s.sub!=='전체') list = list.filter(v=>v.sub===s.sub);
-      list = this.regionFilter(list);
-      base.vendorCount = list.length;
-      base.vendors = list.map(v=>({
-        name:v.name, region:v.region, sub:v.sub, summary:v.summary, galleryCount:v.galleryCount,
-        fromLabel:this.priceLabel(v.packages[0].price), thumb:this.img('v-'+v.id+'-0',500,360), showImg:useReal, telHref:'tel:'+v.phone,
-        onOpen:()=>this.openVendor(v.id), onConsult:()=>this.openConsult(v.name+' ('+v.sub+')'),
-      }));
+      base.sortChips = [['popular','인기순'],['priceLow','가격 낮은순'],['priceHigh','가격 높은순']].map(x=>({label:x[1], onClick:()=>this.setSort(x[0]), style:this.tabStyle(s.sort===x[0])}));
+      let list = this.vendorsForCat(cat); if(s.sub!=='전체') list=list.filter(v=>v.sub===s.sub); list=this.sortVendors(this.regionFilter(list));
+      base.vendorCount = list.length; base.vendors = list.map(v=>this.vendorCardVM(v));
     }
 
-    // VENDOR DETAIL
     if(s.screen==='vendorDetail'){
       const v = this.vendorById(s.vendorId);
-      if(v){
-        const catKey = ['스튜디오','드레스','메이크업'].includes(v.sub)?'sdm':'honsu';
-        const seeds = Array.from({length:8},(_,i)=>'v-'+v.id+'-'+i);
+      if(v){ const catKey=this.catOf(v.sub); const seeds = Array.from({length:8},(_,i)=>'v-'+v.id+'-'+i);
         const selPkg = v.packages.find(p=>p.id===s.sel.pkgId) || v.packages[0];
         const selOpts = v.options.filter(o=>s.sel.optIds.includes(o.id));
         const selTotal = selPkg.price + selOpts.reduce((a,o)=>a+o.price,0);
-        base.vendor = {
-          name:v.name, sub:v.sub, region:v.region, addr:v.addr, parking:v.parking, galleryCount:v.galleryCount,
+        const key='v:'+v.id; const on=this.isWished(key);
+        base.vendor = {name:v.name, sub:v.sub, region:v.region, addr:v.addr, parking:v.parking, galleryCount:v.galleryCount,
           hasTravel:!!v.travel, travel:v.travel, telHref:'tel:'+v.phone, mapSrc:this.mapSrc(v.region),
-          hero:this.img('v-'+v.id+'-0',1000,700), showImg:useReal,
-          catTitle: catKey==='sdm'?'스드메':'혼수',
-          onBack:()=>this.nav({screen:'vendorList', category:catKey}),
-          onOpenGallery:()=>this.openLightbox(seeds,0,v.name),
+          hero:this.img('v-'+v.id+'-0',1000,700), showImg:useReal, heroImgEl: useReal? this.imgEl(this.img('v-'+v.id+'-0',1000,700),{width:'100%',height:'100%',objectFit:'cover'}):null, catTitle: catKey==='sdm'?'스드메':'혼수',
+          onBack:()=>this.nav({screen:'vendorList', category:catKey}), onOpenGallery:()=>this.openLightbox(seeds,0,v.name),
           gallery: seeds.map((sd,i)=>({thumb:this.img(sd,240,240), showImg:useReal, onClick:()=>this.openLightbox(seeds,i,v.name)})),
-          packages: v.packages.map(p=>({
-            id:p.id, tier:p.tier, priceLabel:this.fmt(p.price), comps:p.comps, selected:p.id===s.sel.pkgId,
-            onSelect:()=>this.selectPkg(p.id),
-            cardStyle:(p.id===s.sel.pkgId
-              ?'text-align:left;background:#fff;border:2px solid #c0576b;border-radius:14px;padding:17px 18px;cursor:pointer;box-shadow:0 6px 20px rgba(192,87,107,.12)'
-              :'text-align:left;background:#fff;border:1px solid #ece2d9;border-radius:14px;padding:18px 19px;cursor:pointer'),
-          })),
-          options: v.options.map(o=>{ const ck=s.sel.optIds.includes(o.id); return {
-            title:o.title, priceLabel:this.fmt(o.price), checked:ck, onToggle:()=>this.toggleOpt(o.id),
-            boxStyle:(ck?'width:22px;height:22px;border-radius:6px;background:#c0576b;border:1px solid #c0576b;display:flex;align-items:center;justify-content:center;flex:none':'width:22px;height:22px;border-radius:6px;background:#fff;border:1.5px solid #d8ccc0;display:flex;align-items:center;justify-content:center;flex:none'),
-          }; }),
-          selName:'상품 '+selPkg.id+' · '+selPkg.tier,
-          selPkgLabel:this.fmt(selPkg.price),
-          selOptList: selOpts.map(o=>({title:o.title, priceLabel:this.fmt(o.price)})),
-          selTotalLabel:this.fmt(selTotal),
+          packages: v.packages.map(p=>({id:p.id, tier:p.tier, priceLabel:this.fmt(p.price), comps:p.comps, selected:p.id===s.sel.pkgId, onSelect:()=>this.selectPkg(p.id),
+            cardStyle:(p.id===s.sel.pkgId?'text-align:left;background:#fff;border:2px solid #ff4d6d;border-radius:18px;padding:17px 18px;cursor:pointer;box-shadow:0 6px 20px rgba(255,77,109,.12)':'text-align:left;background:#fff;border:1px solid #ecebf0;border-radius:18px;padding:18px 19px;cursor:pointer')})),
+          options: v.options.map(o=>{ const ck=s.sel.optIds.includes(o.id); return {title:o.title, priceLabel:this.fmt(o.price), checked:ck, onToggle:()=>this.toggleOpt(o.id),
+            boxStyle:(ck?'width:22px;height:22px;border-radius:7px;background:#ff4d6d;border:1px solid #ff4d6d;display:flex;align-items:center;justify-content:center;flex:none':'width:22px;height:22px;border-radius:7px;background:#fff;border:1.5px solid #d8d2de;display:flex;align-items:center;justify-content:center;flex:none')}; }),
+          selName:'상품 '+selPkg.id+' · '+selPkg.tier, selPkgLabel:this.fmt(selPkg.price),
+          selOptList: selOpts.map(o=>({title:o.title, priceLabel:this.fmt(o.price)})), selTotalLabel:this.fmt(selTotal),
           depositHint: depositMode? '결제 시 예약금 10%만 먼저 결제' : '장바구니에서 전액 결제',
           onAddCart:this.addToCart, onConsult:()=>this.openConsult(v.name+' ('+v.sub+')'),
-        };
+          onWish:this.toggleWish(key), wishBtnLabel: on?'♥ 찜함':'♡ 찜',
+          wishBtnStyle:(on?'flex:1;background:#ffe9ee;color:#ff4d6d;border:1.5px solid #ff4d6d;border-radius:14px;padding:13px 0;font-size:14px;font-weight:700;cursor:pointer':'flex:1;background:#fff;color:#2b2530;border:1px solid #e6e2ec;border-radius:14px;padding:13px 0;font-size:14px;font-weight:700;cursor:pointer')};
       }
     }
 
-    // CART
     if(s.screen==='cart'){
       const t = this.totals();
       base.cartEmpty = s.cart.length===0; base.cartHasItems = s.cart.length>0;
-      base.cartItems = s.cart.map(it=>({
-        vendorName:it.vendorName, sub:it.sub, region:it.region, pkgName:it.pkgName, qty:it.qty,
-        optLabels: it.opts.map(o=>o.title+' (+'+this.fmt(o.price)+')'),
-        lineLabel:this.fmt(this.itemUnit(it)*it.qty),
-        thumb:this.img('v-'+it.vendorId+'-0',200,200), showImg:useReal,
-        onInc:()=>this.incQty(it.key), onDec:()=>this.decQty(it.key), onRemove:()=>this.removeItem(it.key),
-      }));
-      base.couponList = this.COUPONS.map(c=>({
-        label:c.label, cond:c.cond, onApply:()=>this.applyCoupon(c.code),
-        style:(s.couponCode===c.code
-          ?'display:flex;justify-content:space-between;align-items:center;gap:8px;background:#fbeef1;border:1.5px solid #c0576b;border-radius:10px;padding:11px 14px;cursor:pointer;text-align:left'
-          :'display:flex;justify-content:space-between;align-items:center;gap:8px;background:#fff;border:1px solid #e7dccf;border-radius:10px;padding:11px 14px;cursor:pointer;text-align:left'),
-      }));
+      base.cartItems = s.cart.map(it=>({vendorName:it.vendorName, sub:it.sub, region:it.region, pkgName:it.pkgName, qty:it.qty,
+        optLabels: it.opts.map(o=>o.title+' (+'+this.fmt(o.price)+')'), lineLabel:this.fmt(this.itemUnit(it)*it.qty),
+        thumb:this.img('v-'+it.vendorId+'-0',200,200), showImg:useReal, thumbEl: useReal? this.imgEl(this.img('v-'+it.vendorId+'-0',200,200),{width:'100%',height:'100%',objectFit:'cover'}):null, onInc:()=>this.incQty(it.key), onDec:()=>this.decQty(it.key), onRemove:()=>this.removeItem(it.key)}));
+      base.couponList = this.COUPONS.map(c=>({label:c.label, cond:c.cond, onApply:()=>this.applyCoupon(c.code),
+        style:(s.couponCode===c.code?'display:flex;justify-content:space-between;align-items:center;gap:8px;background:#ffe9ee;border:1.5px solid #ff4d6d;border-radius:12px;padding:11px 14px;cursor:pointer;text-align:left':'display:flex;justify-content:space-between;align-items:center;gap:8px;background:#fff;border:1px solid #e6e2ec;border-radius:12px;padding:11px 14px;cursor:pointer;text-align:left')}));
       base.useAllPoints=s.useAllPoints; base.onTogglePoints=this.togglePoints; base.pointsLabel=this.fmt(this.availPoints());
       base.cartSubtotal=this.fmt(t.sub); base.cartCouponLabel = t.couponAmt>0?'-'+this.fmt(t.couponAmt):'-0원'; base.cartPointLabel = t.pts>0?'-'+this.fmt(t.pts):'-0원';
       base.cartTotal=this.fmt(t.total); base.onCheckout=this.onCheckout;
@@ -1090,50 +979,37 @@ class Component extends DCLogic {
       base.depositNote = depositMode? '예약금(총액 10%) 결제 후 업체 계약 진행' : '전액 결제 후 업체 계약 진행';
     }
 
-    // CHECKOUT
     if(s.screen==='checkout'){
-      const t = this.totals();
-      const today = depositMode? Math.round(t.total*0.1) : t.total;
+      const t = this.totals(); const today = depositMode? Math.round(t.total*0.1) : t.total;
       base.orderName = s.user?s.user.name:'고객'; base.orderPhone = s.user?s.user.phone:'';
       base.cartCount = s.cart.reduce((a,c)=>a+c.qty,0);
       base.cartItems = s.cart.map(it=>({vendorName:it.vendorName, pkgName:it.pkgName, qty:it.qty, lineLabel:this.fmt(this.itemUnit(it)*it.qty)}));
       base.payMethods = this.PAYS.map(p=>({label:p[1], onSelect:()=>this.setPay(p[0]),
-        style:(s.pay===p[0]
-          ?'background:#fbeef1;color:#c0576b;border:1.5px solid #c0576b;border-radius:10px;padding:13px 0;font-size:13px;font-weight:800;cursor:pointer'
-          :'background:#fff;color:#4a3f38;border:1px solid #e7dccf;border-radius:10px;padding:13px 0;font-size:13px;font-weight:600;cursor:pointer')}));
+        style:(s.pay===p[0]?'background:#ffe9ee;color:#ff4d6d;border:1.5px solid #ff4d6d;border-radius:12px;padding:13px 0;font-size:13px;font-weight:800;cursor:pointer':'background:#fff;color:#4a4550;border:1px solid #e6e2ec;border-radius:12px;padding:13px 0;font-size:13px;font-weight:600;cursor:pointer')}));
       base.cartSubtotal=this.fmt(t.sub); base.totalDiscountLabel = (t.couponAmt+t.pts)>0? '-'+this.fmt(t.couponAmt+t.pts) : '-0원';
-      base.cartTotal=this.fmt(t.total);
-      base.payTodayLabel = depositMode? '오늘 결제 (예약금)' : '오늘 결제';
-      base.payTodayAmount = this.fmt(today);
-      base.onPlaceOrder=this.placeOrder;
+      base.cartTotal=this.fmt(t.total); base.payTodayLabel = depositMode? '오늘 결제 (예약금)' : '오늘 결제';
+      base.payTodayAmount = this.fmt(today); base.onPlaceOrder=this.placeOrder;
     }
 
-    // ORDER DONE
     if(s.screen==='orderDone' && s.lastOrder){
       base.lastOrderId=s.lastOrder.id; base.lastOrderDate=s.lastOrder.date; base.lastOrderPaid=this.fmt(s.lastOrder.total); base.lastOrderStatus=s.lastOrder.status;
     }
 
-    // LOGIN
     if(s.screen==='login'){
       base.loginName=s.login.name; base.loginPhone=s.login.phone; base.loginDate=s.login.date; base.loginTbd=s.login.tbd;
       base.onLoginName=this.onLoginName; base.onLoginPhone=this.onLoginPhone; base.onLoginDate=this.onLoginDate; base.onToggleTbd=this.toggleTbd;
       base.onLoginSubmit=this.onLoginSubmit; base.onKakao=this.onKakao; base.onNaver=this.onNaver;
-      base.dateStyle = 'width:100%;border:1px solid #e0d5c9;border-radius:10px;padding:12px 13px;font-size:14px;outline:none'+(s.login.tbd?';background:#f3ece5;color:#b8ada2':';background:#fff');
+      base.dateStyle = 'width:100%;border:1px solid #e6e2ec;border-radius:12px;padding:12px 13px;font-size:14px;outline:none'+(s.login.tbd?';background:#f4f2f6;color:#c3bccb':';background:#fff');
     }
 
-    // MYPAGE
     if(s.screen==='mypage'){
       base.userName=s.user?s.user.name:''; base.userPhone=s.user?s.user.phone:''; base.userDate=s.user?s.user.date:'';
-      base.pointsLabel=this.fmt(this.availPoints()); base.couponCountLabel=this.COUPONS.length+'장';
+      base.pointsLabel=this.fmt(this.availPoints()); base.couponCountLabel=this.COUPONS.length+'장'; base.wishCountLabel=s.wish.length+'개';
       base.myTabs=[['orders','주문내역'],['consults','상담내역'],['rewards','쿠폰·적립금']].map(t=>({label:t[1], onClick:()=>this.setMyTab(t[0]),
-        style:(s.mytab===t[0]
-          ?'background:none;border:none;border-bottom:2px solid #c0576b;color:#c0576b;font-size:14px;font-weight:800;cursor:pointer;padding:11px 14px;margin-bottom:-1px'
-          :'background:none;border:none;border-bottom:2px solid transparent;color:#8b8178;font-size:14px;font-weight:600;cursor:pointer;padding:11px 14px;margin-bottom:-1px')}));
+        style:(s.mytab===t[0]?'background:none;border:none;border-bottom:2px solid #ff4d6d;color:#ff4d6d;font-size:14px;font-weight:800;cursor:pointer;padding:11px 14px;margin-bottom:-1px':'background:none;border:none;border-bottom:2px solid transparent;color:#8b8592;font-size:14px;font-weight:600;cursor:pointer;padding:11px 14px;margin-bottom:-1px')}));
       base.myOrdersTab=s.mytab==='orders'; base.myConsultsTab=s.mytab==='consults'; base.myRewardsTab=s.mytab==='rewards';
-      base.ordersEmpty=s.orders.length===0;
-      base.orders=s.orders.map(o=>({id:o.id, date:o.date, status:o.status, summary:o.summary, totalLabel:this.fmt(o.total)}));
-      base.consultsEmpty=s.consults.length===0;
-      base.consults=s.consults.map(c=>({target:c.target, wishTime:c.wishTime, phone:c.phone, status:c.status}));
+      base.ordersEmpty=s.orders.length===0; base.orders=s.orders.map(o=>({id:o.id, date:o.date, status:o.status, summary:o.summary, totalLabel:this.fmt(o.total)}));
+      base.consultsEmpty=s.consults.length===0; base.consults=s.consults.map(c=>({target:c.target, wishTime:c.wishTime, phone:c.phone, status:c.status}));
       base.myCoupons=this.COUPONS.map(c=>({label:c.label, cond:c.cond+' 사용 가능', code:c.code}));
     }
 
