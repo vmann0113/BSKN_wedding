@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>지도로 찾는 웨딩 준비 · 웨딩여기</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+@font-face{font-family:'Paperlogy';font-weight:400;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-4Regular.woff2') format('woff2')}
+@font-face{font-family:'Paperlogy';font-weight:500;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-5Medium.woff2') format('woff2')}
+@font-face{font-family:'Paperlogy';font-weight:600;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-6SemiBold.woff2') format('woff2')}
+@font-face{font-family:'Paperlogy';font-weight:700;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-7Bold.woff2') format('woff2')}
+@font-face{font-family:'Paperlogy';font-weight:800;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-8ExtraBold.woff2') format('woff2')}
+</style>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%}
+body{font-family:'Paperlogy','Pretendard',system-ui,-apple-system,sans-serif;letter-spacing:-.01em;background:#f4f3f6;color:#2b2530;overflow:hidden;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+input{font-family:inherit}
+a{color:inherit;text-decoration:none}
+.jua{font-weight:800}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:#d8d4de;border-radius:8px;border:2px solid #f4f3f6}
+
+/* ---------- shell ---------- */
+#app{display:flex;flex-direction:column;height:100%}
+
+header{flex:none;background:#fff;border-bottom:1px solid #ecebf0;z-index:1200;position:relative}
+.hrow{display:flex;align-items:center;gap:12px;padding:10px clamp(12px,2.5vw,22px)}
+.brand{display:flex;align-items:center;gap:8px;flex:none}
+.brand i{width:30px;height:30px;border-radius:10px;background:#ff4d6d;color:#fff;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:15px}
+.brand b{font-size:16px;letter-spacing:-.03em}
+.brand small{color:#a49dae;font-size:11px;display:block;margin-top:-2px;font-weight:600}
+.searchwrap{flex:1;max-width:440px;display:flex;align-items:center;gap:8px;background:#f4f3f6;border:1px solid #e6e3ec;border-radius:999px;padding:9px 15px}
+.searchwrap input{flex:1;border:none;background:none;outline:none;font-size:14px;font-weight:500}
+.searchwrap span{color:#a49dae;font-size:15px}
+.hbtn{background:#fff;border:1px solid #e6e3ec;border-radius:10px;padding:9px 13px;font-size:13px;font-weight:700;color:#4b4455}
+.hbtn.primary{background:#2b2530;border-color:#2b2530;color:#fff}
+.hspacer{margin-left:auto;display:flex;gap:8px;align-items:center;flex:none}
+
+/* ---------- filter bar ---------- */
+.filterbar{flex:none;background:#fff;border-bottom:1px solid #ecebf0;position:relative;z-index:1150}
+.chips{display:flex;gap:8px;padding:11px clamp(12px,2.5vw,22px);overflow-x:auto;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{display:flex;align-items:center;gap:6px;flex:none;background:#fff;border:1px solid #e6e3ec;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:700;color:#4b4455;white-space:nowrap;transition:.15s}
+.chip .cnt{font-size:11px;color:#a49dae;font-weight:700}
+.chip.on{color:#fff;border-color:transparent}
+.chip.on .cnt{color:rgba(255,255,255,.75)}
+.chip.plain.on{background:#2b2530}
+.divider{width:1px;background:#ecebf0;margin:6px 4px;flex:none}
+.pricebox{display:flex;align-items:center;gap:9px;flex:none;padding:0 4px}
+.pricebox label{font-size:12px;font-weight:700;color:#8b8592;white-space:nowrap}
+.pricebox output{font-size:12.5px;font-weight:800;color:#ff4d6d;min-width:66px;white-space:nowrap}
+input[type=range]{accent-color:#ff4d6d;width:110px}
+select.sort{border:1px solid #e6e3ec;border-radius:999px;padding:8px 12px;font-size:13px;font-weight:700;color:#4b4455;background:#fff;outline:none;flex:none}
+
+/* ---------- body split ---------- */
+.split{flex:1;display:flex;min-height:0;position:relative}
+#panel{width:clamp(320px,34vw,430px);flex:none;background:#f4f3f6;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;z-index:600}
+.panelhead{display:flex;align-items:baseline;justify-content:space-between;gap:4px 10px;flex-wrap:wrap;padding:2px 4px 0}
+.panelhead h1{font-size:16px;margin:0;letter-spacing:-.02em;white-space:nowrap}
+.panelhead span{font-size:12.5px;color:#8b8592;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.card{display:flex;gap:12px;background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:11px;transition:.16s;position:relative;text-align:left;width:100%;border-width:1px}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(40,25,55,.09)}
+.card.sel{border-color:#ff4d6d;box-shadow:0 8px 24px rgba(255,77,109,.18)}
+.thumb{width:96px;height:96px;flex:none;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,#efe6ee,#e0d5dd);position:relative}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.badge{position:absolute;left:6px;top:6px;color:#fff;font-size:10px;font-weight:800;padding:3px 7px;border-radius:999px;letter-spacing:-.01em}
+.cbody{flex:1;min-width:0;display:flex;flex-direction:column}
+.cloc{font-size:11.5px;color:#a49dae;font-weight:700}
+.cname{font-size:15px;font-weight:800;letter-spacing:-.02em;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crate{font-size:12px;color:#6d6579;font-weight:600;margin-top:3px}
+.crate b{color:#2b2530}
+.ctags{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+.ctag{font-size:10.5px;font-weight:700;color:#6d6579;background:#f4f3f6;border-radius:6px;padding:3px 7px}
+.cprice{margin-top:auto;padding-top:7px;display:flex;align-items:baseline;gap:5px}
+.cprice em{font-style:normal;font-size:11px;color:#a49dae;font-weight:700}
+.cprice strong{font-weight:800;font-size:17px;color:#ff4d6d;letter-spacing:-.01em}
+.heart{position:absolute;right:9px;top:9px;width:27px;height:27px;border-radius:50%;background:rgba(255,255,255,.94);border:1px solid #ecebf0;color:#d5cfda;font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0}
+.heart.on{color:#ff4d6d}
+
+.empty{background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:40px 20px;text-align:center}
+.empty p{margin:8px 0 0;font-size:13px;color:#8b8592}
+
+/* ---------- map ---------- */
+#mapwrap{flex:1;position:relative;min-width:0}
+#map{position:absolute;inset:0;background:#e8e6ee}
+.leaflet-container{font-family:'Paperlogy','Pretendard',sans-serif}
+.pin{display:flex;align-items:center;gap:4px;background:#fff;border:1.5px solid #2b2530;border-radius:999px;padding:4px 9px;font-size:12px;font-weight:800;color:#2b2530;white-space:nowrap;box-shadow:0 3px 10px rgba(30,20,40,.22);transition:transform .12s;cursor:pointer}
+.pin i{font-style:normal;font-size:11px}
+.pin:hover{transform:scale(1.07)}
+.pin.sel{background:#ff4d6d;border-color:#ff4d6d;color:#fff;transform:scale(1.14);z-index:9999}
+.pin.dim{opacity:.5}
+.leaflet-marker-icon.selz{z-index:9000!important}
+
+.maptop{position:absolute;left:0;right:0;top:12px;z-index:700;display:flex;justify-content:center;pointer-events:none}
+.research{pointer-events:auto;background:#fff;border:1px solid #e0dce8;border-radius:999px;padding:10px 18px;font-size:13px;font-weight:800;color:#2b2530;box-shadow:0 6px 20px rgba(30,20,40,.16);display:none;align-items:center;gap:7px}
+.research.show{display:flex}
+.legend{position:absolute;right:12px;bottom:52px;z-index:700;background:rgba(255,255,255,.95);border:1px solid #e6e3ec;border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;box-shadow:0 6px 18px rgba(30,20,40,.1)}
+.legend div{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;color:#4b4455}
+.legend s{width:10px;height:10px;border-radius:50%;text-decoration:none;flex:none}
+.regionjump{position:absolute;left:12px;top:12px;z-index:700;display:flex;flex-direction:column;gap:5px}
+.rj{background:rgba(255,255,255,.95);border:1px solid #e6e3ec;border-radius:9px;padding:7px 11px;font-size:12px;font-weight:800;color:#4b4455;box-shadow:0 3px 10px rgba(30,20,40,.08)}
+.rj.on{background:#2b2530;color:#fff;border-color:#2b2530}
+
+.viewtoggle{position:fixed;left:50%;transform:translateX(-50%);bottom:22px;z-index:900;background:#2b2530;color:#fff;border:none;border-radius:999px;padding:13px 24px;font-size:13.5px;font-weight:800;box-shadow:0 10px 28px rgba(30,20,40,.34);display:flex;align-items:center;gap:8px}
+.viewtoggle:hover{background:#3b3442}
+
+/* ===== list view (default, 야놀자식) ===== */
+body.listview #mapwrap{display:none}
+body.listview #panel{width:auto;flex:1;background:#f4f3f6;padding:16px clamp(12px,2.5vw,22px) 100px;overflow-y:auto}
+body.listview #cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px}
+body.listview .panelhead{max-width:1180px;margin:0 auto;width:100%}
+body.listview #cards{max-width:1180px;margin:0 auto;width:100%}
+
+/* ---------- detail sheet ---------- */
+#sheet{position:absolute;right:0;top:0;bottom:0;width:min(400px,92vw);background:#fff;border-left:1px solid #ecebf0;box-shadow:-14px 0 40px rgba(30,20,40,.16);z-index:1100;transform:translateX(102%);transition:transform .28s cubic-bezier(.3,.8,.3,1);overflow-y:auto}
+#sheet.open{transform:none}
+.shero{position:relative;height:210px;background:linear-gradient(135deg,#efe6ee,#ddd0d8)}
+.shero img{width:100%;height:100%;object-fit:cover;display:block}
+.sclose{position:absolute;right:12px;top:12px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.95);border:none;font-size:17px;color:#2b2530;display:flex;align-items:center;justify-content:center}
+.sbody{padding:18px}
+.sbody h2{font-size:20px;margin:0;letter-spacing:-.03em}
+.smeta{font-size:13px;color:#8b8592;margin-top:5px;font-weight:600}
+.sgal{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:14px}
+.sgal div{aspect-ratio:1/1;border-radius:9px;overflow:hidden;background:#efe6ee}
+.sgal img{width:100%;height:100%;object-fit:cover;display:block}
+.ssec{font-size:14px;font-weight:800;margin:20px 0 9px;letter-spacing:-.02em}
+.pkg{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid #ecebf0;border-radius:12px;padding:12px 14px;margin-bottom:8px}
+.pkg .pl{font-size:13px;font-weight:800}
+.pkg .pd{font-size:11.5px;color:#8b8592;margin-top:2px;font-weight:600}
+.pkg .pp{font-weight:800;font-size:16px;color:#ff4d6d;white-space:nowrap}
+.sinfo{background:#f8f7fa;border-radius:12px;padding:13px 15px;font-size:13px;color:#4b4455;line-height:1.65}
+.sacts{display:flex;gap:8px;margin-top:16px}
+.sacts a,.sacts button{flex:1;text-align:center;border-radius:12px;padding:14px 0;font-size:14px;font-weight:800;border:1px solid #e6e3ec;background:#fff;color:#2b2530}
+.sacts .fill{background:#ff4d6d;border-color:#ff4d6d;color:#fff}
+
+/* ---------- modal / toast ---------- */
+.mask{position:fixed;inset:0;background:rgba(30,22,34,.55);backdrop-filter:blur(3px);z-index:1400;display:none;align-items:center;justify-content:center;padding:18px}
+.mask.open{display:flex}
+.modal{width:100%;max-width:380px;background:#fff;border-radius:20px;padding:22px}
+.modal h3{margin:0;font-size:18px;letter-spacing:-.02em}
+.modal p{margin:5px 0 0;font-size:13px;color:#8b8592}
+.field{margin-top:12px}
+.field b{display:block;font-size:12.5px;font-weight:700;margin-bottom:5px}
+.field input,.field select{width:100%;border:1px solid #e6e3ec;border-radius:11px;padding:11px 13px;font-size:14px;outline:none;background:#fff}
+.modal .go{width:100%;margin-top:16px;background:#ff4d6d;color:#fff;border:none;border-radius:12px;padding:14px 0;font-size:15px;font-weight:800}
+#toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,14px);z-index:1500;background:#231f29;color:#fff;padding:13px 20px;border-radius:13px;font-size:13.5px;font-weight:700;opacity:0;transition:.22s;pointer-events:none}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- mobile ---------- */
+@media(max-width:900px){
+  .hrow{gap:8px;padding:9px 12px}
+  .brand small{display:none}
+  .searchwrap{max-width:none}
+  .hspacer .hbtn.wide{display:none}
+  .split{display:block}
+  #mapwrap{position:absolute;inset:0}
+  body.mapview #panel{position:absolute;left:0;right:0;bottom:0;top:auto;width:auto;height:auto;background:transparent;flex-direction:row;overflow-x:auto;overflow-y:hidden;gap:10px;padding:10px 12px 78px;scroll-snap-type:x mandatory;z-index:700}
+  body.mapview #panel .panelhead{display:none}
+  body.mapview #panel .card{flex:none;width:min(80vw,320px);scroll-snap-align:center;box-shadow:0 8px 26px rgba(30,20,40,.16)}
+  body.listview #cards{grid-template-columns:1fr}
+  .legend{display:none}
+  body.mapview .viewtoggle{bottom:calc(env(safe-area-inset-bottom) + 140px)}
+  .regionjump{flex-direction:row;flex-wrap:wrap;max-width:calc(100% - 24px)}
+  #sheet{width:100%;border-left:none;border-radius:22px 22px 0 0;top:auto;height:88%;transform:translateY(102%)}
+  #sheet.open{transform:none}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="hrow">
+      <a class="brand" href="index.html"><i>웨</i><div><b>웨딩여기 <em style="font-style:normal;font-size:11px;font-weight:700;color:#a49dae">부산·경남</em></b><small>웨딩홀 · 스드메 · 혼수 지도</small></div></a>
+      <div class="searchwrap"><span>🔍</span><input id="q" placeholder="지역 · 업체명으로 찾기 (예: 해운대, 끌로에)"></div>
+      <div class="hspacer">
+        <a class="hbtn wide" href="index.html">홈</a>
+        <button class="hbtn" id="wishBtn">♥ <span id="wishCnt">0</span></button>
+        <a class="hbtn primary" href="index.html#cart">장바구니</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="filterbar">
+    <div class="chips" id="catChips"></div>
+  </div>
+
+  <div class="split">
+    <div id="panel">
+      <div class="panelhead"><h1 id="resultTitle">이 지역 업체</h1><span id="resultSub">조건을 골라 비교해 보세요</span></div>
+      <div id="cards"></div>
+    </div>
+
+    <div id="mapwrap">
+      <div id="map"></div>
+      <div class="maptop"><button class="research" id="research">📍 이 지역에서 다시 검색</button></div>
+      <div class="regionjump" id="regionJump"></div>
+      <div class="legend" id="legend"></div>
+      <div id="sheet"></div>
+    </div>
+  </div>
+  <button class="viewtoggle" id="viewToggle">🗺️ 지도에서 보기</button>
+</div>
+
+<div class="mask" id="consultMask">
+  <div class="modal">
+    <h3>빠른상담 신청</h3>
+    <p id="consultTarget">편한 시간을 남겨주시면 연락드려요.</p>
+    <div class="field"><b>이름</b><input id="cName" placeholder="이름"></div>
+    <div class="field"><b>연락처</b><input id="cPhone" placeholder="010-0000-0000"></div>
+    <div class="field"><b>희망 통화시간</b><select id="cTime"><option>가능한 빨리</option><option>오전 (10–12시)</option><option>오후 (13–17시)</option><option>저녁 (18–20시)</option><option>주말</option></select></div>
+    <button class="go" id="consultGo">상담 신청하기</button>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+/* =====================================================
+   지도 제공자 설정
+   현재: OpenStreetMap (키 불필요)
+   네이버 지도로 교체할 때:
+     1) 네이버 클라우드 플랫폼 > Maps > Web Dynamic Map 신청
+     2) 배포 도메인 등록 (예: https://bskn-wedding.vercel.app)
+     3) 아래 NAVER_CLIENT_ID 에 발급받은 Client ID 입력
+     → 가격 핀 / 반경 / 내 위치 로직은 그대로 이식됩니다
+   ===================================================== */
+var NAVER_CLIENT_ID = ''; // 예: 'abcd1234efg'
+
+/* ===================== data ===================== */
+var CATS = {
+  hall:  {name:'웨딩홀',   color:'#ff4d6d', icon:'💒', unit:'대관'},
+  studio:{name:'스튜디오', color:'#7c5cff', icon:'📸', unit:'패키지'},
+  dress: {name:'드레스',   color:'#ff8fab', icon:'👰', unit:'패키지'},
+  makeup:{name:'메이크업', color:'#12b3a6', icon:'💄', unit:'패키지'},
+  hanbok:{name:'한복',     color:'#f5a623', icon:'🎎', unit:'대여'}
+};
+var REGIONS = {
+  '부산':[35.1600,129.0700,11], '창원':[35.2270,128.6810,12], '마산':[35.1990,128.5690,13],
+  '김해':[35.2300,128.8700,12], '양산':[35.3080,129.0100,13], '진주':[35.1900,128.1100,12], '울산':[35.5450,129.3250,12]
+};
+var ITEMS = [
+  // 웨딩홀
+  ['h1','hall','그랜디스 웨딩홀','부산','서면',35.1585,129.0602,1500000,4.8,342,['5F 채플','보증 250명','발렛']],
+  ['h2','hall','라움 컨벤션','부산','센텀시티',35.1692,129.1305,2000000,4.9,521,['그랜드볼룸','보증 300명','주차 500대']],
+  ['h3','hall','해운대 아쿠아채플','부산','해운대',35.1628,129.1640,1800000,4.7,288,['오션뷰','단독홀','보증 220명']],
+  ['h4','hall','광안리 오션뷰홀','부산','광안리',35.1535,129.1188,1650000,4.6,197,['야경','하우스웨딩','보증 180명']],
+  ['h5','hall','아펠가모 창원','창원','상남동',35.2272,128.6815,1200000,4.7,254,['크리스탈홀','보증 200명']],
+  ['h6','hall','김해 더컨벤션','김해','내외동',35.2382,128.8735,1000000,4.5,176,['아이보리홀','보증 180명']],
+  ['h7','hall','양산 노블레스','양산','물금',35.3082,129.0105,900000,4.4,132,['가성비','보증 150명']],
+  ['h8','hall','울산 메종드루체','울산','삼산동',35.5382,129.3305,1300000,4.6,209,['루체홀','발렛','보증 220명']],
+  ['h9','hall','진주 라비아채플','진주','초전',35.2052,128.1182,1100000,4.5,143,['가든채플','보증 170명']],
+  ['h10','hall','마산 아름컨벤션','마산','합성동',35.1992,128.5695,950000,4.3,118,['역세권','보증 160명']],
+  // 스튜디오
+  ['s1','studio','세렌디피티 스튜디오','부산','광안리',35.1520,129.1170,700000,4.9,412,['자연광','원본 300컷','야외스냅']],
+  ['s2','studio','모먼트필름','부산','서면',35.1570,129.0580,850000,4.8,336,['필름감성','원본 500컷']],
+  ['s3','studio','화이트룸 스튜디오','부산','해운대',35.1640,129.1620,780000,4.7,221,['미니멀','한옥세트']],
+  ['s4','studio','라피네 스튜디오','창원','상남동',35.2260,128.6800,650000,4.6,188,['가성비','수정 30컷']],
+  ['s5','studio','온스튜디오','김해','장유',35.1955,128.8065,600000,4.5,97,['야외정원','반일촬영']],
+  // 드레스
+  ['d1','dress','끌로에 웨딩드레스','부산','서면',35.1592,129.0610,900000,4.8,298,['임포트','본식2벌']],
+  ['d2','dress','아뜰리에 브라이드','부산','남포동',35.0990,129.0330,1100000,4.9,351,['머메이드','VIP피팅']],
+  ['d3','dress','벨라지오 드레스','부산','연산동',35.1845,129.0795,820000,4.6,164,['볼륨라인','헤드피스']],
+  ['d4','dress','메종드로브','창원','의창구',35.2542,128.6405,750000,4.5,121,['가성비','촬영2벌']],
+  ['d5','dress','브라이덜하우스','울산','성남동',35.5562,129.3172,800000,4.6,139,['클래식','부케포함']],
+  // 메이크업
+  ['m1','makeup','라뷰티 메이크업','부산','해운대',35.1635,129.1650,500000,4.8,276,['물광','헬퍼동행']],
+  ['m2','makeup','제니하우스 서면','부산','서면',35.1578,129.0592,620000,4.9,402,['원장지정','혼주포함']],
+  ['m3','makeup','뮤즈 메이크업','부산','센텀',35.1685,129.1310,480000,4.6,158,['내추럴','속눈썹']],
+  ['m4','makeup','미네르바','창원','상남동',35.2275,128.6820,450000,4.5,112,['가성비','리허설']],
+  ['m5','makeup','글로우 스튜디오','양산','물금',35.3075,129.0095,420000,4.4,88,['화사','출장가능']],
+  // 한복
+  ['b1','hanbok','예단 한복','부산','부산진구',35.1600,129.0560,600000,4.7,143,['폐백','전통혼례']],
+  ['b2','hanbok','곱디 한복','김해','내외동',35.2375,128.8720,520000,4.5,96,['생활한복','혼주']],
+  ['b3','hanbok','담다 한복','부산','남포동',35.0995,129.0318,580000,4.6,108,['맞춤제작','소품']],
+  ['b4','hanbok','한올한복','창원','상남동',35.2265,128.6795,490000,4.4,74,['대여','혼주2인']]
+].map(function(a){
+  return {id:a[0],cat:a[1],name:a[2],region:a[3],dong:a[4],lat:a[5],lng:a[6],price:a[7],rate:a[8],rev:a[9],tags:a[10]};
+});
+
+/* ===================== state ===================== */
+var WKEY='bskn_wish_v1';
+var state = {
+  cats:{hall:true,studio:true,dress:true,makeup:true,hanbok:true},
+  maxPrice:2000000, sort:'dist', q:'', region:null,
+  center:null, radius:10, useRadius:true, located:false,
+  bounds:null, selected:null, view:'list',
+  wish: (function(){ try{ return JSON.parse(localStorage.getItem(WKEY))||[]; }catch(e){ return []; } })()
+};
+var markers = {}, map, radiusCircle=null, meMarker=null;
+var BUSAN_CITYHALL=[35.1798,129.0750];
+
+/* ===================== helpers ===================== */
+function distKm(a,b){
+  var R=6371, dLat=(b[0]-a[0])*Math.PI/180, dLng=(b[1]-a[1])*Math.PI/180;
+  var la1=a[0]*Math.PI/180, la2=b[0]*Math.PI/180;
+  var h=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(la1)*Math.cos(la2)*Math.sin(dLng/2)*Math.sin(dLng/2);
+  return 2*R*Math.asin(Math.sqrt(h));
+}
+function itemDist(it){ return state.center? distKm(state.center,[it.lat,it.lng]) : null; }
+function distLabel(d){ return d==null? '' : (d<1? Math.round(d*1000)+'m' : d.toFixed(1)+'km'); }
+function man(n){ return Math.round(n/10000).toLocaleString('ko-KR')+'만'; }
+function won(n){ return n.toLocaleString('ko-KR')+'원'; }
+function img(seed,w,h){ return 'https://picsum.photos/seed/'+encodeURIComponent(seed)+'/'+w+'/'+h; }
+function toast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(function(){t.classList.remove('show');},2400); }
+function saveWish(){ try{ localStorage.setItem(WKEY, JSON.stringify(state.wish)); }catch(e){} document.getElementById('wishCnt').textContent=state.wish.length; }
+function isWished(id){ return state.wish.indexOf(id)>=0; }
+
+function filtered(){
+  var q = state.q.trim().toLowerCase();
+  var list = ITEMS.filter(function(it){
+    if(!state.cats[it.cat]) return false;
+    if(it.price > state.maxPrice) return false;
+    if(q && (it.name+' '+it.region+' '+it.dong+' '+CATS[it.cat].name).toLowerCase().indexOf(q)<0) return false;
+    if(state.bounds && !state.bounds.contains([it.lat,it.lng])) return false;
+    if(state.useRadius && state.center && distKm(state.center,[it.lat,it.lng])>state.radius) return false;
+    return true;
+  });
+  list.sort(function(a,b){
+    if(state.sort==='dist' && state.center) return distKm(state.center,[a.lat,a.lng])-distKm(state.center,[b.lat,b.lng]);
+    if(state.sort==='priceLow') return a.price-b.price;
+    if(state.sort==='priceHigh') return b.price-a.price;
+    if(state.sort==='review') return b.rev-a.rev;
+    return b.rate-a.rate;
+  });
+  return list;
+}
+
+/* ===================== filter chips ===================== */
+function buildChips(){
+  var wrap=document.getElementById('catChips'); wrap.innerHTML='';
+  Object.keys(CATS).forEach(function(k){
+    var c=CATS[k], n=ITEMS.filter(function(i){return i.cat===k;}).length;
+    var b=document.createElement('button');
+    b.className='chip'+(state.cats[k]?' on':'');
+    if(state.cats[k]) b.style.background=c.color;
+    b.innerHTML='<span>'+c.icon+'</span>'+c.name+' <span class="cnt">'+n+'</span>';
+    b.onclick=function(){ state.cats[k]=!state.cats[k]; buildChips(); render(); };
+    wrap.appendChild(b);
+  });
+  var d=document.createElement('div'); d.className='divider'; wrap.appendChild(d);
+
+  var pb=document.createElement('div'); pb.className='pricebox';
+  pb.innerHTML='<label>예산</label><input type="range" min="400000" max="2000000" step="50000" value="'+state.maxPrice+'"><output>~'+man(state.maxPrice)+'원</output>';
+  var rng=pb.querySelector('input'), out=pb.querySelector('output');
+  rng.oninput=function(){ state.maxPrice=+rng.value; out.textContent='~'+man(state.maxPrice)+'원'; render(); };
+  wrap.appendChild(pb);
+
+  var d3=document.createElement('div'); d3.className='divider'; wrap.appendChild(d3);
+  var rb=document.createElement('div'); rb.className='pricebox';
+  rb.innerHTML='<label>반경</label>';
+  [[3,'3km'],[5,'5km'],[10,'10km'],[20,'20km'],[0,'전체']].forEach(function(r){
+    var b=document.createElement('button');
+    var on = r[0]===0? !state.useRadius : (state.useRadius && state.radius===r[0]);
+    b.className='chip'+(on?' plain on':''); b.style.padding='7px 12px'; b.textContent=r[1];
+    b.onclick=function(){
+      if(r[0]===0){ state.useRadius=false; }
+      else { state.useRadius=true; state.radius=r[0]; if(!state.center) state.center=BUSAN_CITYHALL.slice(); }
+      state.bounds=null; drawRadius(); buildChips(); render();
+      if(state.useRadius && radiusCircle && state.view==='map'){ map._programmatic=true; map.fitBounds(radiusCircle.getBounds(),{padding:[40,40]}); }
+    };
+    rb.appendChild(b);
+  });
+  wrap.appendChild(rb);
+
+  var me=document.createElement('button'); me.className='chip plain'; me.innerHTML='📍 내 위치';
+  me.onclick=function(){ locate(true); };
+  wrap.appendChild(me);
+
+  var d2=document.createElement('div'); d2.className='divider'; wrap.appendChild(d2);
+  var sel=document.createElement('select'); sel.className='sort';
+  [['dist','거리 가까운순'],['rate','평점 높은순'],['review','후기 많은순'],['priceLow','가격 낮은순'],['priceHigh','가격 높은순']].forEach(function(o){
+    var op=document.createElement('option'); op.value=o[0]; op.textContent=o[1]; if(state.sort===o[0]) op.selected=true; sel.appendChild(op);
+  });
+  sel.onchange=function(){ state.sort=sel.value; render(); };
+  wrap.appendChild(sel);
+
+  var clr=document.createElement('button'); clr.className='chip plain'; clr.textContent='필터 초기화';
+  clr.onclick=function(){ state.cats={hall:true,studio:true,dress:true,makeup:true,hanbok:true}; state.maxPrice=2000000; state.q=''; document.getElementById('q').value=''; state.bounds=null; state.region=null; state.useRadius=true; state.radius=10; drawRadius(); buildChips(); buildRegionJump(); render(); if(radiusCircle){ map._programmatic=true; map.fitBounds(radiusCircle.getBounds(),{padding:[40,40]}); } };
+  wrap.appendChild(clr);
+}
+
+function buildLegend(){
+  var l=document.getElementById('legend'); l.innerHTML='';
+  Object.keys(CATS).forEach(function(k){
+    var row=document.createElement('div');
+    row.innerHTML='<s style="background:'+CATS[k].color+'"></s>'+CATS[k].name;
+    l.appendChild(row);
+  });
+  var me=document.createElement('div');
+  me.innerHTML='<s style="background:#2f7bff"></s>내 위치·반경';
+  l.appendChild(me);
+}
+function buildRegionJump(){
+  var w=document.getElementById('regionJump'); w.innerHTML='';
+  Object.keys(REGIONS).forEach(function(r){
+    var b=document.createElement('button'); b.className='rj'+(state.region===r?' on':''); b.textContent=r;
+    b.onclick=function(){
+      state.region=r; state.bounds=null; buildRegionJump();
+      var c=REGIONS[r]; applyCenter([c[0],c[1]],true);
+    };
+    w.appendChild(b);
+  });
+}
+
+/* ===================== map ===================== */
+function initMap(){
+  map = L.map('map',{zoomControl:false, attributionControl:true}).setView([35.1600,129.0700,11][0]?[35.1600,129.0700]:[35.16,129.07],12);
+  L.control.zoom({position:'topright'}).addTo(map);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    maxZoom:19, attribution:'© OpenStreetMap contributors'
+  }).addTo(map);
+
+  ITEMS.forEach(function(it){
+    var c=CATS[it.cat];
+    var m=L.marker([it.lat,it.lng],{icon:pinIcon(it,false), riseOnHover:true, title:it.name});
+    m.on('click',function(){ select(it.id,true); });
+    markers[it.id]=m;
+  });
+
+  map.on('moveend',function(){
+    if(map._programmatic){ map._programmatic=false; return; }
+    document.getElementById('research').classList.add('show');
+  });
+  map.on('zoomstart',function(){ document.getElementById('research').classList.remove('show'); });
+
+  document.getElementById('research').onclick=function(){
+    state.bounds=map.getBounds(); state.region=null; buildRegionJump();
+    this.classList.remove('show'); render();
+    toast('현재 지도 영역에서 검색했어요');
+  };
+}
+function drawRadius(){
+  if(radiusCircle){ map.removeLayer(radiusCircle); radiusCircle=null; }
+  if(meMarker){ map.removeLayer(meMarker); meMarker=null; }
+  if(!state.center) return;
+  if(state.useRadius){
+    radiusCircle=L.circle(state.center,{radius:state.radius*1000,color:'#ff4d6d',weight:1.5,dashArray:'5 5',fillColor:'#ff4d6d',fillOpacity:.05,interactive:false}).addTo(map);
+  }
+  meMarker=L.marker(state.center,{interactive:false,icon:L.divIcon({className:'',iconSize:null,iconAnchor:[0,0],
+    html:'<div style="transform:translate(-50%,-50%);width:18px;height:18px;border-radius:50%;background:#2f7bff;border:3px solid #fff;box-shadow:0 0 0 6px rgba(47,123,255,.18),0 2px 6px rgba(0,0,0,.3)"></div>'})}).addTo(map);
+}
+function applyCenter(c,fly){
+  state.center=c; state.bounds=null; drawRadius(); buildChips(); render();
+  if(fly){ map._programmatic=true; if(state.useRadius && radiusCircle) map.fitBounds(radiusCircle.getBounds(),{padding:[40,40]}); else map.setView(c,12); }
+}
+function locate(userAsked){
+  if(!navigator.geolocation){ applyCenter(BUSAN_CITYHALL.slice(),true); toast('이 브라우저는 위치를 지원하지 않아 부산 중심으로 표시했어요'); return; }
+  if(userAsked) toast('내 위치를 확인하는 중…');
+  navigator.geolocation.getCurrentPosition(function(pos){
+    state.located=true;
+    applyCenter([pos.coords.latitude,pos.coords.longitude],true);
+    toast('내 위치 기준 '+state.radius+'km 이내를 보여드려요');
+  },function(){
+    applyCenter(BUSAN_CITYHALL.slice(),true);
+    toast(userAsked? '위치 권한이 없어 부산 중심 '+state.radius+'km로 표시했어요' : '부산 중심 '+state.radius+'km 이내를 보여드려요');
+  },{enableHighAccuracy:false,timeout:7000,maximumAge:300000});
+}
+function pinIcon(it,sel){
+  var c=CATS[it.cat];
+  var cls='pin'+(sel?' sel':'');
+  var style = sel? '' : 'border-color:'+c.color+';color:'+c.color;
+  return L.divIcon({
+    className:'', iconSize:null, iconAnchor:[0,0],
+    html:'<div class="'+cls+'" style="'+style+';transform:translate(-50%,-135%)"><i>'+c.icon+'</i>'+man(it.price)+'</div>'
+  });
+}
+function syncMarkers(list){
+  var ids={}; list.forEach(function(i){ ids[i.id]=1; });
+  ITEMS.forEach(function(it){
+    var m=markers[it.id];
+    if(ids[it.id]){ if(!map.hasLayer(m)) m.addTo(map); m.setIcon(pinIcon(it,state.selected===it.id)); if(m._icon){ m._icon.classList.toggle('selz',state.selected===it.id); } }
+    else if(map.hasLayer(m)) map.removeLayer(m);
+  });
+}
+
+/* ===================== cards ===================== */
+function cardEl(it){
+  var c=CATS[it.cat];
+  var el=document.createElement('div');
+  el.className='card'+(state.selected===it.id?' sel':'');
+  el.id='card-'+it.id;
+  el.innerHTML=
+    '<div class="thumb"><img loading="lazy" src="'+img('bw-'+it.id,220,220)+'" alt=""><span class="badge" style="background:'+c.color+'">'+c.name+'</span></div>'+
+    '<div class="cbody">'+
+      '<div class="cloc">📍 '+it.region+' · '+it.dong+(itemDist(it)!=null? ' · <b style="color:#2f7bff">'+distLabel(itemDist(it))+'</b>':'')+'</div>'+
+      '<div class="cname">'+it.name+'</div>'+
+      '<div class="crate">⭐ <b>'+it.rate.toFixed(1)+'</b> ('+it.rev.toLocaleString('ko-KR')+')</div>'+
+      '<div class="ctags">'+it.tags.map(function(t){return '<span class="ctag">'+t+'</span>';}).join('')+'</div>'+
+      '<div class="cprice"><em>'+c.unit+'</em><strong>'+man(it.price)+'원~</strong></div>'+
+    '</div>'+
+    '<button class="heart'+(isWished(it.id)?' on':'')+'">♥</button>';
+  el.onclick=function(e){ if(e.target.classList.contains('heart')) return; if(state.view==='list'){ setView('map'); setTimeout(function(){ select(it.id,false); openSheet(it); },140); } else { select(it.id,false); openSheet(it); } };
+  el.querySelector('.heart').onclick=function(e){
+    e.stopPropagation();
+    var i=state.wish.indexOf(it.id);
+    if(i>=0){ state.wish.splice(i,1); this.classList.remove('on'); toast('찜을 해제했어요'); }
+    else { state.wish.push(it.id); this.classList.add('on'); toast('찜 목록에 담았어요 ♥'); }
+    saveWish();
+  };
+  el.onmouseenter=function(){ var m=markers[it.id]; if(m&&m._icon){ m._icon.firstChild.style.transform='translate(-50%,-135%) scale(1.12)'; } };
+  el.onmouseleave=function(){ var m=markers[it.id]; if(m&&m._icon&&state.selected!==it.id){ m._icon.firstChild.style.transform='translate(-50%,-135%)'; } };
+  return el;
+}
+
+function render(){
+  var list=filtered();
+  var box=document.getElementById('cards');
+  box.innerHTML='';
+  if(!list.length){
+    var e=document.createElement('div'); e.className='empty';
+    e.innerHTML='<div style="font-size:30px">🗺️</div><p>이 조건에 맞는 업체가 없어요.<br>예산을 올리거나 지도를 넓혀보세요.</p>';
+    box.appendChild(e);
+  } else {
+    list.forEach(function(it){ box.appendChild(cardEl(it)); });
+  }
+  document.getElementById('resultTitle').textContent = state.bounds? '이 지역 업체'
+    : (state.useRadius && state.center? (state.region? state.region:(state.located?'내 위치':'부산 중심'))+' 반경 '+state.radius+'km'
+    : (state.region? state.region+' 웨딩 업체':'부산·경남 전체'));
+  document.getElementById('resultSub').textContent = list.length+'곳 · '+
+    Object.keys(state.cats).filter(function(k){return state.cats[k];}).map(function(k){return CATS[k].name;}).join('·');
+  syncMarkers(list);
+}
+
+/* ===================== selection & sheet ===================== */
+function select(id, fromMap){
+  state.selected=id;
+  var list=filtered(); syncMarkers(list);
+  Array.prototype.forEach.call(document.querySelectorAll('.card'),function(c){ c.classList.toggle('sel', c.id==='card-'+id); });
+  var card=document.getElementById('card-'+id), panel=document.getElementById('panel');
+  if(card && fromMap){
+    var mobile=window.matchMedia('(max-width:900px)').matches;
+    if(mobile && state.view==='map') panel.scrollTo({left:card.offsetLeft-16,behavior:'smooth'});
+    else panel.scrollTo({top:card.offsetTop-70,behavior:'smooth'});
+  }
+  if(fromMap){ var it=ITEMS.filter(function(i){return i.id===id;})[0]; if(it) openSheet(it); }
+}
+
+function openSheet(it){
+  var c=CATS[it.cat], sheet=document.getElementById('sheet');
+  var pk=[['A','베이직',1],['B','스탠다드',1.6],['C','프리미엄',2.4]];
+  var pkHtml = it.cat==='hall'
+    ? '<div class="pkg"><div><div class="pl">대관료</div><div class="pd">홀·시간대별 상이</div></div><div class="pp">'+man(it.price)+'원~</div></div>'+
+      '<div class="pkg"><div><div class="pl">뷔페 (성인 1인)</div><div class="pd">보증인원 기준</div></div><div class="pp">'+won(Math.round(it.price/28000)*1000)+'</div></div>'
+    : pk.map(function(p){
+        return '<div class="pkg"><div><div class="pl">'+p[0]+' 상품 · '+p[1]+'</div><div class="pd">'+it.tags.slice(0,2).join(' · ')+'</div></div><div class="pp">'+man(Math.round(it.price*p[2]/10000)*10000)+'원</div></div>';
+      }).join('');
+
+  sheet.innerHTML=
+    '<div class="shero"><img src="'+img('bw-'+it.id,800,520)+'" alt=""><button class="sclose">✕</button></div>'+
+    '<div class="sbody">'+
+      '<div style="display:inline-block;background:'+c.color+';color:#fff;font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px">'+c.icon+' '+c.name+'</div>'+
+      '<h2 style="margin-top:9px">'+it.name+'</h2>'+
+      '<div class="smeta">📍 '+it.region+' '+it.dong+' · ⭐ '+it.rate.toFixed(1)+' ('+it.rev.toLocaleString('ko-KR')+'개 후기)</div>'+
+      '<div class="sgal">'+[1,2,3].map(function(n){return '<div><img loading="lazy" src="'+img('bw-'+it.id+'-'+n,240,240)+'" alt=""></div>';}).join('')+'</div>'+
+      '<div class="ssec">'+(it.cat==='hall'?'예상 견적':'상품 구성')+'</div>'+pkHtml+
+      '<div class="ssec">한눈에 보기</div>'+
+      '<div class="sinfo">'+it.tags.map(function(t){return '· '+t;}).join('<br>')+'<br>· 주차 가능 · 방문 상담 예약제</div>'+
+      '<div class="sacts">'+
+        '<a href="tel:051-000-0000">📞 전화</a>'+
+        '<button id="sConsult">빠른상담</button>'+
+        '<a class="fill" href="index.html#'+(it.cat==='hall'?'h':'v')+'='+it.id+'">상세보기</a>'+
+      '</div>'+
+      '<p style="font-size:11.5px;color:#a49dae;text-align:center;margin:12px 0 0">'+(it.cat==='hall'?'웨딩홀은 상담 후 견적이 확정됩니다':'예약금 10%로 먼저 예약할 수 있어요')+'</p>'+
+    '</div>';
+  sheet.classList.add('open');
+  sheet.querySelector('.sclose').onclick=function(){ sheet.classList.remove('open'); };
+  sheet.querySelector('#sConsult').onclick=function(){
+    document.getElementById('consultTarget').textContent='문의 대상 · '+it.name+' ('+c.name+')';
+    document.getElementById('consultMask').classList.add('open');
+  };
+  var m=markers[it.id];
+  if(m){ map._programmatic=true; map.panTo([it.lat,it.lng],{animate:true}); }
+}
+
+/* ===================== wiring ===================== */
+document.getElementById('q').oninput=function(){ state.q=this.value; render(); };
+document.getElementById('wishBtn').onclick=function(){
+  if(!state.wish.length){ toast('아직 찜한 업체가 없어요'); return; }
+  state.cats={hall:true,studio:true,dress:true,makeup:true,hanbok:true};
+  state.bounds=null; state.q=''; document.getElementById('q').value='';
+  var only={}; state.wish.forEach(function(id){only[id]=1;});
+  var box=document.getElementById('cards'); box.innerHTML='';
+  ITEMS.filter(function(i){return only[i.id];}).forEach(function(it){ box.appendChild(cardEl(it)); });
+  document.getElementById('resultTitle').textContent='찜한 업체';
+  document.getElementById('resultSub').textContent=state.wish.length+'곳';
+  syncMarkers(ITEMS.filter(function(i){return only[i.id];}));
+  setView('list');
+};
+document.getElementById('consultGo').onclick=function(){
+  document.getElementById('consultMask').classList.remove('open');
+  toast('상담 신청이 접수되었어요 · 곧 연락드립니다');
+};
+document.getElementById('consultMask').onclick=function(e){ if(e.target===this) this.classList.remove('open'); };
+
+function setView(v){
+  state.view=v;
+  document.body.classList.toggle('mapview', v==='map');
+  document.body.classList.toggle('listview', v==='list');
+  document.getElementById('viewToggle').innerHTML = v==='map'? '☰ 목록으로 보기' : '🗺️ 지도에서 보기';
+  if(v==='map'){
+    setTimeout(function(){
+      map.invalidateSize();
+      if(state.useRadius && radiusCircle){
+        map._programmatic=true;
+        map.fitBounds(radiusCircle.getBounds(),{padding:[40,40]});
+      } else {
+        var list=filtered();
+        if(list.length){
+          map._programmatic=true;
+          map.fitBounds(list.map(function(i){return [i.lat,i.lng];}),{padding:[70,70],maxZoom:13});
+        }
+      }
+    },60);
+  }
+}
+document.getElementById('viewToggle').onclick=function(){ setView(state.view==='map'?'list':'map'); };
+
+initMap();
+buildChips(); buildLegend(); buildRegionJump(); saveWish(); setView('list'); render();
+locate(false);
+
+/* deep link: map.html#cat=studio or #region=부산 */
+(function(){
+  var h=location.hash.replace('#','');
+  if(!h) return;
+  var p={}; h.split('&').forEach(function(kv){ var a=kv.split('='); p[a[0]]=decodeURIComponent(a[1]||''); });
+  if(p.cat && CATS[p.cat]){ Object.keys(state.cats).forEach(function(k){ state.cats[k]=(k===p.cat); }); buildChips(); }
+  if(p.view==='map'){ setView('map'); }
+  if(p.region && REGIONS[p.region]){ state.region=p.region; var c=REGIONS[p.region]; map.setView([c[0],c[1]],c[2]); buildRegionJump(); }
+  render();
+})();
+</script>
+</body>
+</html>
