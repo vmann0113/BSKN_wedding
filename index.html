@@ -8,6 +8,8 @@
 <body>
 <x-dc>
 <helmet data-dc-atomics>
+<link rel="icon" type="image/jpeg" href="./icon.jpg">
+<link rel="apple-touch-icon" href="./icon.jpg">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <style>
@@ -100,7 +102,7 @@ a{color:inherit}
   <header style="position:sticky;top:0;z-index:40;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-bottom:1px solid #ecebf0">
     <div style="max-width:1180px;margin:0 auto;padding:11px clamp(16px,4vw,40px);display:flex;align-items:center;gap:clamp(8px,2vw,18px)">
       <button onClick="{{ goHome }}" style="display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;padding:0">
-        <span style="width:32px;height:32px;border-radius:10px;background:#ff4d6d;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px">웨</span>
+        <img src="./icon.jpg" alt="웨딩여기" style="width:34px;height:34px;border-radius:10px;object-fit:cover;display:block;flex:none"/>
         <span style="display:flex;align-items:baseline;gap:5px"><span style="font-weight:800;font-size:19px;letter-spacing:-.02em;color:#2b2530">웨딩여기</span><span style="font-size:11px;font-weight:700;color:#a49dae">부산·경남</span></span>
       </button>
       <div data-m="hide-m" style="display:flex;align-items:center;gap:5px;background:#f4f3f6;border-radius:999px;padding:7px 12px;margin-left:4px">
@@ -992,7 +994,7 @@ a{color:inherit}
   <footer style="background:#231f29;color:#b7b0c0;margin-top:40px">
     <div style="max-width:1180px;margin:0 auto;padding:40px clamp(16px,4vw,40px);display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:24px">
       <div>
-        <div style="display:flex;align-items:center;gap:8px;color:#fff"><span style="width:28px;height:28px;border-radius:9px;background:#ff4d6d;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px">웨</span><span style="display:flex;align-items:baseline;gap:5px"><span style="font-weight:800;font-size:16px">웨딩여기</span><span style="font-size:10.5px;font-weight:700;color:#8b8496">부산·경남</span></span></div>
+        <div style="display:flex;align-items:center;gap:8px;color:#fff"><img src="./icon.jpg" alt="웨딩여기" style="width:30px;height:30px;border-radius:9px;object-fit:cover;display:block;flex:none"/><span style="display:flex;align-items:baseline;gap:5px"><span style="font-weight:800;font-size:16px">웨딩여기</span><span style="font-size:10.5px;font-weight:700;color:#8b8496">부산·경남</span></span></div>
         <p style="font-size:13px;line-height:1.7;margin:12px 0 0;color:#8b8496">부산·창원·마산·김해·양산·진주·울산<br>웨딩홀 · 스드메 · 혼수 통합 플랫폼</p>
       </div>
       <div><div style="color:#fff;font-weight:700;font-size:14px;margin-bottom:12px">카테고리</div><div style="display:flex;flex-direction:column;gap:8px;font-size:13px"><button onClick="{{ goHall }}" style="background:none;border:none;color:#8b8496;text-align:left;cursor:pointer;padding:0;font-size:13px">웨딩홀</button><button onClick="{{ goSdm }}" style="background:none;border:none;color:#8b8496;text-align:left;cursor:pointer;padding:0;font-size:13px">스드메</button><button onClick="{{ goHonsu }}" style="background:none;border:none;color:#8b8496;text-align:left;cursor:pointer;padding:0;font-size:13px">혼수</button></div></div>

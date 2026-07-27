@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>지도로 찾는 웨딩 준비 · 웨딩여기</title>
+<link rel="icon" type="image/jpeg" href="./icon.jpg">
+<link rel="apple-touch-icon" href="./icon.jpg">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
@@ -31,19 +33,20 @@ a{color:inherit;text-decoration:none}
 #app{display:flex;flex-direction:column;height:100%;height:100dvh}
 
 header{flex:none;background:#fff;border-bottom:1px solid #ecebf0;z-index:1200;position:relative}
-.hrow{display:flex;align-items:center;gap:12px;padding:10px clamp(12px,2.5vw,22px)}
+.hrow{display:flex;align-items:center;gap:12px;padding:10px clamp(12px,2.5vw,22px);min-width:0}
 .brand{display:flex;align-items:center;gap:8px;flex:none}
-.brand i{width:30px;height:30px;border-radius:10px;background:#ff4d6d;color:#fff;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:15px}
+.brand i{width:32px;height:32px;border-radius:10px;overflow:hidden;flex:none;display:block}
+.brand i img{width:100%;height:100%;object-fit:cover;display:block}
 .brand b{font-size:16px;letter-spacing:-.03em}
 .brand small{color:#a49dae;font-size:11px;display:block;margin-top:-2px;font-weight:600}
-.searchwrap{flex:1;max-width:440px;display:flex;align-items:center;background:#faf9fb;border:1px solid #ecebf0;border-radius:999px;padding:0 6px 0 18px;height:48px}
+.searchwrap{flex:1 1 0;min-width:0;max-width:440px;display:flex;align-items:center;background:#faf9fb;border:1px solid #ecebf0;border-radius:999px;padding:0 6px 0 18px;height:48px;overflow:hidden}
 .searchwrap input{flex:1;min-width:0;border:none;background:none;outline:none;font-size:15px;font-weight:500;color:#2b2530}
 .searchwrap input::placeholder{color:#a49dae;font-weight:500}
 .searchwrap .vdiv{width:1px;height:20px;background:#e0dce6;flex:none;text-decoration:none;margin:0 12px}
 .wdate{flex:none;background:none;border:none;font-size:15px;font-weight:700;color:#2b2530;padding:0 12px 0 0;font-family:inherit;white-space:nowrap}
 .hbtn{background:#fff;border:1px solid #e6e3ec;border-radius:10px;padding:9px 13px;font-size:13px;font-weight:700;color:#4b4455}
 .hbtn.primary{background:#2b2530;border-color:#2b2530;color:#fff}
-.hspacer{margin-left:auto;display:flex;gap:8px;align-items:center;flex:none}
+.hspacer{margin-left:auto;display:flex;gap:8px;align-items:center;flex:none;min-width:0}
 
 /* ---------- filter bar ---------- */
 .filterbar{flex:none;background:#fff;border-bottom:1px solid #ecebf0;position:relative;z-index:1150}
@@ -194,7 +197,9 @@ body.listview #cards{max-width:1180px;margin:0 auto;width:100%}
 @media(max-width:900px){
   .hrow{gap:8px;padding:9px 12px}
   .brand small{display:none}
-  .searchwrap{max-width:none;height:44px}
+  .searchwrap{max-width:none;height:44px;padding:0 4px 0 14px}
+  .searchwrap .vdiv{margin:0 8px}
+  .wdate{max-width:42%;overflow:hidden;text-overflow:ellipsis;padding-right:8px;font-size:14px}
   .hspacer .hbtn.wide{display:none}
   input,select{font-size:16px}
   .searchwrap input{font-size:16px}
@@ -213,10 +218,12 @@ body.listview #cards{max-width:1180px;margin:0 auto;width:100%}
   #mapwrap{position:absolute;inset:0}
 
   /* \uc9c0\ub3c4\ubdf0: \ud558\ub2e8 \uac00\ub85c \uce74\ub4dc \ub808\uc774\ub4dc */
-  body.mapview #panel{position:absolute;left:0;right:0;bottom:0;top:auto;width:auto;height:auto;background:transparent;flex-direction:row;overflow-x:auto;overflow-y:hidden;gap:10px;padding:10px 12px calc(var(--sab) + var(--rail) + 10px);scroll-snap-type:x proximity;overscroll-behavior-x:contain;z-index:700}
+  body.mapview #panel{position:absolute;left:0;right:0;bottom:0;top:auto;width:auto;height:auto;background:transparent;display:block;overflow-x:auto;overflow-y:hidden;padding:10px 12px calc(var(--sab) + var(--rail) + 10px);scroll-snap-type:x proximity;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;z-index:700}
   body.mapview #panel .panelhead{display:none}
-  body.mapview #panel .card{flex:none;width:min(78vw,310px);scroll-snap-align:center;box-shadow:0 8px 26px rgba(30,20,40,.16)}
-  body.mapview #panel .thumb{width:78px;height:78px}
+  body.mapview #cards{display:flex;flex-direction:row;gap:10px;width:max-content;max-width:none;margin:0}
+  body.mapview #panel .card{flex:0 0 auto;width:min(78vw,310px);min-width:min(78vw,310px);max-width:min(78vw,310px);scroll-snap-align:center;box-shadow:0 8px 26px rgba(30,20,40,.16);padding:9px}
+  body.mapview #panel .thumb{width:72px;height:72px}
+  body.mapview #panel .ctags{display:none}
 
   /* \ub9ac\uc2a4\ud2b8\ubdf0 */
   body.listview #cards{grid-template-columns:1fr}
@@ -226,8 +233,8 @@ body.listview #cards{max-width:1180px;margin:0 auto;width:100%}
 
   /* \ud558\ub2e8 \ud50c\ub85c\ud305 \uc0ac\ub2e4\ub9ac: \ud1a1\ubc14 \u2192 \uce74\ub4dc\ub808\uc774\ub4dc \u2192 \ud1a0\uae00/\ub0b4\uc704\uce58 */
   .viewtoggle{bottom:calc(var(--sab) + var(--rail) + 14px);padding:12px 22px;font-size:13.5px}
-  body.mapview .viewtoggle{bottom:calc(var(--sab) + var(--rail) + 128px)}
-  .locbtn{right:12px;bottom:calc(var(--sab) + var(--rail) + 128px);width:46px;height:46px}
+  body.mapview .viewtoggle{bottom:calc(var(--sab) + var(--rail) + 160px)}
+  .locbtn{right:12px;bottom:calc(var(--sab) + var(--rail) + 160px);width:46px;height:46px}
   .legend{display:none}
 
   /* \uc9c0\uc5ed \uc810\ud504 1\ud589 \uc2a4\ud06c\ub864, \ub2e4\uc2dc\uac80\uc0c1 \ubc84\ud2bc\uc740 \uadf8 \uc544\ub798\ub85c */
@@ -244,18 +251,19 @@ body.listview #cards{max-width:1180px;margin:0 auto;width:100%}
 
 /* ---------- \uc791\uc740 \ud3f0 (~420) ---------- */
 @media(max-width:420px){
-  .brand em{display:none}
+  .brand div{display:none}
   .hspacer .hbtn.primary{display:none}
-  .brand b{font-size:15px}
+  .wdate{font-size:0;max-width:none;padding-right:6px}
+  .wdate::after{content:'📅 조건';font-size:13px;font-weight:700;white-space:nowrap}
+  .wdate.on::after{color:#ff4d6d}
   .thumb{width:84px;height:84px}
   .cprice strong{font-size:16px}
-  body.mapview #panel .card{width:82vw}
+  body.mapview #panel .card{width:82vw;min-width:82vw;max-width:82vw}
   .viewtoggle{padding:11px 18px}
 }
 
 /* ---------- \ucd08\uc18c\ud615 (~340) ---------- */
 @media(max-width:340px){
-  .brand div{display:none}
   .sgal{grid-template-columns:repeat(2,1fr)}
 }
 
@@ -266,8 +274,8 @@ body.listview #cards{max-width:1180px;margin:0 auto;width:100%}
   #sheet{width:min(420px,62vw);height:100%;top:0;bottom:0;border-radius:0;border-left:1px solid #ecebf0;transform:translateX(102%)}
   #sheet.open{transform:none}
   .shero{height:130px}
-  body.mapview #panel .card{width:min(52vw,280px)}
-  body.mapview .viewtoggle{bottom:calc(var(--sab) + var(--rail) + 118px)}
+  body.mapview #panel .card{width:min(52vw,280px);min-width:min(52vw,280px);max-width:min(52vw,280px)}
+  body.mapview .viewtoggle{bottom:calc(var(--sab) + var(--rail) + 150px)}
   .modal{max-height:calc(100dvh - 20px)}
 }
 </style>
@@ -276,7 +284,7 @@ body.listview #cards{max-width:1180px;margin:0 auto;width:100%}
 <div id="app">
   <header>
     <div class="hrow">
-      <a class="brand" href="index.html"><i>웨</i><div><b>웨딩여기 <em style="font-style:normal;font-size:11px;font-weight:700;color:#a49dae">부산·경남</em></b><small>웨딩홀 · 스드메 · 혼수 지도</small></div></a>
+      <a class="brand" href="index.html"><i><img src="./icon.jpg" alt="웨딩여기"></i><div><b>웨딩여기 <em style="font-style:normal;font-size:11px;font-weight:700;color:#a49dae">부산·경남</em></b><small>웨딩홀 · 스드메 · 혼수 지도</small></div></a>
       <div class="searchwrap">
         <input id="q" placeholder="지역, 업체 검색">
         <s class="vdiv"></s>
