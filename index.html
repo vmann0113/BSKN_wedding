@@ -9,6 +9,7 @@
 <x-dc>
 <helmet data-dc-atomics>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <style>
 @font-face{font-family:'Paperlogy';font-weight:400;font-style:normal;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-4Regular.woff2') format('woff2')}
 @font-face{font-family:'Paperlogy';font-weight:500;font-style:normal;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-5Medium.woff2') format('woff2')}
@@ -19,7 +20,11 @@
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
-body{font-family:'Paperlogy','Pretendard',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;background:#f4f3f6;color:#2b2530;letter-spacing:-.01em}
+html{-webkit-text-size-adjust:100%}
+body{font-family:'Paperlogy','Pretendard',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;background:#f4f3f6;color:#2b2530;letter-spacing:-.01em;overflow-x:hidden}
+img{max-width:100%}
+button,a{-webkit-tap-highlight-color:rgba(255,77,109,.12);touch-action:manipulation}
+.hscroll{overscroll-behavior-x:contain}
 button{font-family:inherit}
 input,select,textarea{font-family:inherit}
 a{color:inherit}
@@ -28,13 +33,68 @@ a{color:inherit}
 .hscroll{-ms-overflow-style:none;scrollbar-width:none}
 .hscroll::-webkit-scrollbar{display:none}
 @keyframes fadeup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ===== tablet (769~1024) ===== */
+@media(min-width:769px) and (max-width:1024px){
+  [data-m="split"]{grid-template-columns:minmax(0,1.5fr) minmax(248px,.9fr)!important;gap:18px!important}
+  [data-m="catgrid"]{grid-template-columns:repeat(6,1fr)!important;gap:18px 8px!important}
+}
+
+/* ===== mobile (야놀자식) ===== */
+@media(max-width:768px){
+  [data-m="split"]{display:block!important}
+  [data-m="rail"]{position:static!important;margin-top:14px;border-radius:18px!important}
+  [data-m="hide-m"]{display:none!important}
+  [data-m="tabbar"]{display:block!important}
+  [data-m="mcta"]{display:flex!important}
+  [data-m="stickyad"]{display:none!important}
+  [data-m="root"]{padding-bottom:0!important}
+  footer{margin-bottom:calc(62px + env(safe-area-inset-bottom))!important}
+  [data-m="hero"]{padding:20px 18px 46px!important}
+  [data-m="secpad"]{padding-left:16px!important;padding-right:16px!important}
+  [data-m="tap"]{min-width:44px!important;min-height:44px!important}
+  [data-m="gal3"]{grid-template-columns:repeat(3,1fr)!important}
+  [data-m="catgrid"]{grid-template-columns:repeat(4,1fr)!important;padding:18px 10px!important}
+  [data-m="modal"]{max-height:calc(100dvh - 32px);overflow-y:auto;-webkit-overflow-scrolling:touch}
+  [data-m="ctapad"]{padding-bottom:84px!important}
+  /* iOS 입력 시 자동 확대 방지 */
+  input,select,textarea{font-size:16px!important}
+}
+
+/* ===== 작은 폰 (~400px: iPhone SE 등) ===== */
+@media(max-width:400px){
+  [data-m="catgrid"]{gap:14px 4px!important;padding:16px 8px!important}
+  [data-m="hero"]{padding:18px 16px 42px!important}
+  [data-m="hcard"]{width:176px!important}
+  [data-m="catlabel"]{font-size:11.5px!important}
+}
+
+/* ===== 초소형 / 폴더블 커버 (~340px) ===== */
+@media(max-width:340px){
+  [data-m="catgrid"]{grid-template-columns:repeat(3,1fr)!important}
+  [data-m="gal3"]{grid-template-columns:repeat(2,1fr)!important}
+  [data-m="hcard"]{width:158px!important}
+}
+
+/* ===== 가로모드 낮은 화면 ===== */
+@media(max-height:480px) and (orientation:landscape){
+  [data-m="hero"]{padding:14px 18px 26px!important}
+  [data-m="modal"]{max-height:calc(100dvh - 20px);overflow-y:auto}
+  [data-m="lightbox"]{max-height:60dvh!important}
+}
+
+@media(min-width:769px){
+  [data-m="tabbar"]{display:none!important}
+  [data-m="mcta"]{display:none!important}
+  [data-m="desk-only"]{display:flex}
+}
 @keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
 @keyframes toastin{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}
 @keyframes heartpop{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
 </style>
 </helmet>
 
-<div style="{{ rootStyle }}">
+<div data-m="root" style="{{ rootStyle }}">
 
   <!-- ============ HEADER ============ -->
   <header style="position:sticky;top:0;z-index:40;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-bottom:1px solid #ecebf0">
@@ -43,7 +103,7 @@ a{color:inherit}
         <span style="width:32px;height:32px;border-radius:10px;background:#ff4d6d;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px">웨</span>
         <span style="display:flex;align-items:baseline;gap:5px"><span style="font-weight:800;font-size:19px;letter-spacing:-.02em;color:#2b2530">웨딩여기</span><span style="font-size:11px;font-weight:700;color:#a49dae">부산·경남</span></span>
       </button>
-      <div style="display:flex;align-items:center;gap:5px;background:#f4f3f6;border-radius:999px;padding:7px 12px;margin-left:4px">
+      <div data-m="hide-m" style="display:flex;align-items:center;gap:5px;background:#f4f3f6;border-radius:999px;padding:7px 12px;margin-left:4px">
         <span style="font-size:14px">📍</span>
         <select value="{{ region }}" onChange="{{ onRegionChange }}" style="border:none;background:none;font-size:13px;font-weight:700;color:#2b2530;cursor:pointer;outline:none">
           <sc-for list="{{ regionOptions }}" as="ro" hint-placeholder-count="8">
@@ -55,15 +115,15 @@ a{color:inherit}
         <sc-for list="{{ navItems }}" as="nav" hint-placeholder-count="3"><button onClick="{{ nav.onClick }}">{{ nav.label }}</button></sc-for>
       </nav>
       <div style="margin-left:auto;display:flex;align-items:center;gap:7px">
-        <button onClick="{{ goSearch }}" style="width:40px;height:38px;background:#f4f3f6;border:none;border-radius:12px;cursor:pointer;font-size:17px" title="검색">🔍</button>
-        <button onClick="{{ goWish }}" style="position:relative;width:40px;height:38px;background:#f4f3f6;border:none;border-radius:12px;cursor:pointer;font-size:17px" title="찜">♥
+        <button data-m="tap" onClick="{{ goSearch }}" style="width:40px;height:38px;background:#f4f3f6;border:none;border-radius:12px;cursor:pointer;font-size:17px" title="검색">🔍</button>
+        <button data-m="hide-m" onClick="{{ goWish }}" style="position:relative;width:40px;height:38px;background:#f4f3f6;border:none;border-radius:12px;cursor:pointer;font-size:17px" title="찜">♥
           <sc-if value="{{ hasWish }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:-5px;right:-5px;background:#ff4d6d;color:#fff;font-size:11px;font-weight:800;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px">{{ wishCount }}</span></sc-if>
         </button>
-        <button onClick="{{ goCart }}" style="position:relative;width:40px;height:38px;background:#f4f3f6;border:none;border-radius:12px;cursor:pointer;font-size:17px" title="장바구니">🛒
+        <button data-m="tap" onClick="{{ goCart }}" style="position:relative;width:40px;height:38px;background:#f4f3f6;border:none;border-radius:12px;cursor:pointer;font-size:17px" title="장바구니">🛒
           <sc-if value="{{ hasCart }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;top:-5px;right:-5px;background:#ff4d6d;color:#fff;font-size:11px;font-weight:800;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px">{{ cartCount }}</span></sc-if>
         </button>
-        <sc-if value="{{ isLoggedIn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ goMypage }}" style="background:#2b2530;color:#fff;border:none;border-radius:12px;padding:9px 13px;font-size:13px;font-weight:700;cursor:pointer">{{ userName }}님</button></sc-if>
-        <sc-if value="{{ isGuest }}" hint-placeholder-val="{{ true }}"><button onClick="{{ goLogin }}" style="background:#2b2530;color:#fff;border:none;border-radius:12px;padding:9px 15px;font-size:13px;font-weight:700;cursor:pointer">로그인</button></sc-if>
+        <sc-if value="{{ isLoggedIn }}" hint-placeholder-val="{{ false }}"><button data-m="hide-m" onClick="{{ goMypage }}" style="background:#2b2530;color:#fff;border:none;border-radius:12px;padding:9px 13px;font-size:13px;font-weight:700;cursor:pointer">{{ userName }}님</button></sc-if>
+        <sc-if value="{{ isGuest }}" hint-placeholder-val="{{ true }}"><button data-m="hide-m" onClick="{{ goLogin }}" style="background:#2b2530;color:#fff;border:none;border-radius:12px;padding:9px 15px;font-size:13px;font-weight:700;cursor:pointer">로그인</button></sc-if>
       </div>
     </div>
   </header>
@@ -74,8 +134,8 @@ a{color:inherit}
   <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
   <div>
     <!-- search header -->
-    <div style="background:#fff;padding:clamp(16px,2.4vw,24px) clamp(16px,4vw,40px) 14px">
-      <div style="max-width:1180px;margin:0 auto">
+    <div style="background:#fff">
+      <div style="max-width:1180px;margin:0 auto;padding:clamp(16px,2.4vw,24px) clamp(16px,4vw,40px) 14px">
         <button onClick="{{ goSearch }}" style="width:100%;display:flex;align-items:center;gap:10px;background:#f4f3f6;border:1.5px solid #ecebf0;border-radius:14px;padding:14px 18px;cursor:pointer;text-align:left" style-hover="border-color:#ff4d6d">
           <span style="font-size:17px">🔍</span><span style="font-size:15px;color:#8b8592;font-weight:500">어디서 결혼하세요? 지역·업체 검색</span>
         </button>
@@ -89,13 +149,15 @@ a{color:inherit}
 
     <!-- categories -->
     <div style="background:#fff">
-      <div style="max-width:1180px;margin:0 auto;padding:12px clamp(16px,4vw,40px) 22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:20px 6px">
-        <sc-for list="{{ categoryCircles }}" as="cc" hint-placeholder-count="8">
-          <button onClick="{{ cc.onClick }}" style="display:flex;flex-direction:column;align-items:center;gap:9px;background:none;border:none;cursor:pointer;padding:0" style-hover="opacity:.82">
-            <span style="{{ cc.iconStyle }}">{{ cc.icon }}</span>
-            <span style="font-size:12.5px;font-weight:700;color:#4a4550">{{ cc.label }}</span>
-          </button>
-        </sc-for>
+      <div style="max-width:1180px;margin:0 auto;padding:4px clamp(16px,4vw,40px) 20px">
+        <div data-m="catgrid" style="border:1px solid #ecebf0;border-radius:20px;background:#fff;padding:20px 14px;display:grid;grid-template-columns:repeat(8,1fr);gap:16px 6px">
+          <sc-for list="{{ categoryCircles }}" as="cc" hint-placeholder-count="8">
+            <button onClick="{{ cc.onClick }}" style="display:flex;flex-direction:column;align-items:center;gap:10px;background:none;border:none;cursor:pointer;padding:0" style-hover="opacity:.82">
+              <span style="{{ cc.iconStyle }}">{{ cc.icon }}</span>
+              <span data-m="catlabel" style="font-size:13px;font-weight:700;color:#4a4550;white-space:nowrap;text-align:center;line-height:1.25">{{ cc.label }}</span>
+            </button>
+          </sc-for>
+        </div>
       </div>
     </div>
 
@@ -144,8 +206,44 @@ a{color:inherit}
       </div>
       </sc-if>
 
-      <!-- map access (야놀자식: 목록 → 지도에서 보기) -->
-      <a href="map.html" style="display:flex;align-items:center;gap:13px;background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:15px 18px;margin-top:14px;text-decoration:none">
+      <!-- 준비 체크리스트 -->
+      <div style="background:#fff;border:1px solid #ecebf0;border-radius:20px;padding:20px 22px;margin-top:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+          <div>
+            <div style="font-size:16px;font-weight:800;letter-spacing:-.02em">{{ ddLabel }} 준비 체크리스트</div>
+            <div style="font-size:12.5px;color:#8b8592;margin-top:3px">{{ ddSub }}</div>
+          </div>
+          <div style="font-weight:800;font-size:22px;color:#ff4d6d">{{ ddPct }}</div>
+        </div>
+        <div style="height:9px;background:#f2f0f5;border-radius:999px;overflow:hidden;margin-top:13px"><span style="{{ ddBarStyle }}"></span></div>
+        <div style="display:flex;flex-direction:column;gap:2px;margin-top:8px">
+          <sc-for list="{{ checklist }}" as="ck" hint-placeholder-count="6">
+            <button onClick="{{ ck.onToggle }}" style="display:flex;align-items:center;gap:12px;background:none;border:none;padding:12px 0;border-bottom:1px solid #f6f4f8;cursor:pointer;text-align:left;width:100%">
+              <span style="{{ ck.boxStyle }}"><sc-if value="{{ ck.done }}" hint-placeholder-val="{{ false }}"><span style="color:#fff;font-size:12px;font-weight:800">✓</span></sc-if></span>
+              <div style="flex:1;min-width:0">
+                <div style="{{ ck.titleStyle }}">{{ ck.title }}</div>
+                <div style="font-size:11.5px;color:#a49dae;font-weight:600;margin-top:2px">{{ ck.when }}</div>
+              </div>
+              <sc-if value="{{ ck.hasGo }}" hint-placeholder-val="{{ false }}">
+                <span style="flex:none;background:#f4f3f6;border-radius:8px;padding:7px 11px;font-size:11.5px;font-weight:800;color:#4a4550">{{ ck.goLabel }}</span>
+              </sc-if>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- 묶음 비교 진입 -->
+      <button onClick="{{ goBundle }}" style="width:100%;display:flex;align-items:center;gap:13px;background:linear-gradient(100deg,#fff4f6,#f4f0ff);border:1px solid #f0e6f2;border-radius:16px;padding:16px 18px;margin-top:12px;cursor:pointer;text-align:left" style-hover="border-color:#ff4d6d">
+        <span style="width:42px;height:42px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;flex:none">🧳</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:15px;font-weight:800;letter-spacing:-.02em">스드메 묶음 비교</div>
+          <div style="font-size:12.5px;color:#8b8592;margin-top:2px">3개 모두 고르면 10% 할인 · 지역 평균가와 비교</div>
+        </div>
+        <span style="flex:none;color:#a49dae;font-size:18px">›</span>
+      </button>
+
+      <!-- 지도 진입 -->
+      <a href="map.html" style="display:flex;align-items:center;gap:13px;background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:15px 18px;margin-top:12px;text-decoration:none">
         <span style="width:42px;height:42px;border-radius:12px;background:#f0edf7;display:flex;align-items:center;justify-content:center;font-size:21px;flex:none">🗺️</span>
         <div style="flex:1;min-width:0">
           <div style="font-size:15px;font-weight:800;letter-spacing:-.02em">지도에서 보기</div>
@@ -161,7 +259,7 @@ a{color:inherit}
       </div>
       <div class="hscroll" style="display:flex;gap:12px;overflow-x:auto;padding-bottom:4px;scroll-snap-type:x proximity">
         <sc-for list="{{ hotCards }}" as="h" hint-placeholder-count="6">
-          <div onClick="{{ h.onOpen }}" style="flex:none;width:206px;scroll-snap-align:start;background:#fff;border:1px solid #ecebf0;border-radius:16px;overflow:hidden;cursor:pointer" style-hover="transform:translateY(-3px)">
+          <div data-m="hcard" onClick="{{ h.onOpen }}" style="flex:none;width:206px;scroll-snap-align:start;background:#fff;border:1px solid #ecebf0;border-radius:16px;overflow:hidden;cursor:pointer" style-hover="transform:translateY(-3px)">
             <div style="position:relative;aspect-ratio:1/1;background:linear-gradient(135deg,#efe6ee,#e3d6dd)">
               <sc-if value="{{ h.showImg }}" hint-placeholder-val="{{ true }}"><img src="{{ h.thumb }}" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" alt=""/></sc-if>
               <span style="position:absolute;left:10px;top:10px;background:rgba(255,255,255,.94);color:#ff4d6d;font-size:10.5px;font-weight:800;padding:4px 9px;border-radius:999px">{{ h.sub }}</span>
@@ -244,7 +342,7 @@ a{color:inherit}
       <sc-if value="{{ adInfeed }}" hint-placeholder-val="{{ true }}">
       <div onClick="{{ onAdClick }}" style="display:flex;align-items:center;gap:14px;background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:14px 16px;margin-bottom:16px;cursor:pointer;position:relative">
         <div style="width:74px;height:74px;border-radius:12px;overflow:hidden;background:#efe6ee;flex:none">
-          <sc-if value="{{ adInfeedShow }}" hint-placeholder-val="{{ false }}"><img src="{{ adInfeedImg }}" loading="lazy" style="width:100%;height:100%;object-fit:cover" alt=""/></sc-if>
+          <div style="{{ adInfeedImgStyle }}"></div>
         </div>
         <div style="flex:1;min-width:0">
           <div style="font-size:11.5px;color:#a49dae;font-weight:700">{{ adInfeedAdvertiser }} · 스폰서</div>
@@ -407,9 +505,9 @@ a{color:inherit}
 
   <!-- ============ HALL DETAIL ============ -->
   <sc-if value="{{ isHallDetail }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width:1180px;margin:0 auto;padding:clamp(16px,3vw,32px) clamp(16px,4vw,40px)">
+  <div data-m="ctapad" style="max-width:1180px;margin:0 auto;padding:clamp(16px,3vw,32px) clamp(16px,4vw,40px)">
     <button onClick="{{ goHall }}" style="background:none;border:none;color:#8b8592;font-size:14px;font-weight:600;cursor:pointer;padding:0;margin-bottom:14px">← 웨딩홀 목록</button>
-    <div style="display:grid;grid-template-columns:minmax(0,1.7fr) minmax(280px,1fr);gap:26px;align-items:start">
+    <div data-m="split" style="display:grid;grid-template-columns:minmax(0,1.7fr) minmax(280px,1fr);gap:26px;align-items:start">
       <div>
         <div style="position:relative;height:clamp(240px,34vw,420px);border-radius:22px;overflow:hidden;background:linear-gradient(135deg,#e9e0e6,#d8c6c2)">
           {{ hall.heroImgEl }}
@@ -437,7 +535,7 @@ a{color:inherit}
           <div style="display:flex;justify-content:space-between;padding:13px 0"><span style="color:#8b8592;font-size:14px">전화번호</span><span style="font-weight:700;font-size:14px">{{ hall.phone }}</span></div>
         </div>
       </div>
-      <div style="position:sticky;top:84px;background:#fff;border:1px solid #ecebf0;border-radius:22px;padding:22px;box-shadow:0 8px 28px rgba(30,20,40,.07)">
+      <div data-m="rail" style="position:sticky;top:84px;background:#fff;border:1px solid #ecebf0;border-radius:22px;padding:22px;box-shadow:0 8px 28px rgba(30,20,40,.07)">
         <div style="font-size:13px;color:#a49dae;font-weight:600">대관 시작가</div>
         <div style="font-weight:800;font-size:28px;color:#2b2530;margin-top:2px">{{ hall.rentalLabel }}</div>
         <div style="font-size:13px;color:#8b8592;margin-top:6px;line-height:1.5">웨딩홀은 견적·계약 상품이라, 상담 후 날짜·홀·견적을 확정해요.</div>
@@ -446,6 +544,14 @@ a{color:inherit}
         <button onClick="{{ hall.onConsult }}" style="width:100%;margin-top:9px;background:#ff4d6d;color:#fff;border:none;border-radius:14px;padding:14px 0;font-size:15px;font-weight:700;cursor:pointer">빠른상담 신청</button>
         <div style="font-size:12px;color:#a49dae;text-align:center;margin-top:10px">평균 응답 10분 이내 · 상담 무료</div>
       </div>
+    </div>
+    <div data-m="mcta" style="display:none;position:fixed;left:0;right:0;bottom:calc(58px + env(safe-area-inset-bottom));z-index:65;background:#fff;border-top:1px solid #ecebf0;box-shadow:0 -6px 20px rgba(30,20,40,.07);padding:10px 14px calc(10px);gap:9px;align-items:center">
+      <div style="flex:none;min-width:0">
+        <div style="font-size:10.5px;color:#a49dae;font-weight:700">대관 시작가</div>
+        <div style="font-size:16px;font-weight:800;color:#2b2530;white-space:nowrap">{{ hall.rentalLabel }}</div>
+      </div>
+      <a href="{{ hall.telHref }}" style="flex:none;min-width:48px;min-height:48px;display:flex;align-items:center;justify-content:center;text-decoration:none;background:#f4f3f6;color:#2b2530;border-radius:13px;font-size:19px">📞</a>
+      <button onClick="{{ hall.onConsult }}" style="flex:1;min-height:48px;background:#ff4d6d;color:#fff;border:none;border-radius:13px;font-size:15px;font-weight:800;cursor:pointer">빠른상담 신청</button>
     </div>
   </div>
   </sc-if>
@@ -497,9 +603,9 @@ a{color:inherit}
 
   <!-- ============ VENDOR DETAIL ============ -->
   <sc-if value="{{ isVendorDetail }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width:1180px;margin:0 auto;padding:clamp(16px,3vw,32px) clamp(16px,4vw,40px)">
+  <div data-m="ctapad" style="max-width:1180px;margin:0 auto;padding:clamp(16px,3vw,32px) clamp(16px,4vw,40px)">
     <button onClick="{{ vendor.onBack }}" style="background:none;border:none;color:#8b8592;font-size:14px;font-weight:600;cursor:pointer;padding:0;margin-bottom:14px">← {{ vendor.catTitle }} 목록</button>
-    <div style="display:grid;grid-template-columns:minmax(0,1.7fr) minmax(300px,1fr);gap:26px;align-items:start">
+    <div data-m="split" style="display:grid;grid-template-columns:minmax(0,1.7fr) minmax(300px,1fr);gap:26px;align-items:start">
       <div>
         <div style="position:relative;height:clamp(240px,34vw,420px);border-radius:22px;overflow:hidden;background:linear-gradient(135deg,#efe6ee,#dcc9d3)">
           {{ vendor.heroImgEl }}
@@ -547,7 +653,7 @@ a{color:inherit}
           <div style="padding:13px 16px;font-size:14px;color:#4a4550;border-top:1px solid #f2f0f5;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px"><span>📍 {{ vendor.addr }}</span><span style="color:#8b8592">주차 {{ vendor.parking }}</span></div>
         </div>
       </div>
-      <div style="position:sticky;top:84px;background:#fff;border:1px solid #ecebf0;border-radius:22px;padding:22px;box-shadow:0 8px 28px rgba(30,20,40,.07)">
+      <div data-m="rail" style="position:sticky;top:84px;background:#fff;border:1px solid #ecebf0;border-radius:22px;padding:22px;box-shadow:0 8px 28px rgba(30,20,40,.07)">
         <div style="font-size:13px;color:#a49dae;font-weight:600">선택: {{ vendor.selName }}</div>
         <div style="font-weight:800;font-size:28px;color:#2b2530;margin-top:3px">{{ vendor.selTotalLabel }}</div>
         <div style="font-size:12px;color:#8b8592;margin-top:4px">패키지 + 선택 추가금 합계</div>
@@ -563,12 +669,20 @@ a{color:inherit}
         <div style="font-size:12px;color:#a49dae;text-align:center;margin-top:10px">{{ vendor.depositHint }}</div>
       </div>
     </div>
+    <div data-m="mcta" style="display:none;position:fixed;left:0;right:0;bottom:calc(58px + env(safe-area-inset-bottom));z-index:65;background:#fff;border-top:1px solid #ecebf0;box-shadow:0 -6px 20px rgba(30,20,40,.07);padding:10px 14px;gap:9px;align-items:center">
+      <div style="flex:none;min-width:0">
+        <div style="font-size:10.5px;color:#a49dae;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:96px">{{ vendor.selName }}</div>
+        <div style="font-size:16px;font-weight:800;color:#2b2530;white-space:nowrap">{{ vendor.selTotalLabel }}</div>
+      </div>
+      <button onClick="{{ vendor.onConsult }}" style="flex:none;min-width:48px;min-height:48px;background:#f4f3f6;color:#2b2530;border:none;border-radius:13px;font-size:13px;font-weight:700;cursor:pointer;padding:0 12px">상담</button>
+      <button onClick="{{ vendor.onAddCart }}" style="flex:1;min-height:48px;background:#ff4d6d;color:#fff;border:none;border-radius:13px;font-size:15px;font-weight:800;cursor:pointer">장바구니 담기</button>
+    </div>
   </div>
   </sc-if>
 
   <!-- ============ CART ============ -->
   <sc-if value="{{ isCart }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width:1080px;margin:0 auto;padding:clamp(20px,3.5vw,40px) clamp(16px,4vw,40px)">
+  <div style="max-width:1180px;margin:0 auto;padding:clamp(20px,3.5vw,40px) clamp(16px,4vw,40px)">
     <h1 style="font-weight:800;font-size:clamp(24px,3vw,32px);color:#2b2530;margin:0 0 20px">장바구니 🛒</h1>
     <sc-if value="{{ cartEmpty }}" hint-placeholder-val="{{ true }}">
       <div style="background:#fff;border:1px solid #ecebf0;border-radius:20px;padding:60px 20px;text-align:center">
@@ -579,7 +693,7 @@ a{color:inherit}
       </div>
     </sc-if>
     <sc-if value="{{ cartHasItems }}" hint-placeholder-val="{{ false }}">
-    <div style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr);gap:22px;align-items:start">
+    <div data-m="split" style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr);gap:22px;align-items:start">
       <div style="display:flex;flex-direction:column;gap:12px">
         <sc-for list="{{ cartItems }}" as="it" hint-placeholder-count="2">
           <div style="background:#fff;border:1px solid #ecebf0;border-radius:18px;padding:18px;display:flex;gap:14px">
@@ -598,7 +712,7 @@ a{color:inherit}
           </div>
         </sc-for>
       </div>
-      <div style="position:sticky;top:84px;background:#fff;border:1px solid #ecebf0;border-radius:22px;padding:22px;box-shadow:0 8px 28px rgba(30,20,40,.07)">
+      <div data-m="rail" style="position:sticky;top:84px;background:#fff;border:1px solid #ecebf0;border-radius:22px;padding:22px;box-shadow:0 8px 28px rgba(30,20,40,.07)">
         <div style="font-weight:800;font-size:18px;margin-bottom:14px">결제 요약</div>
         <div style="font-size:13px;font-weight:700;color:#4a4550;margin-bottom:8px">쿠폰</div>
         <div style="display:flex;flex-direction:column;gap:8px">
@@ -624,7 +738,7 @@ a{color:inherit}
   <div style="max-width:940px;margin:0 auto;padding:clamp(20px,3.5vw,40px) clamp(16px,4vw,40px)">
     <button onClick="{{ goCart }}" style="background:none;border:none;color:#8b8592;font-size:14px;font-weight:600;cursor:pointer;padding:0;margin-bottom:12px">← 장바구니</button>
     <h1 style="font-weight:800;font-size:clamp(24px,3vw,32px);color:#2b2530;margin:0 0 20px">주문 / 결제</h1>
-    <div style="display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr);gap:22px;align-items:start">
+    <div data-m="split" style="display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr);gap:22px;align-items:start">
       <div style="display:flex;flex-direction:column;gap:16px">
         <div style="background:#fff;border:1px solid #ecebf0;border-radius:18px;padding:20px">
           <div style="font-weight:800;font-size:16px;margin-bottom:12px">주문자 정보</div>
@@ -647,7 +761,7 @@ a{color:inherit}
           <sc-if value="{{ depositMode }}" hint-placeholder-val="{{ true }}"><div style="background:#ffe9ee;border-radius:12px;padding:12px 14px;margin-top:14px;font-size:13px;color:#c62d4a;line-height:1.5">🔒 <b>예약금 결제 모드</b> · 오늘은 총액의 10%를 예약금으로 결제하고, 잔금은 업체 계약 시 정산해요.</div></sc-if>
         </div>
       </div>
-      <div style="position:sticky;top:84px;background:#fff;border:1px solid #ecebf0;border-radius:22px;padding:22px;box-shadow:0 8px 28px rgba(30,20,40,.07)">
+      <div data-m="rail" style="position:sticky;top:84px;background:#fff;border:1px solid #ecebf0;border-radius:22px;padding:22px;box-shadow:0 8px 28px rgba(30,20,40,.07)">
         <div style="font-weight:800;font-size:18px;margin-bottom:14px">최종 결제</div>
         <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px"><span style="color:#8b8592">상품금액</span><span style="font-weight:700">{{ cartSubtotal }}</span></div>
         <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px"><span style="color:#8b8592">쿠폰·적립 할인</span><span style="font-weight:700;color:#ff4d6d">{{ totalDiscountLabel }}</span></div>
@@ -683,29 +797,51 @@ a{color:inherit}
   <!-- ============ LOGIN ============ -->
   <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ false }}">
   <div style="max-width:420px;margin:0 auto;padding:clamp(30px,5vw,64px) clamp(16px,4vw,40px)">
-    <h1 style="font-weight:800;font-size:27px;color:#2b2530;margin:0 0 4px;text-align:center">반가워요! 👋</h1>
-    <p style="color:#8b8592;font-size:14px;text-align:center;margin:0 0 26px">이름과 연락처만 있으면 바로 시작할 수 있어요.</p>
+    <h1 style="font-weight:800;font-size:27px;color:#2b2530;margin:0 0 4px;text-align:center">{{ authTitle }}</h1>
+    <p style="color:#8b8592;font-size:14px;text-align:center;margin:0 0 22px">{{ authSub }}</p>
+
+    <div style="display:flex;background:#f4f2f6;border-radius:13px;padding:4px;margin-bottom:18px">
+      <button onClick="{{ onModeSignup }}" style="{{ signupTabStyle }}">회원가입</button>
+      <button onClick="{{ onModeLogin }}" style="{{ loginTabStyle }}">로그인</button>
+    </div>
+
     <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px">
       <button onClick="{{ onKakao }}" style="display:flex;align-items:center;justify-content:center;gap:9px;background:#FEE500;color:#3c1e1e;border:none;border-radius:14px;padding:14px 0;font-size:15px;font-weight:800;cursor:pointer">💬 카카오톡으로 시작</button>
       <button onClick="{{ onNaver }}" style="display:flex;align-items:center;justify-content:center;gap:9px;background:#03C75A;color:#fff;border:none;border-radius:14px;padding:14px 0;font-size:15px;font-weight:800;cursor:pointer">N 네이버로 시작</button>
     </div>
-    <div style="display:flex;align-items:center;gap:12px;margin:18px 0"><div style="flex:1;height:1px;background:#e6e2ec"></div><span style="font-size:12px;color:#a49dae">또는 직접 입력</span><div style="flex:1;height:1px;background:#e6e2ec"></div></div>
+    <div style="display:flex;align-items:center;gap:12px;margin:18px 0"><div style="flex:1;height:1px;background:#e6e2ec"></div><span style="font-size:12px;color:#a49dae">또는 이메일로</span><div style="flex:1;height:1px;background:#e6e2ec"></div></div>
+
     <div style="background:#fff;border:1px solid #ecebf0;border-radius:20px;padding:22px">
-      <div style="margin-bottom:14px"><div style="font-size:13px;font-weight:700;color:#4a4550;margin-bottom:6px">이름</div><input value="{{ loginName }}" onChange="{{ onLoginName }}" placeholder="이름을 입력하세요" style="width:100%;border:1px solid #e6e2ec;border-radius:12px;padding:12px 13px;font-size:14px;outline:none"/></div>
-      <div style="margin-bottom:14px"><div style="font-size:13px;font-weight:700;color:#4a4550;margin-bottom:6px">전화번호</div><input value="{{ loginPhone }}" onChange="{{ onLoginPhone }}" placeholder="010-0000-0000" style="width:100%;border:1px solid #e6e2ec;border-radius:12px;padding:12px 13px;font-size:14px;outline:none"/></div>
-      <div style="margin-bottom:16px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px;font-weight:700;color:#4a4550">결혼 예정일</span><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" checked="{{ loginTbd }}" onChange="{{ onToggleTbd }}" style="accent-color:#ff4d6d;width:15px;height:15px"/><span style="font-size:12px;color:#8b8592">미정</span></label></div>
-        <input type="date" value="{{ loginDate }}" onChange="{{ onLoginDate }}" disabled="{{ loginTbd }}" style="{{ dateStyle }}"/>
-      </div>
-      <button onClick="{{ onLoginSubmit }}" style="width:100%;background:#ff4d6d;color:#fff;border:none;border-radius:14px;padding:15px 0;font-size:15px;font-weight:800;cursor:pointer" style-hover="background:#e63958">시작하기</button>
-      <div style="font-size:12px;color:#a49dae;text-align:center;margin-top:12px;line-height:1.5">가입 시 이용약관 및 개인정보처리방침에 동의하며,<br>전화번호 인증(SMS)이 진행됩니다.</div>
+      <sc-if value="{{ isSignupMode }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-bottom:14px"><div style="font-size:13px;font-weight:700;color:#4a4550;margin-bottom:6px">이름</div><input value="{{ loginName }}" onChange="{{ onLoginName }}" placeholder="이름을 입력하세요" style="width:100%;border:1px solid #e6e2ec;border-radius:12px;padding:12px 13px;font-size:14px;outline:none"/></div>
+        <div style="margin-bottom:14px"><div style="font-size:13px;font-weight:700;color:#4a4550;margin-bottom:6px">전화번호</div><input value="{{ loginPhone }}" onChange="{{ onLoginPhone }}" placeholder="010-0000-0000" style="width:100%;border:1px solid #e6e2ec;border-radius:12px;padding:12px 13px;font-size:14px;outline:none"/></div>
+      </sc-if>
+
+      <div style="margin-bottom:14px"><div style="font-size:13px;font-weight:700;color:#4a4550;margin-bottom:6px">이메일</div><input type="email" value="{{ loginEmail }}" onChange="{{ onLoginEmail }}" placeholder="you@example.com" style="width:100%;border:1px solid #e6e2ec;border-radius:12px;padding:12px 13px;font-size:14px;outline:none"/></div>
+      <div style="margin-bottom:14px"><div style="font-size:13px;font-weight:700;color:#4a4550;margin-bottom:6px">비밀번호</div><input type="password" value="{{ loginPw }}" onChange="{{ onLoginPw }}" placeholder="6자 이상" style="width:100%;border:1px solid #e6e2ec;border-radius:12px;padding:12px 13px;font-size:14px;outline:none"/></div>
+
+      <sc-if value="{{ isSignupMode }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-bottom:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px;font-weight:700;color:#4a4550">결혼 예정일</span><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" checked="{{ loginTbd }}" onChange="{{ onToggleTbd }}" style="accent-color:#ff4d6d;width:15px;height:15px"/><span style="font-size:12px;color:#8b8592">미정</span></label></div>
+          <input type="date" value="{{ loginDate }}" onChange="{{ onLoginDate }}" disabled="{{ loginTbd }}" style="{{ dateStyle }}"/>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ authError }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#fff0f3;border-radius:11px;padding:11px 13px;margin-bottom:12px;font-size:12.5px;color:#c9304f;line-height:1.5">{{ authErrorMsg }}</div>
+      </sc-if>
+
+      <button onClick="{{ onLoginSubmit }}" style="{{ authBtnStyle }}">{{ authBtnLabel }}</button>
+      <div style="font-size:12px;color:#a49dae;text-align:center;margin-top:12px;line-height:1.5">{{ authFootnote }}</div>
     </div>
+
+    <div style="{{ dbBadgeStyle }}">{{ dbBadge }}</div>
   </div>
   </sc-if>
 
   <!-- ============ MYPAGE ============ -->
   <sc-if value="{{ isMypage }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width:900px;margin:0 auto;padding:clamp(20px,3.5vw,40px) clamp(16px,4vw,40px)">
+  <div style="max-width:1180px;margin:0 auto;padding:clamp(20px,3.5vw,40px) clamp(16px,4vw,40px)">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
       <div><h1 style="font-weight:800;font-size:clamp(22px,3vw,30px);color:#2b2530;margin:0">{{ userName }}님</h1><div style="color:#8b8592;font-size:14px;margin-top:4px">{{ userPhone }} · 예정일 {{ userDate }}</div></div>
       <button onClick="{{ onLogout }}" style="background:#fff;color:#8b8592;border:1px solid #e6e2ec;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer">로그아웃</button>
@@ -734,7 +870,7 @@ a{color:inherit}
 
   <!-- ============ ADMIN (광고 관리) ============ -->
   <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width:1080px;margin:0 auto;padding:clamp(20px,3.5vw,40px) clamp(16px,4vw,40px)">
+  <div style="max-width:1180px;margin:0 auto;padding:clamp(20px,3.5vw,40px) clamp(16px,4vw,40px)">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
       <div>
         <div style="font-size:12px;font-weight:800;color:#ff4d6d;letter-spacing:.04em">ADMIN</div>
@@ -778,6 +914,78 @@ a{color:inherit}
   </div>
   </sc-if>
 
+  <!-- ============ BUNDLE (스드메 묶음 비교) ============ -->
+  <sc-if value="{{ isBundle }}" hint-placeholder-val="{{ false }}">
+  <div style="max-width:1180px;margin:0 auto;padding:clamp(20px,3.5vw,40px) clamp(16px,4vw,40px)">
+    <div style="font-size:12px;font-weight:800;color:#ff4d6d;letter-spacing:.04em">BUNDLE</div>
+    <h1 style="font-weight:800;font-size:clamp(24px,3vw,32px);color:#2b2530;margin:5px 0 4px">스드메 묶음 비교 🧳</h1>
+    <p style="color:#8b8592;font-size:15px;margin:0 0 20px">스튜디오·드레스·메이크업을 골라 총액을 한 번에 비교하세요. 3개를 모두 담으면 묶음 할인이 적용됩니다.</p>
+
+    <div data-m="split" style="display:grid;grid-template-columns:minmax(0,1.7fr) minmax(300px,1fr);gap:24px;align-items:start">
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <sc-for list="{{ bundleSlots }}" as="bs" hint-placeholder-count="3">
+          <div>
+            <div style="display:flex;align-items:center;gap:9px;margin-bottom:11px">
+              <span style="{{ bs.dotStyle }}">{{ bs.icon }}</span>
+              <span style="font-size:16px;font-weight:800;letter-spacing:-.02em">{{ bs.title }}</span>
+              <sc-if value="{{ bs.picked }}" hint-placeholder-val="{{ false }}">
+                <span style="font-size:11.5px;font-weight:800;color:#12b3a6;background:#e6f7f5;border-radius:6px;padding:3px 8px">선택됨</span>
+              </sc-if>
+            </div>
+            <div class="hscroll" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:4px">
+              <sc-for list="{{ bs.options }}" as="bo" hint-placeholder-count="3">
+                <button onClick="{{ bo.onPick }}" style="{{ bo.style }}">
+                  <div style="position:relative;aspect-ratio:4/3;border-radius:11px;overflow:hidden;background:#efe6ee">
+                    <sc-if value="{{ bo.showImg }}" hint-placeholder-val="{{ false }}"><img src="{{ bo.thumb }}" loading="lazy" style="width:100%;height:100%;object-fit:cover" alt=""/></sc-if>
+                    <sc-if value="{{ bo.on }}" hint-placeholder-val="{{ false }}">
+                      <span style="position:absolute;right:7px;top:7px;width:22px;height:22px;border-radius:50%;background:#ff4d6d;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center">✓</span>
+                    </sc-if>
+                  </div>
+                  <div style="font-size:11.5px;color:#a49dae;font-weight:700;margin-top:8px">📍 {{ bo.region }}</div>
+                  <div style="font-size:14px;font-weight:800;letter-spacing:-.02em;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ bo.name }}</div>
+                  <div style="font-size:12px;color:#6d6579;font-weight:600;margin-top:3px">⭐ {{ bo.rate }}</div>
+                  <div style="font-weight:800;font-size:15px;color:#ff4d6d;margin-top:6px">{{ bo.price }}</div>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+
+        <div style="background:#fff;border:1px solid #ecebf0;border-radius:18px;padding:18px 20px">
+          <div style="font-size:15px;font-weight:800;margin-bottom:12px">지역별 평균 묶음가와 비교</div>
+          <sc-for list="{{ bundleCompare }}" as="bc" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;gap:11px;padding:9px 0">
+              <span style="width:44px;font-size:12.5px;font-weight:700;color:#4a4550;flex:none">{{ bc.label }}</span>
+              <div style="flex:1;height:9px;background:#f2f0f5;border-radius:999px;overflow:hidden"><span style="{{ bc.barStyle }}"></span></div>
+              <span style="{{ bc.valStyle }}">{{ bc.value }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div data-m="rail" style="position:sticky;top:84px;background:#fff;border:1px solid #ecebf0;border-radius:22px;padding:22px;box-shadow:0 8px 28px rgba(30,20,40,.07)">
+        <div style="font-size:15px;font-weight:800;margin-bottom:13px">내 묶음 견적</div>
+        <sc-for list="{{ bundleLines }}" as="bl" hint-placeholder-count="3">
+          <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #f4f2f6">
+            <div style="min-width:0">
+              <div style="font-size:11.5px;color:#a49dae;font-weight:700">{{ bl.cat }}</div>
+              <div style="font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ bl.name }}</div>
+            </div>
+            <span style="{{ bl.valStyle }}">{{ bl.price }}</span>
+          </div>
+        </sc-for>
+        <div style="display:flex;justify-content:space-between;font-size:13.5px;margin-top:13px"><span style="color:#8b8592">합계</span><span style="font-weight:700">{{ bundleSubtotal }}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13.5px;margin-top:7px"><span style="color:#8b8592">묶음 할인 {{ bundleRate }}</span><span style="font-weight:800;color:#ff4d6d">{{ bundleDiscount }}</span></div>
+        <div style="height:1px;background:#f0eef4;margin:14px 0"></div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:15px;font-weight:800">총액</span><span style="font-weight:800;font-size:26px;color:#ff4d6d">{{ bundleTotal }}</span></div>
+        <div style="{{ bundleHintStyle }}">{{ bundleHint }}</div>
+        <button onClick="{{ onBundleCart }}" style="{{ bundleBtnStyle }}">{{ bundleBtnLabel }}</button>
+        <button onClick="{{ onBundleReset }}" style="width:100%;margin-top:8px;background:none;border:none;color:#a49dae;font-size:12.5px;font-weight:600;cursor:pointer;padding:7px 0">다시 고르기</button>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
   </main>
 
   <!-- ============ FOOTER ============ -->
@@ -797,8 +1005,8 @@ a{color:inherit}
 
   <!-- AD · 하단 스티키 바 -->
   <sc-if value="{{ adSticky }}" hint-placeholder-val="{{ false }}">
-  <div style="position:fixed;left:0;right:0;bottom:0;z-index:70;background:rgba(43,37,48,.97);backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,.1)">
-    <div style="max-width:1180px;margin:0 auto;padding:11px clamp(14px,4vw,40px);display:flex;align-items:center;gap:12px">
+  <div data-m="stickyad" style="position:fixed;left:0;right:0;bottom:0;z-index:70;background:rgba(43,37,48,.97);backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,.1)">
+    <div style="max-width:1180px;margin:0 auto;padding:11px clamp(16px,4vw,40px);display:flex;align-items:center;gap:12px">
       <span style="font-size:20px;flex:none">{{ adStickyEmoji }}</span>
       <div style="flex:1;min-width:0">
         <div style="font-size:13.5px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ adStickyTitle }}</div>
@@ -813,9 +1021,9 @@ a{color:inherit}
   <!-- AD · 첫 방문 팝업 -->
   <sc-if value="{{ adPopupOpen }}" hint-placeholder-val="{{ false }}">
   <div onClick="{{ onClosePopup }}" style="position:fixed;inset:0;z-index:120;background:rgba(30,22,34,.6);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:20px">
-    <div onClick="{{ stop }}" style="width:100%;max-width:330px;background:#fff;border-radius:20px;overflow:hidden;animation:pop .25s ease;position:relative">
+    <div data-m="modal" onClick="{{ stop }}" style="width:100%;max-width:330px;background:#fff;border-radius:20px;overflow:hidden;animation:pop .25s ease;position:relative">
       <div style="position:relative;aspect-ratio:4/3;background:linear-gradient(135deg,#efe6ee,#ddd0d8)">
-        <sc-if value="{{ adPopupShow }}" hint-placeholder-val="{{ false }}"><img src="{{ adPopupImg }}" style="width:100%;height:100%;object-fit:cover;display:block" alt=""/></sc-if>
+        <div style="{{ adPopupImgStyle }}"></div>
         <span style="position:absolute;right:10px;top:10px;background:rgba(0,0,0,.4);color:#fff;font-size:9.5px;font-weight:700;padding:3px 7px;border-radius:5px">광고</span>
       </div>
       <div style="padding:18px 20px 20px">
@@ -829,10 +1037,24 @@ a{color:inherit}
   </div>
   </sc-if>
 
+  <!-- ============ MOBILE TAB BAR ============ -->
+  <nav data-m="tabbar" style="display:none;position:fixed;left:0;right:0;bottom:0;z-index:60;background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-top:1px solid #ecebf0;padding-bottom:env(safe-area-inset-bottom)">
+    <div style="display:grid;grid-template-columns:repeat(5,1fr)">
+      <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="5">
+        <button onClick="{{ tb.onClick }}" style="{{ tb.style }}">
+          <span style="position:relative;font-size:20px;line-height:1">{{ tb.icon }}
+            <sc-if value="{{ tb.hasBadge }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:-4px;right:-8px;background:#ff4d6d;color:#fff;font-size:10px;font-weight:800;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 4px">{{ tb.badge }}</span></sc-if>
+          </span>
+          <span style="font-size:11px;font-weight:700">{{ tb.label }}</span>
+        </button>
+      </sc-for>
+    </div>
+  </nav>
+
   <!-- ============ CONSULT MODAL ============ -->
   <sc-if value="{{ consultOpen }}" hint-placeholder-val="{{ false }}">
   <div onClick="{{ closeConsult }}" style="position:fixed;inset:0;z-index:80;background:rgba(30,24,32,.55);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:20px">
-    <div onClick="{{ stop }}" style="width:100%;max-width:400px;background:#fff;border-radius:22px;padding:26px;animation:pop .25s ease">
+    <div data-m="modal" onClick="{{ stop }}" style="width:100%;max-width:400px;background:#fff;border-radius:22px;padding:26px;animation:pop .25s ease">
       <div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font-weight:800;font-size:21px;color:#2b2530">빠른상담 신청</div><div style="font-size:13px;color:#8b8592;margin-top:4px">편한 시간을 남겨주시면 연락드려요.</div></div><button onClick="{{ closeConsult }}" style="background:none;border:none;font-size:22px;color:#c3bccb;cursor:pointer">×</button></div>
       <div style="background:#f7f5f9;border-radius:12px;padding:11px 14px;margin:16px 0;font-size:13px;color:#4a4550">문의 대상 · <b>{{ consultTarget }}</b></div>
       <div style="margin-bottom:12px"><div style="font-size:13px;font-weight:700;margin-bottom:6px">이름</div><input value="{{ consultName }}" onChange="{{ onConsultName }}" placeholder="이름" style="width:100%;border:1px solid #e6e2ec;border-radius:12px;padding:11px 13px;font-size:14px;outline:none"/></div>
@@ -847,7 +1069,7 @@ a{color:inherit}
   <sc-if value="{{ lightboxOpen }}" hint-placeholder-val="{{ false }}">
   <div onClick="{{ closeLightbox }}" style="position:fixed;inset:0;z-index:90;background:rgba(20,16,22,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px">
     <div style="color:#fff;font-size:13px;margin-bottom:14px;opacity:.7">{{ lightboxTitle }} · {{ lightboxIndex }} / {{ lightboxTotal }}</div>
-    <div onClick="{{ stop }}" style="max-width:min(900px,92vw);max-height:74vh;border-radius:14px;overflow:hidden;background:#2a2430">{{ lightboxImgEl }}</div>
+    <div data-m="lightbox" onClick="{{ stop }}" style="max-width:min(900px,92vw);max-height:74vh;border-radius:14px;overflow:hidden;background:#2a2430">{{ lightboxImgEl }}</div>
     <div style="display:flex;gap:12px;margin-top:18px"><button onClick="{{ lightboxPrev }}" style="background:rgba(255,255,255,.14);color:#fff;border:none;border-radius:12px;padding:12px 22px;font-size:14px;font-weight:700;cursor:pointer">← 이전</button><button onClick="{{ closeLightbox }}" style="background:#fff;color:#2b2530;border:none;border-radius:12px;padding:12px 22px;font-size:14px;font-weight:700;cursor:pointer">닫기</button><button onClick="{{ lightboxNext }}" style="background:rgba(255,255,255,.14);color:#fff;border:none;border-radius:12px;padding:12px 22px;font-size:14px;font-weight:700;cursor:pointer">다음 →</button></div>
   </div>
   </sc-if>
@@ -904,11 +1126,24 @@ class Component extends DCLogic {
     const BASE = {'스튜디오':700000,'드레스':900000,'메이크업':500000,'한복':600000,'예복':500000,'예물':1500000,'신혼여행':2500000};
     const GCOUNT = {'스튜디오':42,'드레스':28,'메이크업':24,'한복':26,'예복':22,'예물':20,'신혼여행':30};
     const rnd = x => Math.round(x/10000)*10000;
-    const mkPkgs = sub => [
-      {id:'A',tier:'베이직',price:rnd(BASE[sub]),comps:COMP[sub].A},
-      {id:'B',tier:'스탠다드',price:rnd(BASE[sub]*1.6),comps:COMP[sub].B},
-      {id:'C',tier:'프리미엄',price:rnd(BASE[sub]*2.4),comps:COMP[sub].C},
-    ];
+    const mkPkgs = (sub, base) => {
+      const b = base || BASE[sub];
+      return [
+        {id:'A',tier:'베이직',price:rnd(b),comps:COMP[sub].A},
+        {id:'B',tier:'스탠다드',price:rnd(b*1.6),comps:COMP[sub].B},
+        {id:'C',tier:'프리미엄',price:rnd(b*2.4),comps:COMP[sub].C},
+      ];
+    };
+    // 업체별 기준가 (map.html 과 동일)
+    const VPRICE = {
+      sd1:700000, sd2:850000, sd3:780000,
+      dr1:900000, dr2:1100000, dr3:820000,
+      mk1:500000, mk2:620000, mk3:480000,
+      hb1:600000, hb2:520000,
+      yb1:560000, yb2:480000,
+      ym1:1500000, ym2:1850000,
+      hm1:2500000, hm2:3100000
+    };
     const rawV = [
       ['sd1','세렌디피티 스튜디오','스튜디오','부산','부산 수영구 광안해변로 200','따뜻한 감성의 자연광 스튜디오'],
       ['sd2','모먼트필름 스튜디오','스튜디오','창원','창원 성산구 상남로 45','필름 감성 원판 전문'],
@@ -933,7 +1168,7 @@ class Component extends DCLogic {
       phone:area[a[3]]+'-'+(500+i)+'-'+(2000+i*7),
       parking:'인근 공영주차 · 방문 시 2시간 무료',
       galleryCount:GCOUNT[a[2]], travel:a[2]==='신혼여행'?'다낭 · 발리 · 몰디브 · 하와이':'',
-      packages:mkPkgs(a[2]), options:OPT[a[2]].map((o,j)=>({id:a[0]+'-o'+j,title:o[0],price:o[1]})),
+      packages:mkPkgs(a[2], VPRICE[a[0]]), options:OPT[a[2]].map((o,j)=>({id:a[0]+'-o'+j,title:o[0],price:o[1]})),
     }));
 
     this.COUPONS = [
@@ -951,8 +1186,11 @@ class Component extends DCLogic {
       consult:{open:false,target:'',name:'',phone:'',time:'가능한 빨리'},
       lightbox:{open:false,seeds:[],i:0,title:''},
       ads:this.loadAds(), heroIdx:0, rankTab:'hall', stickyClosed:false, popupClosed:false,
+      bundle:{'스튜디오':null,'드레스':null,'메이크업':null},
+      checks:this.loadChecks(),
       toast:'', mytab:'orders', lastOrder:null,
-      login:{name:'',phone:'',date:'',tbd:false},
+      login:{name:'',phone:'',date:'',tbd:false,email:'',pw:''},
+      authMode:'signup', authErr:'', authBusy:false,
     };
   }
 
@@ -1022,6 +1260,48 @@ class Component extends DCLogic {
   toggleAd = (id)=> this.setState(s=>{ var ads=Object.assign({},s.ads); ads[id]=!ads[id]; this.saveAds(ads); return {ads}; });
   toggleMaster = ()=> this.setState(s=>{ var ads=Object.assign({},s.ads); ads._master=!ads._master; this.saveAds(ads); return {ads}; });
   goAdmin = ()=> this.nav({screen:'admin'});
+  goBundle = ()=> this.nav({screen:'bundle'});
+
+  CHECKLIST = [
+    {id:'c1', title:'예산 정하고 양가 상견례',        from:12, to:9, go:null},
+    {id:'c2', title:'웨딩홀 투어 · 날짜 확정',        from:10, to:7, go:'hall'},
+    {id:'c3', title:'스드메 계약 (스튜디오·드레스·메이크업)', from:8, to:5, go:'bundle'},
+    {id:'c4', title:'예물 · 예복 · 한복 준비',        from:6, to:3, go:'honsu'},
+    {id:'c5', title:'청첩장 제작 · 하객 명단 정리',   from:4, to:2, go:null},
+    {id:'c6', title:'신혼여행 예약',                  from:5, to:2, go:'travel'},
+    {id:'c7', title:'본식 리허설 · 최종 점검',        from:1, to:0, go:null}
+  ];
+  loadChecks(){ try{ return JSON.parse(localStorage.getItem('bskn_checks_v1'))||{}; }catch(e){ return {}; } }
+  toggleCheck = (id)=> this.setState(s=>{
+    const c=Object.assign({},s.checks); c[id]=!c[id];
+    try{ localStorage.setItem('bskn_checks_v1', JSON.stringify(c)); }catch(e){}
+    return {checks:c};
+  });
+  monthsLeft(){
+    const u=this.state.user;
+    if(!u || !u.date || u.date==='미정') return null;
+    const d=new Date(u.date); if(isNaN(d)) return null;
+    return Math.max(0, Math.round((d-new Date())/(1000*60*60*24*30.4)));
+  }
+  pickBundle = (sub,id)=> this.setState(s=>{ const b=Object.assign({},s.bundle); b[sub]= b[sub]===id? null : id; return {bundle:b}; });
+  resetBundle = ()=> this.setState({bundle:{'스튜디오':null,'드레스':null,'메이크업':null}});
+  bundleAddCart = ()=>{
+    const subs=['스튜디오','드레스','메이크업'];
+    const picked=subs.map(k=>this.state.bundle[k]).filter(Boolean);
+    if(picked.length<3){ this.showToast('3개를 모두 골라야 묶음 할인이 적용돼요'); return; }
+    const items=picked.map(id=>{
+      const v=this.vendorById(id), p=v.packages[0];
+      return {key:'bundle|'+v.id+'|'+p.id, vendorId:v.id, vendorName:v.name, sub:v.sub, region:v.region,
+        pkgId:p.id, pkgName:'상품 '+p.id+' · '+p.tier+' (묶음)', pkgPrice:Math.round(p.price*0.9/1000)*1000, opts:[], qty:1};
+    });
+    this.setState(s=>{
+      const cart=[...s.cart];
+      items.forEach(it=>{ if(!cart.find(c=>c.key===it.key)) cart.push(it); });
+      return {cart};
+    });
+    this.showToast('묶음 3건을 장바구니에 담았어요 🎉');
+    this.nav({screen:'cart'});
+  };
   onAdClick = ()=> this.showToast('광고 랜딩으로 이동합니다 (데모)');
   closeSticky = ()=> this.setState({stickyClosed:true});
   closePopup = ()=> this.setState({popupClosed:true});
@@ -1036,6 +1316,8 @@ class Component extends DCLogic {
       var h = (location.hash||'').replace(/^#/,''); if(!h) return;
       var p = {}; h.split('&').forEach(function(kv){ var a=kv.split('='); p[a[0]]=decodeURIComponent(a[1]||''); });
       if(h==='admin'){ this.nav({screen:'admin'}); return; }
+      if(h==='bundle'){ this.nav({screen:'bundle'}); return; }
+      if(h==='mypage'){ this.nav({screen: this.state.user?'mypage':'login'}); return; }
       if(h==='cart'){ this.nav({screen:'cart'}); return; }
       if(h==='wish'){ this.nav({screen:'wish'}); return; }
       if(p.name){
@@ -1050,6 +1332,12 @@ class Component extends DCLogic {
     };
     this._hash();
     window.addEventListener('hashchange', this._hash);
+
+    // 세션 복구 (새로고침해도 로그인 유지)
+    this.db().then(db=>{
+      if(!db || !db.ready()) return;
+      db.currentUser().then(u=>{ if(u) this.hydrate(u.id); }).catch(()=>{});
+    });
   }
   componentWillUnmount(){ if(this._hash) window.removeEventListener('hashchange', this._hash); if(this._heroTimer) clearInterval(this._heroTimer); }
 
@@ -1069,7 +1357,13 @@ class Component extends DCLogic {
   onRegionChange = (e)=> this.setState({region:e.target.value});
   onSearch = (e)=> this.setState({search:e.target.value});
   setSort = (v)=> this.setState({sort:v});
-  toggleWish = (key)=> (e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.setState(s=>({wish: s.wish.includes(key)? s.wish.filter(x=>x!==key):[...s.wish,key]})); };
+  toggleWish = (key)=> (e)=>{
+    if(e&&e.stopPropagation) e.stopPropagation();
+    const had = this.state.wish.includes(key);
+    this.setState(s=>({wish: had? s.wish.filter(x=>x!==key):[...s.wish,key]}));
+    const u=this.state.user; if(!u) return;
+    this.db().then(db=>{ if(!db) return; had? db.removeWish(u.id,key) : db.addWish(u.id,key); });
+  };
 
   selectPkg = (pid)=> this.setState(s=>({sel:{...s.sel, pkgId:pid}}));
   toggleOpt = (oid)=> this.setState(s=>{ const has=s.sel.optIds.includes(oid); return {sel:{...s.sel, optIds: has? s.sel.optIds.filter(x=>x!==oid):[...s.sel.optIds,oid]}}; });
@@ -1095,13 +1389,18 @@ class Component extends DCLogic {
     const now = new Date();
     const dstr = now.getFullYear()+'.'+String(now.getMonth()+1).padStart(2,'0')+'.'+String(now.getDate()).padStart(2,'0');
     const order = {id:'ORD-'+(now.getFullYear()%100)+String(now.getMonth()+1).padStart(2,'0')+String(Math.floor(Math.random()*900+100)), date:dstr, total:deposit, status:(this.props.depositMode??true)?'예약금 결제완료':'결제완료', summary: items[0].vendorName + (items.length>1? ' 외 '+(items.length-1)+'건':'')};
+    order.items = items; order.orderTotal = t.total;
     this.setState(s=>({orders:[order,...s.orders], cart:[], couponCode:null, useAllPoints:false, lastOrder:order, screen:'orderDone'}));
     try{ requestAnimationFrame(()=>window.scrollTo(0,0)); }catch(e){}
+    const u=this.state.user;
+    if(u) this.db().then(db=>{ if(db) db.createOrder(u.id, order).catch(e=>console.warn('주문 저장 실패',e)); });
   };
 
   openConsult = (target)=> this.setState(s=>({consult:{...s.consult, open:true, target, name:s.user?s.user.name:'', phone:s.user?s.user.phone:''}}));
   closeConsult = ()=> this.setState(s=>({consult:{...s.consult, open:false}}));
-  submitConsult = ()=>{ const c=this.state.consult; const rec={target:c.target, name:c.name||'고객', phone:c.phone||'010-0000-0000', wishTime:c.time, status:'접수완료'}; this.setState(s=>({consults:[rec,...s.consults], consult:{...s.consult, open:false, name:'', phone:''}})); this.showToast('상담 신청이 접수되었어요 📞'); };
+  submitConsult = ()=>{ const c=this.state.consult; const rec={target:c.target, name:c.name||'고객', phone:c.phone||'010-0000-0000', wishTime:c.time, status:'접수완료'};
+    const u=this.state.user;
+    this.db().then(db=>{ if(db) db.createConsult(u? u.id : null, rec).catch(e=>console.warn('상담 저장 실패',e)); }); this.setState(s=>({consults:[rec,...s.consults], consult:{...s.consult, open:false, name:'', phone:''}})); this.showToast('상담 신청이 접수되었어요 📞'); };
   onConsultName = (e)=>{ const v=e.target.value; this.setState(s=>({consult:{...s.consult,name:v}})); };
   onConsultPhone = (e)=>{ const v=e.target.value; this.setState(s=>({consult:{...s.consult,phone:v}})); };
   onConsultTime = (e)=>{ const v=e.target.value; this.setState(s=>({consult:{...s.consult,time:v}})); };
@@ -1116,6 +1415,86 @@ class Component extends DCLogic {
   onLoginPhone = (e)=>{ const v=e.target.value; this.setState(s=>({login:{...s.login,phone:v}})); };
   onLoginDate = (e)=>{ const v=e.target.value; this.setState(s=>({login:{...s.login,date:v}})); };
   toggleTbd = ()=> this.setState(s=>({login:{...s.login,tbd:!s.login.tbd}}));
+  onLoginEmail = (e)=>{ const v=e.target.value; this.setState(s=>({login:{...s.login,email:v}})); };
+  onLoginPw = (e)=>{ const v=e.target.value; this.setState(s=>({login:{...s.login,pw:v}})); };
+  setAuthMode = (m)=> this.setState(s=>({authMode:m, authErr:''}));
+
+  async db(){
+    if(this._db) return this._db;
+    try{ this._db = await import('./db.js'); }catch(e){ this._db=null; }
+    return this._db;
+  }
+
+  // 로그인 후 서버 데이터 적재
+  async hydrate(userId){
+    const db = await this.db(); if(!db) return;
+    try{
+      let prof = await db.getProfile(userId);
+      if(!prof && db.ensureProfile){
+        const cu = await db.currentUser();
+        prof = await db.ensureProfile(cu);
+      }
+      const [orders, consults, wishes] = await Promise.all([
+        db.listOrders(userId), db.listConsults(userId), db.listWishes(userId)
+      ]);
+      this.setState({
+        user:{ id:userId,
+          name: prof? prof.name : '회원',
+          phone: prof? (prof.phone||'') : '',
+          date: prof? (prof.is_date_tbd || !prof.wedding_date ? '미정' : prof.wedding_date) : '미정',
+          points: prof? (prof.points||0) : 0,
+          provider: prof? prof.provider : 'local' },
+        orders: orders.map(o=>({ id:o.id, date:(o.created_at||'').slice(0,10).replace(/-/g,'.'),
+          status:o.status, summary:o.summary, total:o.total, orderTotal:o.order_total, items:o.items||[] })),
+        consults: consults.map(c=>({ target:c.target, name:c.name, phone:c.phone, wishTime:c.wish_time, status:c.status })),
+        wish: wishes
+      });
+    }catch(e){ console.warn('hydrate 실패', e); }
+  }
+
+  submitAuth = async ()=>{
+    const f=this.state.login, mode=this.state.authMode;
+    const db = await this.db();
+    if(!db || !db.ready()){ this.setState({authErr:'Supabase에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.'}); return; }
+    if(!f.email || !f.pw){ this.setState({authErr:'이메일과 비밀번호를 입력해 주세요.'}); return; }
+    if(mode==='signup' && !f.name){ this.setState({authErr:'이름을 입력해 주세요.'}); return; }
+    this.setState({authBusy:true, authErr:''});
+    try{
+      let user;
+      if(mode==='signup'){
+        user = await db.signUp({ email:f.email, password:f.pw, name:f.name, phone:f.phone,
+          weddingDate:f.date, isTbd:f.tbd });
+      } else {
+        user = await db.signIn({ email:f.email, password:f.pw });
+      }
+      await this.hydrate(user.id);
+      this.setState({authBusy:false, screen:'home', login:{...f, pw:''}});
+      this.showToast((this.state.user? this.state.user.name : '회원')+'님, 환영합니다 👋');
+    }catch(err){
+      const m = String(err && err.message || err);
+      console.warn('[auth]', m);
+      let msg = '문제가 발생했어요. 잠시 후 다시 시도해 주세요.';
+      if(/rate limit/i.test(m)) msg='가입 확인 메일 발송 한도를 초과했습니다. 잠시 후 다시 시도하거나, Supabase 대시보드에서 이메일 확인을 꺼주세요.';
+      else if(/fetch|network|Failed to/i.test(m)) msg='네트워크 연결을 확인해 주세요.';
+      else if(/Invalid login/i.test(m)) msg='이메일 또는 비밀번호가 올바르지 않습니다.';
+      else if(/already registered|already exists/i.test(m)) msg='이미 가입된 이메일입니다. 로그인 탭을 이용해 주세요.';
+      else if(/Password should be/i.test(m)) msg='비밀번호는 6자 이상이어야 합니다.';
+      else if(/confirm/i.test(m)) msg='가입 확인 메일을 확인해 주세요. (대시보드에서 이메일 확인을 끄면 즉시 로그인됩니다)';
+      else if(/does not exist|schema cache|relation/i.test(m)) msg='DB 테이블이 아직 없습니다. Supabase 대시보드 > SQL Editor 에서 supabase-schema.sql 을 실행해 주세요.';
+      else if(/is invalid/i.test(m)) msg='사용할 수 없는 이메일 주소입니다. 실제 사용 가능한 이메일을 입력해 주세요.';
+      this.setState({authBusy:false, authErr:msg});
+    }
+  };
+
+  oauth = async (provider)=>{
+    const db = await this.db();
+    if(!db || !db.ready()){ this.setState({authErr:'Supabase에 연결할 수 없습니다.'}); return; }
+    try{ await db.signInOAuth(provider); }
+    catch(e){
+      this.setState({authErr:(provider==='kakao'?'카카오':'네이버')+' 로그인이 아직 설정되지 않았습니다. Supabase 대시보드 > Authentication > Providers 에서 활성화해 주세요.'});
+    }
+  };
+
   doLogin = (provider)=>{
     const f=this.state.login;
     const name = f.name || (provider==='kakao'?'카카오회원':provider==='naver'?'네이버회원':'김신부');
@@ -1124,10 +1503,13 @@ class Component extends DCLogic {
     this.setState({user:{name, phone, date:f.tbd?'미정':(f.date||'미정'), tbd:f.tbd, points:30000, provider}, orders:seeded, screen:'home'});
     this.showToast(name+'님, 환영합니다 👋');
   };
-  onLoginSubmit = ()=> this.doLogin('local');
-  onKakao = ()=> this.doLogin('kakao');
-  onNaver = ()=> this.doLogin('naver');
-  onLogout = ()=> this.setState({user:null, orders:[], consults:[], screen:'home'});
+  onLoginSubmit = ()=> this.submitAuth();
+  onKakao = ()=> this.oauth('kakao');
+  onNaver = ()=> this.oauth('naver');
+  onLogout = async ()=>{
+    const db = await this.db(); if(db) { try{ await db.signOut(); }catch(e){} }
+    this.setState({user:null, orders:[], consults:[], wish:[], screen:'home'});
+  };
   setMyTab = (t)=> this.setState({mytab:t});
 
   regionFilter(list){ return this.state.region==='전체'? list : list.filter(x=>x.region===this.state.region); }
@@ -1181,7 +1563,22 @@ class Component extends DCLogic {
       isLoggedIn:!!s.user, isGuest:!s.user, userName:s.user?s.user.name:'',
       goHome:this.goHome, goHall:this.goHall, goSdm:this.goSdm, goHonsu:this.goHonsu, goCart:this.goCart, goWish:this.goWish, goSearch:this.goSearch, goLogin:this.goLogin, goMypage:this.goMypage,
       showMap, bottomTabs,
-      isAdmin:s.screen==='admin', goAdmin:this.goAdmin, onAdClick:this.onAdClick,
+      tabs:[
+        {icon:'🏠', label:'홈',       key:'home',   go:this.goHome},
+        {icon:'🔍', label:'검색',     key:'search', go:this.goSearch},
+        {icon:'🗺️', label:'지도',     key:'map',    go:()=>{ try{ location.href='map.html'; }catch(e){} }},
+        {icon:'♥',  label:'찜',       key:'wish',   go:this.goWish,   badge:s.wish.length},
+        {icon:'👤', label:'마이',     key:'my',     go:this.goMypage, badge:s.cart.reduce((a,c)=>a+c.qty,0)}
+      ].map(t=>{
+        const active = (t.key==='home'&&s.screen==='home') || (t.key==='search'&&s.screen==='search')
+          || (t.key==='wish'&&s.screen==='wish') || (t.key==='my'&&(s.screen==='mypage'||s.screen==='login'));
+        return {icon:t.icon, label:t.label, onClick:t.go,
+          hasBadge: t.key==='wish' ? s.wish.length>0 : false,
+          badge: t.badge,
+          style:'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:none;border:none;cursor:pointer;padding:9px 0 7px;min-height:56px;color:'+(active?'#ff4d6d':'#a49dae')};
+      }),
+      isAdmin:s.screen==='admin', isBundle:s.screen==='bundle', goBundle:this.goBundle,
+      goAdmin:this.goAdmin, onAdClick:this.onAdClick,
       adStrip:this.adOn('strip'), adHero:this.adOn('hero'), adBrand:this.adOn('brand'),
       adInfeed:this.adOn('infeed'), adSponsor:this.adOn('sponsor'),
       adSticky:this.adOn('sticky') && !s.stickyClosed,
@@ -1195,7 +1592,10 @@ class Component extends DCLogic {
       adPopupAdvertiser:this.AD_CREATIVE.popup.advertiser, adPopupTitle:this.AD_CREATIVE.popup.title,
       adPopupSub:this.AD_CREATIVE.popup.sub, adPopupImg:this.img(this.AD_CREATIVE.popup.seed,600,450),
       adPopupShow:useReal, adInfeedShow:useReal,
-      rootStyle:'min-height:100vh;background:#f4f3f6;color:#2b2530'+((this.adOn('sticky') && !s.stickyClosed)?';padding-bottom:76px':''),
+      adPopupImgStyle:'width:100%;height:100%;background-size:cover;background-position:center'+(useReal?";background-image:url('"+this.img(this.AD_CREATIVE.popup.seed,600,450)+"')":''),
+      adInfeedImgStyle:'width:100%;height:100%;background-size:cover;background-position:center'+(useReal?";background-image:url('"+this.img(this.AD_CREATIVE.infeed.seed,200,200)+"')":''),
+      rootStyle:'min-height:100dvh;background:#f4f3f6;color:#2b2530'+((this.adOn('sticky') && !s.stickyClosed)?';padding-bottom:76px':''),
+      mobilePad:true,
       isHome:s.screen==='home', isSearch:s.screen==='search', isWish:s.screen==='wish',
       isHallList:s.screen==='hallList', isHallDetail:s.screen==='hallDetail',
       isVendorList:s.screen==='vendorList', isVendorDetail:s.screen==='vendorDetail',
@@ -1224,7 +1624,7 @@ class Component extends DCLogic {
       ];
       const pastels = ['#FFE3E9','#E3EEFF','#FFE9F2','#F0E7FF','#FCEBD8','#E5F1FF','#FFF3D6','#E0F5F0'];
       base.categoryCircles = pills.map((p,i)=>({label:p[0], icon:p[1], onClick:p[2],
-        iconStyle:'width:54px;height:54px;border-radius:18px;background:'+pastels[i%pastels.length]+';display:flex;align-items:center;justify-content:center;font-size:25px;line-height:1'}));
+        iconStyle:'width:100%;max-width:78px;aspect-ratio:1/1;border-radius:24px;background:'+pastels[i%pastels.length]+';display:flex;align-items:center;justify-content:center;font-size:clamp(28px,3.4vw,36px);line-height:1'}));
       const H=this.regionFilter(this.HALLS), S=this.regionFilter(this.vendorsForCat('sdm')), N=this.regionFilter(this.vendorsForCat('honsu'));
       const pools=[H.map(x=>['hall',x]), S.map(x=>['v',x]), N.map(x=>['v',x])];
       const feed=[]; let idx=0; while(feed.length<16){ let added=false; for(const p of pools){ if(p[idx]){ feed.push(p[idx]); added=true; } } if(!added) break; idx++; }
@@ -1236,6 +1636,27 @@ class Component extends DCLogic {
         style:(s.region===r
           ?'flex:none;background:#2b2530;color:#fff;border:1px solid #2b2530;border-radius:999px;padding:8px 15px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap'
           :'flex:none;background:#f4f3f6;color:#4b4455;border:1px solid #ecebf0;border-radius:999px;padding:8px 15px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap')}));
+
+      // D-day 체크리스트
+      const ml=this.monthsLeft();
+      const done=this.CHECKLIST.filter(c=>s.checks[c.id]).length;
+      const pct=Math.round(done/this.CHECKLIST.length*100);
+      base.ddLabel = ml==null? '결혼' : 'D-'+(ml*30>0? ml+'개월' : '임박');
+      base.ddSub = ml==null
+        ? (s.user? '예정일을 등록하면 시기별로 안내해드려요' : '로그인하고 예정일을 등록해보세요')
+        : '예식까지 약 '+ml+'개월 · '+done+'/'+this.CHECKLIST.length+'단계 완료';
+      base.ddPct = pct+'%';
+      base.ddBarStyle='display:block;height:100%;border-radius:999px;transition:width .3s;width:'+pct+'%;background:linear-gradient(90deg,#ff4d6d,#ff8095)';
+      const goMap={hall:this.goHall, bundle:this.goBundle, honsu:this.goHonsu, travel:this.goHonsu};
+      base.checklist=this.CHECKLIST.map(c=>{
+        const dn=!!s.checks[c.id];
+        const now = ml!=null && ml<=c.from && ml>=c.to;
+        return {title:c.title, done:dn, hasGo:!!c.go, goLabel:'바로가기',
+          when: now? '지금 할 때예요' : (ml==null? '예식 '+c.from+'~'+c.to+'개월 전' : '예식 '+c.from+'~'+c.to+'개월 전'),
+          onToggle:()=>this.toggleCheck(c.id),
+          boxStyle:'width:24px;height:24px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none;'+(dn?'background:#ff4d6d;border:1px solid #ff4d6d':'background:#fff;border:1.5px solid #ddd7e2'),
+          titleStyle:'font-size:14px;font-weight:700;letter-spacing:-.01em;'+(dn?'color:#b6aebd;text-decoration:line-through':(now?'color:#ff4d6d':'color:#2b2530'))};
+      });
 
       // hero carousel (ad)
       const hero = this.AD_CREATIVE.hero[s.heroIdx % 3];
@@ -1283,6 +1704,53 @@ class Component extends DCLogic {
         {badge:'이벤트', title:'혼수 한 번에\n예물+한복+예복', sub:'묶음 예약 시 추가 할인', bg:'linear-gradient(120deg,#12b3a6,#4fd1c5)', onClick:this.goHonsu}
       ].map(c=>({badge:c.badge, title:c.title, sub:c.sub, onClick:c.onClick,
         style:'color:#fff;border-radius:18px;padding:20px 22px;cursor:pointer;min-height:140px;display:flex;flex-direction:column;justify-content:flex-end;background:'+c.bg}));
+    }
+
+    if(s.screen==='bundle'){
+      const meta={'스튜디오':{icon:'📸',color:'#7c5cff'},'드레스':{icon:'👰',color:'#ff8fab'},'메이크업':{icon:'💄',color:'#12b3a6'}};
+      const subs=['스튜디오','드레스','메이크업'];
+      base.bundleSlots = subs.map(sub=>{
+        const list=this.VENDORS.filter(v=>v.sub===sub);
+        return {title:sub, icon:meta[sub].icon, picked:!!s.bundle[sub],
+          dotStyle:'width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;flex:none;background:'+meta[sub].color+'22',
+          options:list.map(v=>{
+            const on=s.bundle[sub]===v.id;
+            return {name:v.name, region:v.region, rate:(4.9-(list.indexOf(v)%3)*0.1).toFixed(1),
+              price:this.man(v.packages[0].price)+'원~', showImg:useReal, thumb:this.img('v-'+v.id+'-0',300,225), on,
+              onPick:()=>this.pickBundle(sub,v.id),
+              style:'flex:none;width:172px;text-align:left;background:#fff;border-radius:16px;padding:10px;cursor:pointer;border:'+(on?'2px solid #ff4d6d':'1px solid #ecebf0')};
+          })};
+      });
+      const chosen = subs.map(k=>s.bundle[k]).filter(Boolean).map(id=>this.vendorById(id));
+      const sum = chosen.reduce((a,v)=>a+v.packages[0].price,0);
+      const full = chosen.length===3;
+      const disc = full? Math.round(sum*0.1) : 0;
+      base.bundleLines = subs.map(sub=>{
+        const v=s.bundle[sub]? this.vendorById(s.bundle[sub]) : null;
+        return {cat:sub, name:v? v.name : '아직 안 골랐어요',
+          price:v? this.man(v.packages[0].price)+'원' : '—',
+          valStyle:'font-size:13.5px;font-weight:800;white-space:nowrap;color:'+(v?'#2b2530':'#c4bdcc')};
+      });
+      base.bundleSubtotal=this.fmt(sum);
+      base.bundleRate= full? '10%' : '(3개 선택 시)';
+      base.bundleDiscount= full? '-'+this.fmt(disc) : '-0원';
+      base.bundleTotal=this.fmt(sum-disc);
+      base.bundleHint= full? '3개를 모두 고르셨어요. 10% 묶음 할인이 적용됐습니다 🎉' : (3-chosen.length)+'개만 더 고르면 10% 할인이 적용돼요.';
+      base.bundleHintStyle='font-size:12.5px;margin-top:10px;line-height:1.5;border-radius:10px;padding:10px 12px;'+(full?'background:#e6f7f5;color:#0d8f84':'background:#f8f7fa;color:#8b8592');
+      base.bundleBtnLabel= full? '묶음 장바구니 담기' : '3개를 모두 골라주세요';
+      base.bundleBtnStyle='width:100%;margin-top:14px;border:none;border-radius:13px;padding:15px 0;font-size:15px;font-weight:800;'+(full?'background:#ff4d6d;color:#fff;cursor:pointer':'background:#f2f0f5;color:#b6aebd;cursor:not-allowed');
+      base.onBundleCart=this.bundleAddCart; base.onBundleReset=this.resetBundle;
+      const avg={}; this.R.forEach(r=>{
+        const vs=this.VENDORS.filter(v=>v.region===r && subs.includes(v.sub));
+        if(vs.length) avg[r]=Math.round(vs.reduce((a,v)=>a+v.packages[0].price,0)/vs.length*3);
+      });
+      const rows=Object.keys(avg).map(r=>({label:r, v:avg[r]}));
+      if(full) rows.push({label:'내 견적', v:sum-disc, me:true});
+      const max=Math.max(...rows.map(r=>r.v));
+      base.bundleCompare=rows.sort((a,b)=>a.v-b.v).map(r=>({
+        label:r.label, value:this.man(r.v)+'원',
+        barStyle:'display:block;height:100%;border-radius:999px;width:'+Math.round(r.v/max*100)+'%;background:'+(r.me?'#ff4d6d':'#d9d3e0'),
+        valStyle:'width:64px;text-align:right;font-size:12.5px;font-weight:800;flex:none;color:'+(r.me?'#ff4d6d':'#6d6579')}));
     }
 
     if(s.screen==='admin'){
@@ -1410,6 +1878,23 @@ class Component extends DCLogic {
     }
 
     if(s.screen==='login'){
+      const su = s.authMode==='signup';
+      base.isSignupMode=su;
+      base.authTitle = su? '반가워요! 👋' : '다시 오셨네요';
+      base.authSub = su? '가입하면 3만 적립금을 바로 드려요.' : '이메일로 로그인하세요.';
+      base.onModeSignup=()=>this.setAuthMode('signup'); base.onModeLogin=()=>this.setAuthMode('login');
+      const tabOn='flex:1;border:none;border-radius:10px;padding:11px 0;font-size:13.5px;font-weight:800;cursor:pointer;background:#fff;color:#2b2530;box-shadow:0 1px 4px rgba(30,20,40,.1)';
+      const tabOff='flex:1;border:none;border-radius:10px;padding:11px 0;font-size:13.5px;font-weight:700;cursor:pointer;background:none;color:#8b8592';
+      base.signupTabStyle= su? tabOn : tabOff;
+      base.loginTabStyle= su? tabOff : tabOn;
+      base.loginEmail=s.login.email; base.loginPw=s.login.pw;
+      base.onLoginEmail=this.onLoginEmail; base.onLoginPw=this.onLoginPw;
+      base.authError=!!s.authErr; base.authErrorMsg=s.authErr;
+      base.authBtnLabel = s.authBusy? '처리 중…' : (su? '가입하고 시작하기' : '로그인');
+      base.authBtnStyle='width:100%;border:none;border-radius:14px;padding:15px 0;font-size:15px;font-weight:800;'+(s.authBusy?'background:#f2f0f5;color:#b6aebd;cursor:wait':'background:#ff4d6d;color:#fff;cursor:pointer');
+      base.authFootnote = su? '가입 시 이용약관 및 개인정보처리방침에 동의합니다.' : '비밀번호를 잊으셨다면 다시 가입해 주세요.';
+      base.dbBadge='🔒 Supabase에 안전하게 저장됩니다';
+      base.dbBadgeStyle='text-align:center;font-size:11.5px;color:#a49dae;margin-top:14px;font-weight:600';
       base.loginName=s.login.name; base.loginPhone=s.login.phone; base.loginDate=s.login.date; base.loginTbd=s.login.tbd;
       base.onLoginName=this.onLoginName; base.onLoginPhone=this.onLoginPhone; base.onLoginDate=this.onLoginDate; base.onToggleTbd=this.toggleTbd;
       base.onLoginSubmit=this.onLoginSubmit; base.onKakao=this.onKakao; base.onNaver=this.onNaver;

@@ -16,17 +16,19 @@
 </style>
 <style>
 *{box-sizing:border-box}
+:root{--sab:env(safe-area-inset-bottom,0px);--rail:56px}
 html,body{margin:0;padding:0;height:100%}
-body{font-family:'Paperlogy','Pretendard',system-ui,-apple-system,sans-serif;letter-spacing:-.01em;background:#f4f3f6;color:#2b2530;overflow:hidden;-webkit-font-smoothing:antialiased}
+body{font-family:'Paperlogy','Pretendard',system-ui,-apple-system,sans-serif;letter-spacing:-.01em;background:#f4f3f6;color:#2b2530;overflow:hidden;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
 button{font-family:inherit;cursor:pointer}
 input{font-family:inherit}
+button,a{-webkit-tap-highlight-color:rgba(255,77,109,.12);touch-action:manipulation}
 a{color:inherit;text-decoration:none}
 .jua{font-weight:800}
 ::-webkit-scrollbar{width:9px;height:9px}
 ::-webkit-scrollbar-thumb{background:#d8d4de;border-radius:8px;border:2px solid #f4f3f6}
 
 /* ---------- shell ---------- */
-#app{display:flex;flex-direction:column;height:100%}
+#app{display:flex;flex-direction:column;height:100%;height:100dvh}
 
 header{flex:none;background:#fff;border-bottom:1px solid #ecebf0;z-index:1200;position:relative}
 .hrow{display:flex;align-items:center;gap:12px;padding:10px clamp(12px,2.5vw,22px)}
@@ -34,16 +36,19 @@ header{flex:none;background:#fff;border-bottom:1px solid #ecebf0;z-index:1200;po
 .brand i{width:30px;height:30px;border-radius:10px;background:#ff4d6d;color:#fff;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:15px}
 .brand b{font-size:16px;letter-spacing:-.03em}
 .brand small{color:#a49dae;font-size:11px;display:block;margin-top:-2px;font-weight:600}
-.searchwrap{flex:1;max-width:440px;display:flex;align-items:center;gap:8px;background:#f4f3f6;border:1px solid #e6e3ec;border-radius:999px;padding:9px 15px}
-.searchwrap input{flex:1;border:none;background:none;outline:none;font-size:14px;font-weight:500}
-.searchwrap span{color:#a49dae;font-size:15px}
+.searchwrap{flex:1;max-width:440px;display:flex;align-items:center;background:#faf9fb;border:1px solid #ecebf0;border-radius:999px;padding:0 6px 0 18px;height:48px}
+.searchwrap input{flex:1;min-width:0;border:none;background:none;outline:none;font-size:15px;font-weight:500;color:#2b2530}
+.searchwrap input::placeholder{color:#a49dae;font-weight:500}
+.searchwrap .vdiv{width:1px;height:20px;background:#e0dce6;flex:none;text-decoration:none;margin:0 12px}
+.wdate{flex:none;background:none;border:none;font-size:15px;font-weight:700;color:#2b2530;padding:0 12px 0 0;font-family:inherit;white-space:nowrap}
 .hbtn{background:#fff;border:1px solid #e6e3ec;border-radius:10px;padding:9px 13px;font-size:13px;font-weight:700;color:#4b4455}
 .hbtn.primary{background:#2b2530;border-color:#2b2530;color:#fff}
 .hspacer{margin-left:auto;display:flex;gap:8px;align-items:center;flex:none}
 
 /* ---------- filter bar ---------- */
 .filterbar{flex:none;background:#fff;border-bottom:1px solid #ecebf0;position:relative;z-index:1150}
-.chips{display:flex;gap:8px;padding:11px clamp(12px,2.5vw,22px);overflow-x:auto;scrollbar-width:none}
+.chips{display:flex;align-items:center;gap:8px;padding:11px clamp(12px,2.5vw,22px);overflow-x:auto;scrollbar-width:none}
+.chips .clr{margin-left:auto;background:none!important;border:none!important;color:#a49dae!important;font-weight:600;padding:8px 2px!important;flex:none}
 .chips::-webkit-scrollbar{display:none}
 .chip{display:flex;align-items:center;gap:6px;flex:none;background:#fff;border:1px solid #e6e3ec;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:700;color:#4b4455;white-space:nowrap;transition:.15s}
 .chip .cnt{font-size:11px;color:#a49dae;font-weight:700}
@@ -77,9 +82,10 @@ select.sort{border:1px solid #e6e3ec;border-radius:999px;padding:8px 12px;font-s
 .crate b{color:#2b2530}
 .ctags{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
 .ctag{font-size:10.5px;font-weight:700;color:#6d6579;background:#f4f3f6;border-radius:6px;padding:3px 7px}
-.cprice{margin-top:auto;padding-top:7px;display:flex;align-items:baseline;gap:5px}
-.cprice em{font-style:normal;font-size:11px;color:#a49dae;font-weight:700}
-.cprice strong{font-weight:800;font-size:17px;color:#ff4d6d;letter-spacing:-.01em}
+.cprice{margin-top:auto;padding-top:7px;display:flex;flex-direction:column;align-items:flex-end;gap:1px}
+.plist{font-size:11.5px;color:#a49dae;font-weight:600}
+.plist s{color:#c4bdcc}
+.cprice strong{font-weight:800;font-size:18px;color:#2b2530;letter-spacing:-.02em}
 .heart{position:absolute;right:9px;top:9px;width:27px;height:27px;border-radius:50%;background:rgba(255,255,255,.94);border:1px solid #ecebf0;color:#d5cfda;font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0}
 .heart.on{color:#ff4d6d}
 
@@ -93,7 +99,10 @@ select.sort{border:1px solid #e6e3ec;border-radius:999px;padding:8px 12px;font-s
 .pin{display:flex;align-items:center;gap:4px;background:#fff;border:1.5px solid #2b2530;border-radius:999px;padding:4px 9px;font-size:12px;font-weight:800;color:#2b2530;white-space:nowrap;box-shadow:0 3px 10px rgba(30,20,40,.22);transition:transform .12s;cursor:pointer}
 .pin i{font-style:normal;font-size:11px}
 .pin:hover{transform:scale(1.07)}
-.pin.sel{background:#ff4d6d;border-color:#ff4d6d;color:#fff;transform:scale(1.14);z-index:9999}
+.callout{background:#fff;border:2px solid #ff4d6d;border-radius:16px;padding:9px 15px;box-shadow:0 8px 22px rgba(30,20,40,.26);white-space:nowrap;position:relative;cursor:pointer}
+.cline{font-size:12.5px;font-weight:700;color:#2b2530;max-width:190px;overflow:hidden;text-overflow:ellipsis}
+.cprice2{font-size:15px;font-weight:800;color:#ff4d6d;margin-top:1px}
+.tail{position:absolute;left:50%;bottom:-8px;width:12px;height:12px;background:#fff;border-right:2px solid #ff4d6d;border-bottom:2px solid #ff4d6d;transform:translateX(-50%) rotate(45deg);text-decoration:none}
 .pin.dim{opacity:.5}
 .leaflet-marker-icon.selz{z-index:9000!important}
 
@@ -107,8 +116,19 @@ select.sort{border:1px solid #e6e3ec;border-radius:999px;padding:8px 12px;font-s
 .rj{background:rgba(255,255,255,.95);border:1px solid #e6e3ec;border-radius:9px;padding:7px 11px;font-size:12px;font-weight:800;color:#4b4455;box-shadow:0 3px 10px rgba(30,20,40,.08)}
 .rj.on{background:#2b2530;color:#fff;border-color:#2b2530}
 
-.viewtoggle{position:fixed;left:50%;transform:translateX(-50%);bottom:22px;z-index:900;background:#2b2530;color:#fff;border:none;border-radius:999px;padding:13px 24px;font-size:13.5px;font-weight:800;box-shadow:0 10px 28px rgba(30,20,40,.34);display:flex;align-items:center;gap:8px}
-.viewtoggle:hover{background:#3b3442}
+.viewtoggle{position:fixed;left:50%;transform:translateX(-50%);bottom:22px;z-index:900;background:#fff;color:#2b2530;border:1px solid #e6e3ec;border-radius:999px;padding:13px 26px;font-size:14px;font-weight:800;box-shadow:0 8px 24px rgba(30,20,40,.22);display:flex;align-items:center;gap:8px}
+.viewtoggle:hover{background:#faf9fb}
+
+/* 내 위치 플로팅 버튼 */
+.locbtn{position:absolute;right:14px;bottom:86px;z-index:800;width:52px;height:52px;border-radius:50%;background:#fff;border:1px solid #e6e3ec;box-shadow:0 6px 18px rgba(30,20,40,.2);display:flex;align-items:center;justify-content:center;font-size:19px;color:#2b2530}
+.locbtn:active{background:#f4f3f6}
+
+/* 하단 탭바 (모바일) */
+.tabbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:1000;background:#fff;border-top:1px solid #ecebf0;padding-bottom:env(safe-area-inset-bottom)}
+.tabbar > div{display:grid;grid-template-columns:repeat(5,1fr)}
+.tabbar a,.tabbar button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:none;border:none;padding:9px 0 7px;min-height:56px;color:#a49dae;font-size:11px;font-weight:700;text-decoration:none;font-family:inherit}
+.tabbar .on{color:#2b2530;font-weight:800}
+.tabbar svg{display:block}
 
 /* ===== list view (default, 야놀자식) ===== */
 body.listview #mapwrap{display:none}
@@ -118,7 +138,7 @@ body.listview .panelhead{max-width:1180px;margin:0 auto;width:100%}
 body.listview #cards{max-width:1180px;margin:0 auto;width:100%}
 
 /* ---------- detail sheet ---------- */
-#sheet{position:absolute;right:0;top:0;bottom:0;width:min(400px,92vw);background:#fff;border-left:1px solid #ecebf0;box-shadow:-14px 0 40px rgba(30,20,40,.16);z-index:1100;transform:translateX(102%);transition:transform .28s cubic-bezier(.3,.8,.3,1);overflow-y:auto}
+#sheet{position:absolute;right:0;top:0;bottom:0;width:min(400px,92vw);background:#fff;border-left:1px solid #ecebf0;box-shadow:-14px 0 40px rgba(30,20,40,.16);z-index:1100;transform:translateX(102%);transition:transform .28s cubic-bezier(.3,.8,.3,1);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 #sheet.open{transform:none}
 .shero{position:relative;height:210px;background:linear-gradient(135deg,#efe6ee,#ddd0d8)}
 .shero img{width:100%;height:100%;object-fit:cover;display:block}
@@ -142,33 +162,113 @@ body.listview #cards{max-width:1180px;margin:0 auto;width:100%}
 /* ---------- modal / toast ---------- */
 .mask{position:fixed;inset:0;background:rgba(30,22,34,.55);backdrop-filter:blur(3px);z-index:1400;display:none;align-items:center;justify-content:center;padding:18px}
 .mask.open{display:flex}
-.modal{width:100%;max-width:380px;background:#fff;border-radius:20px;padding:22px}
+.modal{width:100%;max-width:380px;background:#fff;border-radius:20px;padding:22px;max-height:calc(100dvh - 36px);overflow-y:auto;-webkit-overflow-scrolling:touch}
 .modal h3{margin:0;font-size:18px;letter-spacing:-.02em}
 .modal p{margin:5px 0 0;font-size:13px;color:#8b8592}
 .field{margin-top:12px}
 .field b{display:block;font-size:12.5px;font-weight:700;margin-bottom:5px}
 .field input,.field select{width:100%;border:1px solid #e6e3ec;border-radius:11px;padding:11px 13px;font-size:14px;outline:none;background:#fff}
 .modal .go{width:100%;margin-top:16px;background:#ff4d6d;color:#fff;border:none;border-radius:12px;padding:14px 0;font-size:15px;font-weight:800}
+.stepper{display:flex;align-items:center;justify-content:space-between;border:1px solid #e6e3ec;border-radius:12px;padding:6px}
+.stepper button{width:44px;height:44px;border-radius:9px;border:none;background:#f4f3f6;font-size:19px;font-weight:800;color:#2b2530}
+.stepper div{display:flex;align-items:baseline;gap:3px}
+.stepper strong{font-size:22px;font-weight:800}
+.stepper span{font-size:13px;color:#8b8592;font-weight:700}
+.ghint{font-size:12px;color:#8b8592;margin-top:8px;line-height:1.5}
+.wbtns{display:flex;gap:8px;margin-top:16px}
+.wbtns .ghost{flex:none;background:#f4f3f6;border:none;border-radius:12px;padding:14px 18px;font-size:14px;font-weight:700;color:#8b8592}
+.wbtns .go{flex:1}
+.wdate.on{color:#ff4d6d}
 #toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,14px);z-index:1500;background:#231f29;color:#fff;padding:13px 20px;border-radius:13px;font-size:13.5px;font-weight:700;opacity:0;transition:.22s;pointer-events:none}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 
 /* ---------- mobile ---------- */
+/* ---------- tablet (901~1100) ---------- */
+@media(min-width:901px) and (max-width:1100px){
+  #panel{width:clamp(300px,30vw,340px)}
+  .pricebox label{display:none}
+  input[type=range]{width:84px}
+}
+
+/* ---------- mobile / \ud1a0\uc11c \uc774\ud558 (~900) ---------- */
 @media(max-width:900px){
   .hrow{gap:8px;padding:9px 12px}
   .brand small{display:none}
-  .searchwrap{max-width:none}
+  .searchwrap{max-width:none;height:44px}
   .hspacer .hbtn.wide{display:none}
+  input,select{font-size:16px}
+  .searchwrap input{font-size:16px}
+
+  /* \ud544\ud130\ubc14: 1\ud589 \uce74\ud14c\uace0\ub9ac \uc2a4\ud06c\ub864 + 2\ud589 \uc815\ub82c/\uac00\uacc4 */
+  .chips{flex-wrap:nowrap;overflow-x:auto;padding:9px 12px;gap:7px}
+  .chips > .chip{order:1;min-height:40px;padding:8px 13px}
+  .chips > .divider{display:none}
+  .chips > .pricebox.rad{order:2;margin-left:4px;padding-left:9px;border-left:1px solid #ecebf0}
+  .chips > select.sort{order:3;min-height:40px}
+  .chips > .pricebox{order:4}
+  .chips > .clr{order:5;margin-left:2px}
+  input[type=range]{width:88px}
+
   .split{display:block}
   #mapwrap{position:absolute;inset:0}
-  body.mapview #panel{position:absolute;left:0;right:0;bottom:0;top:auto;width:auto;height:auto;background:transparent;flex-direction:row;overflow-x:auto;overflow-y:hidden;gap:10px;padding:10px 12px 78px;scroll-snap-type:x mandatory;z-index:700}
+
+  /* \uc9c0\ub3c4\ubdf0: \ud558\ub2e8 \uac00\ub85c \uce74\ub4dc \ub808\uc774\ub4dc */
+  body.mapview #panel{position:absolute;left:0;right:0;bottom:0;top:auto;width:auto;height:auto;background:transparent;flex-direction:row;overflow-x:auto;overflow-y:hidden;gap:10px;padding:10px 12px calc(var(--sab) + var(--rail) + 10px);scroll-snap-type:x proximity;overscroll-behavior-x:contain;z-index:700}
   body.mapview #panel .panelhead{display:none}
-  body.mapview #panel .card{flex:none;width:min(80vw,320px);scroll-snap-align:center;box-shadow:0 8px 26px rgba(30,20,40,.16)}
+  body.mapview #panel .card{flex:none;width:min(78vw,310px);scroll-snap-align:center;box-shadow:0 8px 26px rgba(30,20,40,.16)}
+  body.mapview #panel .thumb{width:78px;height:78px}
+
+  /* \ub9ac\uc2a4\ud2b8\ubdf0 */
   body.listview #cards{grid-template-columns:1fr}
+  body.listview #panel{padding-bottom:calc(var(--sab) + var(--rail) + 78px)}
+
+  .tabbar{display:block}
+
+  /* \ud558\ub2e8 \ud50c\ub85c\ud305 \uc0ac\ub2e4\ub9ac: \ud1a1\ubc14 \u2192 \uce74\ub4dc\ub808\uc774\ub4dc \u2192 \ud1a0\uae00/\ub0b4\uc704\uce58 */
+  .viewtoggle{bottom:calc(var(--sab) + var(--rail) + 14px);padding:12px 22px;font-size:13.5px}
+  body.mapview .viewtoggle{bottom:calc(var(--sab) + var(--rail) + 128px)}
+  .locbtn{right:12px;bottom:calc(var(--sab) + var(--rail) + 128px);width:46px;height:46px}
   .legend{display:none}
-  body.mapview .viewtoggle{bottom:calc(env(safe-area-inset-bottom) + 140px)}
-  .regionjump{flex-direction:row;flex-wrap:wrap;max-width:calc(100% - 24px)}
-  #sheet{width:100%;border-left:none;border-radius:22px 22px 0 0;top:auto;height:88%;transform:translateY(102%)}
+
+  /* \uc9c0\uc5ed \uc810\ud504 1\ud589 \uc2a4\ud06c\ub864, \ub2e4\uc2dc\uac80\uc0c1 \ubc84\ud2bc\uc740 \uadf8 \uc544\ub798\ub85c */
+  .regionjump{flex-direction:row;flex-wrap:nowrap;overflow-x:auto;max-width:calc(100% - 20px);left:10px;top:10px;padding-bottom:2px;scrollbar-width:none}
+  .regionjump::-webkit-scrollbar{display:none}
+  .maptop{top:54px}
+
+  /* \uc0c1\uc138 \uc2dc\ud2b8: \ubc14\ud568 \uc2dc\ud2b8\ub85c */
+  #sheet{width:100%;border-left:none;border-radius:22px 22px 0 0;top:auto;bottom:0;height:88dvh;transform:translateY(102%)}
   #sheet.open{transform:none}
+  .sbody{padding:18px 18px calc(var(--sab) + 24px)}
+  .shero{height:180px}
+}
+
+/* ---------- \uc791\uc740 \ud3f0 (~420) ---------- */
+@media(max-width:420px){
+  .brand em{display:none}
+  .hspacer .hbtn.primary{display:none}
+  .brand b{font-size:15px}
+  .thumb{width:84px;height:84px}
+  .cprice strong{font-size:16px}
+  body.mapview #panel .card{width:82vw}
+  .viewtoggle{padding:11px 18px}
+}
+
+/* ---------- \ucd08\uc18c\ud615 (~340) ---------- */
+@media(max-width:340px){
+  .brand div{display:none}
+  .sgal{grid-template-columns:repeat(2,1fr)}
+}
+
+/* ---------- \uac00\ub85c\ubaa8\ub4dc ---------- */
+@media(max-height:520px) and (orientation:landscape){
+  .chips{padding:6px 12px}
+  .chips > .chip{min-height:36px;padding:6px 12px}
+  #sheet{width:min(420px,62vw);height:100%;top:0;bottom:0;border-radius:0;border-left:1px solid #ecebf0;transform:translateX(102%)}
+  #sheet.open{transform:none}
+  .shero{height:130px}
+  body.mapview #panel .card{width:min(52vw,280px)}
+  body.mapview .viewtoggle{bottom:calc(var(--sab) + var(--rail) + 118px)}
+  .modal{max-height:calc(100dvh - 20px)}
 }
 </style>
 </head>
@@ -177,7 +277,11 @@ body.listview #cards{max-width:1180px;margin:0 auto;width:100%}
   <header>
     <div class="hrow">
       <a class="brand" href="index.html"><i>웨</i><div><b>웨딩여기 <em style="font-style:normal;font-size:11px;font-weight:700;color:#a49dae">부산·경남</em></b><small>웨딩홀 · 스드메 · 혼수 지도</small></div></a>
-      <div class="searchwrap"><span>🔍</span><input id="q" placeholder="지역 · 업체명으로 찾기 (예: 해운대, 끌로에)"></div>
+      <div class="searchwrap">
+        <input id="q" placeholder="지역, 업체 검색">
+        <s class="vdiv"></s>
+        <button class="wdate" id="wdate">예식일 · 하객수</button>
+      </div>
       <div class="hspacer">
         <a class="hbtn wide" href="index.html">홈</a>
         <button class="hbtn" id="wishBtn">♥ <span id="wishCnt">0</span></button>
@@ -201,10 +305,42 @@ body.listview #cards{max-width:1180px;margin:0 auto;width:100%}
       <div class="maptop"><button class="research" id="research">📍 이 지역에서 다시 검색</button></div>
       <div class="regionjump" id="regionJump"></div>
       <div class="legend" id="legend"></div>
+      <button class="locbtn" id="locBtn" title="내 위치"><svg width="21" height="21" viewBox="0 0 24 24" fill="#2b2530"><path d="M3 11.2 20.5 3.5 12.8 21l-2-7.8-7.8-2Z"/></svg></button>
       <div id="sheet"></div>
     </div>
   </div>
-  <button class="viewtoggle" id="viewToggle">🗺️ 지도에서 보기</button>
+  <button class="viewtoggle" id="viewToggle"></button>
+  <nav class="tabbar">
+    <div>
+      <a href="index.html#search"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M3 6h8M3 11h6M3 16h5"/><circle cx="16.5" cy="14.5" r="4"/><path d="m19.6 17.6 2.4 2.4"/></svg>카테고리</a>
+      <button class="on" onclick="locate(true)"><svg width="23" height="23" viewBox="0 0 24 24" fill="currentColor"><path d="M3 11.2 20.5 3.5 12.8 21l-2-7.8-7.8-2Z"/></svg>내주변</button>
+      <a href="index.html"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/></svg>홈</a>
+      <button id="tabWish"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 20s-7.5-4.7-7.5-9.6A4.4 4.4 0 0 1 12 7.4a4.4 4.4 0 0 1 7.5 3C19.5 15.3 12 20 12 20Z"/></svg>찜</button>
+      <a href="index.html#mypage"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c1.2-3.6 4-5.4 7-5.4s5.8 1.8 7 5.4"/></svg>마이</a>
+    </div>
+  </nav>
+</div>
+
+<div class="mask" id="wMask">
+  <div class="modal">
+    <h3>예식 조건</h3>
+    <p>예정일과 하객 수를 넣으면 조건에 맞는 곳만 보여드려요.</p>
+    <div class="field"><b>예식 예정월</b>
+      <select id="wMonthSel"></select>
+    </div>
+    <div class="field"><b>예상 하객 수</b>
+      <div class="stepper">
+        <button id="gMinus">−</button>
+        <div><strong id="gVal">250</strong><span>명</span></div>
+        <button id="gPlus">+</button>
+      </div>
+      <div class="ghint" id="gHint"></div>
+    </div>
+    <div class="wbtns">
+      <button class="ghost" id="wClear">조건 해제</button>
+      <button class="go" id="wApply" style="margin-top:0">조건 적용</button>
+    </div>
+  </div>
 </div>
 
 <div class="mask" id="consultMask">
@@ -257,20 +393,20 @@ var ITEMS = [
   ['h10','hall','마산 아름컨벤션','마산','합성동',35.1992,128.5695,950000,4.3,118,['역세권','보증 160명']],
   // 스튜디오
   ['s1','studio','세렌디피티 스튜디오','부산','광안리',35.1520,129.1170,700000,4.9,412,['자연광','원본 300컷','야외스냅']],
-  ['s2','studio','모먼트필름','부산','서면',35.1570,129.0580,850000,4.8,336,['필름감성','원본 500컷']],
-  ['s3','studio','화이트룸 스튜디오','부산','해운대',35.1640,129.1620,780000,4.7,221,['미니멀','한옥세트']],
+  ['s2','studio','모먼트필름 스튜디오','창원','상남동',35.2260,128.6800,850000,4.8,336,['필름감성','원본 500컷']],
+  ['s3','studio','화이트룸 스튜디오','김해','내외동',35.2382,128.8735,780000,4.7,221,['미니멀','한옥세트']],
   ['s4','studio','라피네 스튜디오','창원','상남동',35.2260,128.6800,650000,4.6,188,['가성비','수정 30컷']],
   ['s5','studio','온스튜디오','김해','장유',35.1955,128.8065,600000,4.5,97,['야외정원','반일촬영']],
   // 드레스
   ['d1','dress','끌로에 웨딩드레스','부산','서면',35.1592,129.0610,900000,4.8,298,['임포트','본식2벌']],
-  ['d2','dress','아뜰리에 브라이드','부산','남포동',35.0990,129.0330,1100000,4.9,351,['머메이드','VIP피팅']],
-  ['d3','dress','벨라지오 드레스','부산','연산동',35.1845,129.0795,820000,4.6,164,['볼륨라인','헤드피스']],
+  ['d2','dress','아뜰리에 브라이드','울산','성남동',35.5562,129.3172,1100000,4.9,351,['머메이드','VIP피팅']],
+  ['d3','dress','벨라지오 드레스','진주','초전동',35.2052,128.1182,820000,4.6,164,['볼륨라인','헤드피스']],
   ['d4','dress','메종드로브','창원','의창구',35.2542,128.6405,750000,4.5,121,['가성비','촬영2벌']],
   ['d5','dress','브라이덜하우스','울산','성남동',35.5562,129.3172,800000,4.6,139,['클래식','부케포함']],
   // 메이크업
   ['m1','makeup','라뷰티 메이크업','부산','해운대',35.1635,129.1650,500000,4.8,276,['물광','헬퍼동행']],
-  ['m2','makeup','제니하우스 서면','부산','서면',35.1578,129.0592,620000,4.9,402,['원장지정','혼주포함']],
-  ['m3','makeup','뮤즈 메이크업','부산','센텀',35.1685,129.1310,480000,4.6,158,['내추럴','속눈썹']],
+  ['m2','makeup','제니하우스 창원점','창원','상남동',35.2275,128.6820,620000,4.9,402,['원장지정','혼주포함']],
+  ['m3','makeup','뮤즈 메이크업','양산','물금',35.3075,129.0095,480000,4.6,158,['내추럴','속눈썹']],
   ['m4','makeup','미네르바','창원','상남동',35.2275,128.6820,450000,4.5,112,['가성비','리허설']],
   ['m5','makeup','글로우 스튜디오','양산','물금',35.3075,129.0095,420000,4.4,88,['화사','출장가능']],
   // 한복
@@ -279,7 +415,8 @@ var ITEMS = [
   ['b3','hanbok','담다 한복','부산','남포동',35.0995,129.0318,580000,4.6,108,['맞춤제작','소품']],
   ['b4','hanbok','한올한복','창원','상남동',35.2265,128.6795,490000,4.4,74,['대여','혼주2인']]
 ].map(function(a){
-  return {id:a[0],cat:a[1],name:a[2],region:a[3],dong:a[4],lat:a[5],lng:a[6],price:a[7],rate:a[8],rev:a[9],tags:a[10]};
+  var g=(a[10].join(' ').match(/보증\s*(\d+)/)||[])[1];
+  return {id:a[0],cat:a[1],name:a[2],region:a[3],dong:a[4],lat:a[5],lng:a[6],price:a[7],rate:a[8],rev:a[9],tags:a[10],guarantee:g?+g:null};
 });
 
 /* ===================== state ===================== */
@@ -288,6 +425,7 @@ var state = {
   cats:{hall:true,studio:true,dress:true,makeup:true,hanbok:true},
   maxPrice:2000000, sort:'dist', q:'', region:null,
   center:null, radius:10, useRadius:true, located:false,
+  wMonth:'2026.10', wGuests:250, wFilterOn:false,
   bounds:null, selected:null, view:'list',
   wish: (function(){ try{ return JSON.parse(localStorage.getItem(WKEY))||[]; }catch(e){ return []; } })()
 };
@@ -318,6 +456,7 @@ function filtered(){
     if(q && (it.name+' '+it.region+' '+it.dong+' '+CATS[it.cat].name).toLowerCase().indexOf(q)<0) return false;
     if(state.bounds && !state.bounds.contains([it.lat,it.lng])) return false;
     if(state.useRadius && state.center && distKm(state.center,[it.lat,it.lng])>state.radius) return false;
+    if(state.wFilterOn && it.cat==='hall' && it.guarantee && it.guarantee>state.wGuests) return false;
     return true;
   });
   list.sort(function(a,b){
@@ -351,7 +490,7 @@ function buildChips(){
   wrap.appendChild(pb);
 
   var d3=document.createElement('div'); d3.className='divider'; wrap.appendChild(d3);
-  var rb=document.createElement('div'); rb.className='pricebox';
+  var rb=document.createElement('div'); rb.className='pricebox rad';
   rb.innerHTML='<label>반경</label>';
   [[3,'3km'],[5,'5km'],[10,'10km'],[20,'20km'],[0,'전체']].forEach(function(r){
     var b=document.createElement('button');
@@ -379,7 +518,7 @@ function buildChips(){
   sel.onchange=function(){ state.sort=sel.value; render(); };
   wrap.appendChild(sel);
 
-  var clr=document.createElement('button'); clr.className='chip plain'; clr.textContent='필터 초기화';
+  var clr=document.createElement('button'); clr.className='clr'; clr.textContent='선택초기화';
   clr.onclick=function(){ state.cats={hall:true,studio:true,dress:true,makeup:true,hanbok:true}; state.maxPrice=2000000; state.q=''; document.getElementById('q').value=''; state.bounds=null; state.region=null; state.useRadius=true; state.radius=10; drawRadius(); buildChips(); buildRegionJump(); render(); if(radiusCircle){ map._programmatic=true; map.fitBounds(radiusCircle.getBounds(),{padding:[40,40]}); } };
   wrap.appendChild(clr);
 }
@@ -462,12 +601,16 @@ function locate(userAsked){
 }
 function pinIcon(it,sel){
   var c=CATS[it.cat];
-  var cls='pin'+(sel?' sel':'');
-  var style = sel? '' : 'border-color:'+c.color+';color:'+c.color;
-  return L.divIcon({
-    className:'', iconSize:null, iconAnchor:[0,0],
-    html:'<div class="'+cls+'" style="'+style+';transform:translate(-50%,-135%)"><i>'+c.icon+'</i>'+man(it.price)+'</div>'
-  });
+  if(sel){
+    return L.divIcon({className:'',iconSize:null,iconAnchor:[0,0],
+      html:'<div class="callout" style="transform:translate(-50%,-118%)">'+
+             '<div class="cline">'+c.icon+' '+it.name+'</div>'+
+             '<div class="cprice2">'+man(it.price)+'원~</div>'+
+             '<s class="tail"></s>'+
+           '</div>'});
+  }
+  return L.divIcon({className:'',iconSize:null,iconAnchor:[0,0],
+    html:'<div class="pin" style="border-color:'+c.color+';color:'+c.color+';transform:translate(-50%,-135%)"><i>'+c.icon+'</i>'+man(it.price)+'</div>'});
 }
 function syncMarkers(list){
   var ids={}; list.forEach(function(i){ ids[i.id]=1; });
@@ -489,9 +632,13 @@ function cardEl(it){
     '<div class="cbody">'+
       '<div class="cloc">📍 '+it.region+' · '+it.dong+(itemDist(it)!=null? ' · <b style="color:#2f7bff">'+distLabel(itemDist(it))+'</b>':'')+'</div>'+
       '<div class="cname">'+it.name+'</div>'+
-      '<div class="crate">⭐ <b>'+it.rate.toFixed(1)+'</b> ('+it.rev.toLocaleString('ko-KR')+')</div>'+
-      '<div class="ctags">'+it.tags.map(function(t){return '<span class="ctag">'+t+'</span>';}).join('')+'</div>'+
-      '<div class="cprice"><em>'+c.unit+'</em><strong>'+man(it.price)+'원~</strong></div>'+
+      '<div class="crate">⭐ <b>'+it.rate.toFixed(1)+'</b> ('+it.rev.toLocaleString('ko-KR')+') · '+c.name+
+   (state.wFilterOn&&it.guarantee? ' · <b style="color:#12b3a6">보증 '+it.guarantee+'명 ✓</b>':'')+'</div>'+
+      '<div class="ctags">'+it.tags.slice(0,2).map(function(t){return '<span class="ctag">'+t+'</span>';}).join('')+'</div>'+
+      '<div class="cprice">'+
+        '<span class="plist">'+c.unit+' <s>'+man(Math.round(it.price*1.25))+'원</s></span>'+
+        '<strong>'+man(it.price)+'원~</strong>'+
+      '</div>'+
     '</div>'+
     '<button class="heart'+(isWished(it.id)?' on':'')+'">♥</button>';
   el.onclick=function(e){ if(e.target.classList.contains('heart')) return; if(state.view==='list'){ setView('map'); setTimeout(function(){ select(it.id,false); openSheet(it); },140); } else { select(it.id,false); openSheet(it); } };
@@ -591,6 +738,41 @@ document.getElementById('wishBtn').onclick=function(){
   syncMarkers(ITEMS.filter(function(i){return only[i.id];}));
   setView('list');
 };
+(function(){
+  var sel=document.getElementById('wMonthSel');
+  for(var y=2026;y<=2027;y++) for(var mo=1;mo<=12;mo++){
+    if(y===2026&&mo<8) continue;
+    var v=y+'.'+String(mo).padStart(2,'0');
+    var o=document.createElement('option'); o.value=v; o.textContent=y+'년 '+mo+'월'; sel.appendChild(o);
+  }
+  sel.value=state.wMonth;
+  function hint(){
+    var n=ITEMS.filter(function(i){return i.cat==='hall'&&i.guarantee&&i.guarantee<=state.wGuests;}).length;
+    var tot=ITEMS.filter(function(i){return i.cat==='hall';}).length;
+    document.getElementById('gHint').textContent='보증인원 조건이 맞는 웨딩홀 '+n+'곳 / 전체 '+tot+'곳';
+  }
+  function setG(v){ state.wGuests=Math.max(50,Math.min(600,v)); document.getElementById('gVal').textContent=state.wGuests; hint(); }
+  document.getElementById('gMinus').onclick=function(){ setG(state.wGuests-10); };
+  document.getElementById('gPlus').onclick=function(){ setG(state.wGuests+10); };
+  document.getElementById('wdate').onclick=function(){ hint(); document.getElementById('wMask').classList.add('open'); };
+  document.getElementById('wMask').onclick=function(e){ if(e.target===this) this.classList.remove('open'); };
+  document.getElementById('wApply').onclick=function(){
+    state.wMonth=sel.value; state.wFilterOn=true;
+    var d=document.getElementById('wdate');
+    d.textContent=state.wMonth+' · '+state.wGuests+'명'; d.classList.add('on');
+    document.getElementById('wMask').classList.remove('open');
+    render(); toast('예식 조건을 적용했어요');
+  };
+  document.getElementById('wClear').onclick=function(){
+    state.wFilterOn=false;
+    var d=document.getElementById('wdate');
+    d.textContent='예식일 · 하객수'; d.classList.remove('on');
+    document.getElementById('wMask').classList.remove('open');
+    render();
+  };
+  hint();
+})();
+
 document.getElementById('consultGo').onclick=function(){
   document.getElementById('consultMask').classList.remove('open');
   toast('상담 신청이 접수되었어요 · 곧 연락드립니다');
@@ -601,7 +783,9 @@ function setView(v){
   state.view=v;
   document.body.classList.toggle('mapview', v==='map');
   document.body.classList.toggle('listview', v==='list');
-  document.getElementById('viewToggle').innerHTML = v==='map'? '☰ 목록으로 보기' : '🗺️ 지도에서 보기';
+  document.getElementById('viewToggle').innerHTML = v==='map'
+    ? '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2b2530" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h2M9 7h11M4 12h2M9 12h11M4 17h2M9 17h11"/></svg> 목록'
+    : '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2b2530" stroke-width="2.2" stroke-linejoin="round"><path d="M9 4 3 6.5v13L9 17l6 2.5 6-2.5v-13L15 6.5 9 4v13"/></svg> 지도에서 보기';
   if(v==='map'){
     setTimeout(function(){
       map.invalidateSize();
@@ -619,6 +803,13 @@ function setView(v){
   }
 }
 document.getElementById('viewToggle').onclick=function(){ setView(state.view==='map'?'list':'map'); };
+var _rsz;
+function refit(){ clearTimeout(_rsz); _rsz=setTimeout(function(){ if(map && state.view==='map') map.invalidateSize(); },220); }
+window.addEventListener('orientationchange', refit);
+window.addEventListener('resize', refit);
+if(window.visualViewport) window.visualViewport.addEventListener('resize', refit);
+document.getElementById('locBtn').onclick=function(){ locate(true); };
+document.getElementById('tabWish').onclick=function(){ document.getElementById('wishBtn').click(); };
 
 initMap();
 buildChips(); buildLegend(); buildRegionJump(); saveWish(); setView('list'); render();
