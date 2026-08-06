@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>운영 관리자 · 웨딩여기</title>
+<link rel="icon" type="image/jpeg" href="./icon.jpg">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<style>
+@font-face{font-family:'Paperlogy';font-weight:400;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-4Regular.woff2') format('woff2')}
+@font-face{font-family:'Paperlogy';font-weight:600;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-6SemiBold.woff2') format('woff2')}
+@font-face{font-family:'Paperlogy';font-weight:800;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-8ExtraBold.woff2') format('woff2')}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+html,body{margin:0;padding:0}
+body{font-family:'Paperlogy','Pretendard',system-ui,sans-serif;background:#f4f3f6;color:#2b2530;letter-spacing:-.01em;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit}
+a{color:#ff4d6d;text-decoration:none}
+a:hover{color:#e03e5c}
+button,a{-webkit-tap-highlight-color:rgba(255,77,109,.12);touch-action:manipulation}
+
+header{position:sticky;top:0;z-index:80;background:#2b2530;color:#fff}
+.hrow{max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px clamp(14px,3vw,26px);min-width:0}
+.brand{display:flex;align-items:center;gap:9px;color:#fff;min-width:0}
+.brand i{width:30px;height:30px;border-radius:9px;overflow:hidden;flex:none;display:block}
+.brand i img{width:100%;height:100%;object-fit:cover;display:block}
+.brand b{font-size:15.5px;font-weight:800;white-space:nowrap}
+.brand small{display:block;font-size:10.5px;color:#a49dae;font-weight:700}
+.hsp{margin-left:auto;display:flex;gap:8px;flex:none}
+.hbtn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:9px;padding:8px 12px;font-size:12.5px;font-weight:700;color:#fff}
+.hbtn:hover{background:rgba(255,255,255,.18)}
+
+nav.tabs{background:#fff;border-bottom:1px solid #ecebf0;position:sticky;top:52px;z-index:70}
+nav.tabs div{max-width:1240px;margin:0 auto;display:flex;gap:2px;padding:0 clamp(10px,3vw,26px);overflow-x:auto;scrollbar-width:none}
+nav.tabs div::-webkit-scrollbar{display:none}
+nav.tabs button{background:none;border:none;border-bottom:2.5px solid transparent;padding:14px 13px;font-size:13.5px;font-weight:700;color:#8d8697;white-space:nowrap;flex:none}
+nav.tabs button.on{color:#2b2530;border-bottom-color:#ff4d6d;font-weight:800}
+nav.tabs button b{background:#ff4d6d;color:#fff;border-radius:99px;font-size:10.5px;padding:1px 6px;margin-left:5px;vertical-align:1px}
+
+.wrap{max-width:1240px;margin:0 auto;padding:clamp(16px,2.6vw,26px) clamp(14px,3vw,26px) 70px}
+.card{background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:clamp(16px,2.2vw,22px)}
+.card+.card{margin-top:14px}
+h2.sec{font-size:16px;font-weight:800;margin:0 0 3px}
+.seclead{font-size:12.5px;color:#8d8697;margin:0 0 16px;font-weight:600}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.kpi{background:#fff;border:1px solid #ecebf0;border-radius:14px;padding:16px}
+.kpi span{display:block;font-size:11.5px;color:#8d8697;font-weight:800;margin-bottom:6px}
+.kpi b{display:block;font-size:25px;font-weight:800;line-height:1}
+.kpi em{display:block;font-style:normal;font-size:11.5px;color:#a49dae;font-weight:700;margin-top:6px}
+.kpi.hot b{color:#ff4d6d}
+
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:11px 9px;border-bottom:1px solid #f0eef4;vertical-align:middle}
+th{font-size:11.5px;color:#8d8697;font-weight:800;white-space:nowrap}
+td b{font-weight:800}
+tbody tr:hover{background:#faf9fb}
+.tbwrap{overflow-x:auto;margin:0 -4px}
+.tbwrap table{min-width:660px}
+
+.badge{display:inline-flex;align-items:center;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:800;white-space:nowrap}
+.b-draft{background:#f2f0f5;color:#7d7589}
+.b-pending{background:#fff5e6;color:#a86a00}
+.b-approved{background:#eefaf3;color:#1c7a4a}
+.b-rejected{background:#fff1f3;color:#c3283f}
+.b-suspended{background:#eceaf1;color:#5d5668}
+.b-new{background:#fff1f3;color:#c3283f}
+.b-doing{background:#eef3ff;color:#2451b8}
+.b-done{background:#eefaf3;color:#1c7a4a}
+
+.btn{border:none;border-radius:10px;padding:9px 14px;font-size:12.5px;font-weight:800;background:#ff4d6d;color:#fff}
+.btn:hover{background:#f03b5c}
+.btn.ghost{background:#f4f3f6;color:#2b2530}
+.btn.ghost:hover{background:#ebe9ef}
+.btn.line{background:#fff;border:1px solid #e6e3ec;color:#2b2530}
+.btn.sm{padding:7px 11px;font-size:12px;border-radius:9px}
+.btn:disabled{background:#f2f0f5;color:#b6aebd;cursor:not-allowed}
+.filters{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.chip{background:#faf9fb;border:1px solid #e6e3ec;border-radius:999px;padding:8px 14px;font-size:12.5px;font-weight:700;color:#4a4550}
+.chip.on{background:#2b2530;border-color:#2b2530;color:#fff}
+.inp{width:100%;background:#faf9fb;border:1px solid #e6e3ec;border-radius:10px;padding:11px 12px;font-size:14px;color:#2b2530;outline:none}
+.inp:focus{border-color:#ff4d6d;background:#fff}
+.err{background:#fff1f3;border:1px solid #ffd3da;color:#c3283f;border-radius:12px;padding:12px 14px;font-size:13px;font-weight:700;margin-bottom:14px;line-height:1.6}
+.empty{text-align:center;padding:38px 16px;color:#a49dae;font-size:13.5px;font-weight:700}
+.muted{color:#a49dae;font-size:12px;font-weight:600}
+.sw{position:relative;width:44px;height:26px;border-radius:99px;background:#dcd8e4;border:none;flex:none;transition:background .18s}
+.sw.on{background:#ff4d6d}
+.sw:after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .18s}
+.sw.on:after{transform:translateX(18px)}
+.adrow{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #f0eef4}
+.adrow:last-child{border-bottom:none}
+.adrow div{flex:1;min-width:0}
+.adrow b{display:block;font-size:14px;font-weight:800}
+.mask{position:fixed;inset:0;background:rgba(28,20,36,.5);z-index:900;display:none;align-items:center;justify-content:center;padding:16px}
+.mask.open{display:flex}
+.modal{width:100%;max-width:440px;background:#fff;border-radius:18px;padding:22px;max-height:calc(100dvh - 32px);overflow-y:auto}
+.field{margin-bottom:13px}
+.field label{display:block;font-size:12px;font-weight:800;color:#4a4550;margin-bottom:6px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:24px;z-index:9000;background:#2b2530;color:#fff;border-radius:999px;padding:12px 20px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw;text-align:center}
+.toast.on{opacity:1}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.gate{max-width:400px;margin:60px auto;text-align:center}
+
+@media(max-width:640px){
+  input,select,textarea{font-size:16px!important}
+  .brand small{display:none}
+  nav.tabs{top:50px}
+  .kpi b{font-size:21px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hrow">
+    <a class="brand" href="index.html"><i><img src="./icon.jpg" alt=""></i>
+      <span><b>웨딩여기</b><small>운영 관리자</small></span></a>
+    <div class="hsp" id="hsp"></div>
+  </div>
+</header>
+<nav class="tabs" id="tabs"><div></div></nav>
+
+<div class="wrap" id="root"><div class="card"><p class="muted">불러오는 중…</p></div></div>
+
+<div class="mask" id="mask"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import * as DB from './db.js';
+
+const CATS={hall:'웨딩홀',studio:'스튜디오',dress:'드레스',makeup:'메이크업',hanbok:'한복',suit:'예복',jewelry:'예물',honeymoon:'신혼여행'};
+const VSTATUS={draft:['작성 중','b-draft'],pending:['승인 대기','b-pending'],approved:['노출 중','b-approved'],rejected:['반려','b-rejected'],suspended:['중지','b-suspended']};
+const CSTATUS={'접수완료':['접수완료','b-new'],'상담중':['상담중','b-doing'],'연결완료':['연결완료','b-done'],'종료':['종료','b-draft']};
+const TIER_BADGE={basic:'b-draft',plus:'b-pending',premium:'b-approved'};
+const AD_STATUS={pending:['광고센터 승인대기','b-pending'],approved:['승인됨','b-approved'],rejected:['반려됨','b-rejected']};
+const AD_UNITS=[
+  ['hero','홈 히어로 배너'],['strip','카테고리 하단 스트립'],['brand','브랜드 블록'],
+  ['infeed','피드 인피드'],['sponsor','스폰서 랭킹'],['sticky','하단 스티키(PC)'],['popup','첫 방문 팝업']
+];
+const AD_RATE={infeed:{kind:'cpm',amount:8000},sponsor:{kind:'cpc',amount:900}};
+const adCost=s=>{ const r=AD_RATE[s.unit]; if(!r) return null; return r.kind==='cpm'? Math.round((s.impressions||0)/1000*r.amount) : (s.clicks||0)*r.amount; };
+const TABS=[['dash','대시보드'],['vendors','업체 승인'],['consults','상담'],['orders','예약'],['ads','광고'],['members','회원'],['billing','정산']];
+
+const $=s=>document.querySelector(s);
+const el=(t,a={},k=[])=>{const n=document.createElement(t);
+  for(const p in a){ if(p==='class')n.className=a[p]; else if(p==='html')n.innerHTML=a[p]; else if(p.startsWith('on'))n[p]=a[p]; else if(a[p]!=null&&a[p]!==false)n.setAttribute(p,a[p]); }
+  (Array.isArray(k)?k:[k]).forEach(c=>{ if(c==null||c===false)return; n.appendChild(typeof c==='string'?document.createTextNode(c):c); });
+  return n;};
+let _t; const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(()=>t.classList.remove('on'),2400);};
+const won=n=>(n|0).toLocaleString('ko-KR');
+const dt=s=>s? new Date(s).toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}) : '-';
+const day=s=>s? new Date(s).toLocaleDateString('ko-KR',{year:'2-digit',month:'2-digit',day:'2-digit'}) : '-';
+const friendly=e=>{const m=(e&&(e.message||String(e)))||'';
+  if(/does not exist|schema cache|relation/i.test(m))return 'DB 테이블이 없습니다. supabase-schema.sql 을 실행해 주세요.';
+  if(/row-level security|policy/i.test(m))return '권한이 없습니다. admins 테이블에 계정이 등록되어 있는지 확인해 주세요.';
+  return m||'문제가 발생했어요.';};
+
+const S={user:null,admin:false,tab:'dash',err:'',busy:false,
+  stats:null,vendors:[],vFilter:'pending',consults:[],cFilter:'접수완료',orders:[],members:[],ads:{},slots:[],billings:[],login:{}};
+
+(async function boot(){
+  if(!DB.ready()){ $('#root').innerHTML='<div class="card"><div class="err">Supabase에 연결할 수 없습니다.</div></div>'; return; }
+  S.user=await DB.currentUser();
+  if(S.user) S.admin=await DB.isAdmin();
+  if(S.admin) await loadTab('dash');
+  render();
+})();
+
+/* ══════════ 렌더 ══════════ */
+function render(){
+  const h=$('#hsp'); h.innerHTML='';
+  h.appendChild(el('a',{class:'hbtn',href:'index.html'},'사이트'));
+  h.appendChild(el('a',{class:'hbtn',href:'vendor.html'},'파트너센터'));
+  if(S.user) h.appendChild(el('button',{class:'hbtn',onclick:async()=>{await DB.signOut();location.reload();}},'로그아웃'));
+
+  const tb=$('#tabs').firstElementChild; tb.innerHTML='';
+  if(S.admin) TABS.forEach(([id,label])=>{
+    const n = id==='vendors'? S.vendors.filter(v=>v.status==='pending').length
+            : id==='consults'? S.consults.filter(c=>c.status==='접수완료').length : 0;
+    tb.appendChild(el('button',{class:S.tab===id?'on':'',onclick:()=>go(id)},
+      [label, n? el('b',{},String(n)) : null].filter(Boolean)));
+  });
+
+  const r=$('#root'); r.innerHTML='';
+  if(!S.user || !S.admin){ r.appendChild(gate()); return; }
+  if(S.err) r.appendChild(el('div',{class:'err'},S.err));
+  r.appendChild(({dash,vendors,consults,orders,ads,members,billing})[S.tab]());
+}
+
+function gate(){
+  const f=S.login;
+  return el('div',{class:'card gate'},[
+    el('div',{style:'font-size:38px;margin-bottom:10px'},'🔐'),
+    el('h2',{class:'sec'}, S.user? '관리자 권한이 없습니다' : '관리자 로그인'),
+    el('p',{class:'seclead'}, S.user
+      ? '이 계정은 관리자로 등록되지 않았습니다. Supabase > admins 테이블에 user_id 를 추가해 주세요.'
+      : '운영 계정으로 로그인해 주세요.'),
+    S.err? el('div',{class:'err'},S.err):null,
+    S.user? el('div',{class:'muted',style:'line-height:1.8'},[
+      el('div',{},'현재 계정: '+(S.user.email||S.user.id)),
+      el('code',{style:'display:block;background:#faf9fb;border:1px solid #ecebf0;border-radius:8px;padding:10px;margin-top:10px;font-size:11px;text-align:left;word-break:break-all'},
+        "insert into admins(user_id) values ('"+S.user.id+"');")
+    ]) : el('div',{},[
+      el('div',{class:'field'},[el('label',{},'이메일'),
+        el('input',{class:'inp',type:'email',value:f.email||'',oninput:e=>f.email=e.target.value})]),
+      el('div',{class:'field'},[el('label',{},'비밀번호'),
+        el('input',{class:'inp',type:'password',value:f.pw||'',oninput:e=>f.pw=e.target.value})]),
+      el('button',{class:'btn',style:'width:100%;padding:13px',disabled:S.busy,onclick:async()=>{
+        S.err='';S.busy=true;render();
+        try{ S.user=await DB.signIn({email:f.email,password:f.pw}); S.admin=await DB.isAdmin();
+             if(S.admin) await loadTab('dash'); }
+        catch(e){ S.err=friendly(e); }
+        S.busy=false;render();
+      }}, S.busy? el('span',{class:'spin'}):'로그인')
+    ])
+  ]);
+}
+
+async function go(tab){ S.tab=tab; S.err=''; S.busy=true; render(); await loadTab(tab); S.busy=false; render(); }
+
+async function loadTab(tab){
+  try{
+    if(tab==='dash'){ S.stats=await DB.adminStats(); S.vendors=await DB.adminVendors('all'); S.consults=await DB.adminConsults('all'); }
+    if(tab==='vendors')  S.vendors=await DB.adminVendors('all');
+    if(tab==='consults') S.consults=await DB.adminConsults('all');
+    if(tab==='orders')   S.orders=await DB.adminOrders();
+    if(tab==='members')  S.members=await DB.adminMembers();
+    if(tab==='ads'){ S.ads=await DB.loadAdUnits()||{}; S.slots=await DB.adminAdSlots(); if(!S.vendors.length) S.vendors=await DB.adminVendors('approved'); }
+    if(tab==='billing'){ S.billings=await DB.listBillings(); if(!S.vendors.length) S.vendors=await DB.adminVendors('all'); }
+  }catch(e){ S.err=friendly(e); }
+}
+
+/* ══════════ 대시보드 ══════════ */
+function dash(){
+  const s=S.stats||{};
+  const pending=S.vendors.filter(v=>v.status==='pending');
+  const open=S.consults.filter(c=>c.status==='접수완료');
+  const box=el('div');
+
+  box.appendChild(el('div',{class:'kpis'},[
+    ['회원',won(s.members||0),'최근 7일 +'+won(s.members_7d||0)],
+    ['노출 업체',won(s.vendors_live||0),'승인 대기 '+won(s.vendors_pending||0)+'곳'],
+    ['미처리 상담',won(s.consults_open||0),'최근 7일 '+won(s.consults_7d||0)+'건'],
+    ['예약 건수',won(s.orders_all||0),'결제완료 '+won(s.revenue_paid||0)+'원']
+  ].map((k,i)=>el('div',{class:'kpi'+(i===2&&(s.consults_open|0)>0?' hot':'')},[
+    el('span',{},k[0]),el('b',{},k[1]),el('em',{},k[2])]))));
+
+  box.appendChild(el('div',{class:'card',style:'margin-top:14px'},[
+    el('h2',{class:'sec'},'지금 처리할 일'),
+    el('p',{class:'seclead'},'대기 중인 승인과 상담을 먼저 처리하세요.'),
+    (!pending.length && !open.length)
+      ? el('div',{class:'empty'},'✨ 대기 중인 항목이 없습니다')
+      : el('div',{},[
+          ...pending.slice(0,5).map(v=>el('div',{class:'adrow'},[
+            el('span',{class:'badge b-pending'},'승인 대기'),
+            el('div',{},[el('b',{},v.name),el('span',{class:'muted'},(CATS[v.cat]||v.cat)+' · '+(v.sigungu||'-')+' · '+dt(v.submitted_at))]),
+            el('button',{class:'btn sm',onclick:()=>go('vendors')},'검토')
+          ])),
+          ...open.slice(0,5).map(c=>el('div',{class:'adrow'},[
+            el('span',{class:'badge b-new'},'상담'),
+            el('div',{},[el('b',{},c.name+' · '+c.phone),el('span',{class:'muted'},(c.target||'-')+' · '+dt(c.created_at))]),
+            el('button',{class:'btn sm',onclick:()=>go('consults')},'처리')
+          ]))
+        ])
+  ]));
+  return box;
+}
+
+/* ══════════ 업체 승인 ══════════ */
+function vendors(){
+  const counts = {};
+  S.vendors.forEach(v=>counts[v.status]=(counts[v.status]||0)+1);
+  const list = S.vFilter==='all'? S.vendors : S.vendors.filter(v=>v.status===S.vFilter);
+
+  return el('div',{class:'card'},[
+    el('div',{style:'display:flex;align-items:flex-start;gap:10px;margin-bottom:2px'},[
+      el('div',{style:'flex:1'},[
+        el('h2',{class:'sec',style:'margin:0'},'업체 승인 관리'),
+        el('p',{class:'seclead',style:'margin:0'},'승인하면 이용자 사이트·지도에 즉시 노출됩니다.')
+      ]),
+      el('a',{class:'btn sm ghost',href:'vendor-bulk-template.csv',download:'vendor-bulk-template.csv'},'양식 다운로드'),
+      el('label',{class:'btn sm',style:'cursor:pointer'},[
+        '+ CSV 대량 등록',
+        el('input',{type:'file',accept:'.csv',style:'display:none',onchange:e=>{ if(e.target.files[0]) importVendorCSV(e.target.files[0]); e.target.value=''; }})
+      ])
+    ]),
+    el('div',{class:'filters'}, [['pending','승인 대기'],['approved','노출 중'],['rejected','반려'],['draft','작성 중'],['suspended','중지'],['all','전체']]
+      .map(([k,label])=>el('button',{class:'chip'+(S.vFilter===k?' on':''),onclick:()=>{S.vFilter=k;render();}},
+        label+(k==='all'? ' '+S.vendors.length : ' '+(counts[k]||0))))),
+    list.length? el('div',{class:'tbwrap'},el('table',{},[
+      el('thead',{},el('tr',{},['업체','카테고리','지역','시작가','등급','신청일','상태',''].map(h=>el('th',{},h)))),
+      el('tbody',{}, list.map(v=>{
+        const st=VSTATUS[v.status]||VSTATUS.draft;
+        return el('tr',{},[
+          el('td',{},[el('b',{},v.name||'-'),el('div',{class:'muted'},v.biz_no? '사업자 '+v.biz_no : '사업자번호 없음')]),
+          el('td',{},CATS[v.cat]||v.cat),
+          el('td',{},(v.region||'')+' '+(v.sigungu||'')),
+          el('td',{},v.price_from? won(v.price_from)+'원':'-'),
+          el('td',{},el('span',{class:'badge '+(TIER_BADGE[v.tier||'basic'])},({basic:'베이직',plus:'플러스',premium:'프리미엄'})[v.tier||'basic'])),
+          el('td',{class:'muted'},dt(v.submitted_at||v.created_at)),
+          el('td',{},el('span',{class:'badge '+st[1]},st[0])),
+          el('td',{},el('div',{style:'display:flex;gap:6px;justify-content:flex-end'},[
+            el('button',{class:'btn sm line',onclick:()=>vendorDetail(v)},'상세'),
+            v.status==='pending'? el('button',{class:'btn sm',onclick:()=>doApprove(v)},'승인'):null,
+            v.status==='pending'? el('button',{class:'btn sm ghost',onclick:()=>doReject(v)},'반려'):null,
+            v.status==='approved'? el('button',{class:'btn sm ghost',onclick:()=>setStatus(v,'suspended')},'중지'):null,
+            v.status==='suspended'? el('button',{class:'btn sm',onclick:()=>setStatus(v,'approved')},'재개'):null
+          ].filter(Boolean)))
+        ]);
+      }))
+    ])) : el('div',{class:'empty'},'해당 상태의 업체가 없습니다')
+  ]);
+}
+
+function parseCSV(text){
+  text = text.replace(/^\uFEFF/,'');
+  const rows=[]; let row=[]; let cur=''; let inQ=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(inQ){ if(c==='"'){ if(text[i+1]==='"'){ cur+='"'; i++; } else inQ=false; } else cur+=c; }
+    else if(c==='"') inQ=true;
+    else if(c===','){ row.push(cur); cur=''; }
+    else if(c==='\n'){ row.push(cur); rows.push(row); row=[]; cur=''; }
+    else if(c==='\r'){ /* skip */ }
+    else cur+=c;
+  }
+  if(cur.length || row.length){ row.push(cur); rows.push(row); }
+  return rows.filter(r=>!(r.length===1 && r[0]===''));
+}
+const CSV_HEADER_MAP = {
+  '업체명':'name','카테고리':'cat','지역':'region','시군구':'sigungu','주소':'address','상세주소':'address_detail',
+  '위도':'lat','경도':'lng','전화번호':'tel','한줄소개':'intro','시작가':'price_from','보증인원':'guarantee',
+  '홀타입':'hall_types','1인식대':'meal_price','주차안내':'parking','대표이미지URL':'cover_url',
+  '카카오채널URL':'kakao_url','인스타그램URL':'insta_url','홈페이지URL':'homepage','사업자등록번호':'biz_no','대표자명':'biz_owner'
+};
+const CSV_CAT_MAP = {hall:'hall',studio:'studio',dress:'dress',makeup:'makeup',hanbok:'hanbok',suit:'suit',jewelry:'jewelry',honeymoon:'honeymoon',
+  '웨딩홀':'hall','스튜디오':'studio','드레스':'dress','메이크업':'makeup','한복':'hanbok','예복':'suit','예물':'jewelry','신혼여행':'honeymoon'};
+async function importVendorCSV(file){
+  let rows;
+  try{ rows = parseCSV(await file.text()); }catch(e){ toast('CSV를 읽을 수 없습니다'); return; }
+  if(rows.length<2){ toast('데이터가 없습니다'); return; }
+  const header = rows[0].map(h=>CSV_HEADER_MAP[h.trim()]||h.trim());
+  const dataRows = rows.slice(1).filter(r=>r.some(c=>(c||'').trim()!==''));
+  let existing;
+  try{ existing = await DB.existingVendorKeys(); }catch(e){ existing = new Set(); }
+  const toInsert=[]; let skipped=0, invalid=0;
+  for(const r of dataRows){
+    const obj={}; header.forEach((k,i)=>obj[k]=(r[i]||'').trim());
+    const cat = CSV_CAT_MAP[(obj.cat||'').toLowerCase()];
+    if(!obj.name || !cat){ invalid++; continue; }
+    const key = obj.name+'|'+(obj.address||'');
+    if(existing.has(key)){ skipped++; continue; }
+    toInsert.push({
+      name:obj.name, cat, region:obj.region||null, sigungu:obj.sigungu||null,
+      address:obj.address||null, address_detail:obj.address_detail||null,
+      lat:obj.lat?parseFloat(obj.lat):null, lng:obj.lng?parseFloat(obj.lng):null,
+      tel:obj.tel||null, intro:obj.intro||null,
+      price_from:obj.price_from?parseInt(String(obj.price_from).replace(/[^0-9]/g,''),10)||0:0,
+      guarantee:obj.guarantee?parseInt(obj.guarantee,10)||null:null,
+      hall_types: obj.hall_types? obj.hall_types.split(/[\/,·]/).map(s=>s.trim()).filter(Boolean) : [],
+      meal_price:obj.meal_price?parseInt(String(obj.meal_price).replace(/[^0-9]/g,''),10)||null:null,
+      parking:obj.parking||null, cover_url:obj.cover_url||null,
+      kakao_url:obj.kakao_url||null, insta_url:obj.insta_url||null, homepage:obj.homepage||null,
+      biz_no:obj.biz_no||null, biz_owner:obj.biz_owner||null,
+      status:'approved', tier:'basic', approved_at:new Date().toISOString()
+    });
+    existing.add(key);
+  }
+  if(!toInsert.length){ toast('등록할 새 업체가 없습니다 (중복 '+skipped+'건 · 형식오류 '+invalid+'건)'); return; }
+  const needGeo = toInsert.filter(v=>(!v.lat||!v.lng) && v.address);
+  let geoFound=0;
+  for(let i=0;i<needGeo.length;i++){
+    const v = needGeo[i];
+    toast('주소로 좌표 조회 중… ('+(i+1)+'/'+needGeo.length+')');
+    try{
+      const r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=kr&q='+encodeURIComponent([v.address,v.address_detail].filter(Boolean).join(' ')));
+      const j = await r.json();
+      if(j && j[0]){ v.lat=+(+j[0].lat).toFixed(6); v.lng=+(+j[0].lon).toFixed(6); geoFound++; }
+    }catch(e){ /* leave lat/lng null, admin can fix later */ }
+    if(i<needGeo.length-1) await new Promise(res=>setTimeout(res,1100)); // nominatim rate limit
+  }
+  try{
+    const n = await DB.bulkInsertVendors(toInsert);
+    toast(n+'곳 등록 완료'+(needGeo.length? ' · 좌표 '+geoFound+'/'+needGeo.length+'건 자동 조회':'')+(skipped?' · 중복 '+skipped+'건 제외':'')+(invalid?' · 형식오류 '+invalid+'건 제외':''));
+    S.vendors = await DB.adminVendors('all'); render();
+  }catch(e){ S.err=friendly(e); render(); }
+}
+
+async function doApprove(v){
+  try{ await DB.approveVendor(v.id); v.status='approved'; toast(v.name+' 승인 완료'); render(); }
+  catch(e){ S.err=friendly(e); render(); }
+}
+async function setStatus(v,st){
+  try{ await DB.updateVendor(v.id,{status:st}); v.status=st; toast('상태를 변경했습니다'); render(); }
+  catch(e){ S.err=friendly(e); render(); }
+}
+function doReject(v){
+  let reason='';
+  openModal([
+    el('h2',{class:'sec'},'반려 사유'),
+    el('p',{class:'seclead'},v.name+' 업체에 전달됩니다.'),
+    el('textarea',{class:'inp',rows:4,placeholder:'예: 사업자등록증이 흐려 판독이 어렵습니다. 다시 첨부해 주세요.',
+      oninput:e=>reason=e.target.value}),
+    el('div',{style:'display:flex;gap:8px;margin-top:16px'},[
+      el('button',{class:'btn ghost',style:'flex:1;padding:12px',onclick:closeModal},'취소'),
+      el('button',{class:'btn',style:'flex:1;padding:12px',onclick:async()=>{
+        if(!reason.trim()){ toast('사유를 입력해 주세요'); return; }
+        try{ await DB.rejectVendor(v.id,reason.trim()); v.status='rejected'; v.reject_reason=reason.trim();
+             closeModal(); toast('반려 처리했습니다'); render(); }
+        catch(e){ closeModal(); S.err=friendly(e); render(); }
+      }},'반려하기')
+    ])
+  ]);
+}
+
+async function vendorDetail(v){
+  const imgs=await DB.listVendorImages(v.id).catch(()=>[]);
+  const prods=await DB.listVendorProducts(v.id).catch(()=>[]);
+  const internal=await DB.getVendorInternal(v.id).catch(()=>null);
+  const line=(k,val)=>el('div',{style:'display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #f4f2f7;font-size:13px'},[
+    el('span',{style:'width:88px;flex:none;color:#8d8697;font-weight:800;font-size:12px'},k),
+    el('span',{style:'flex:1;min-width:0;word-break:break-all'}, val||'-')]);
+  openModal([
+    el('h2',{class:'sec'},v.name),
+    el('p',{class:'seclead'},(CATS[v.cat]||v.cat)+' · '+(v.region||'')+' '+(v.sigungu||'')),
+    dataChecklist(v,imgs,prods,internal),
+    v.cover_url? el('img',{src:v.cover_url,style:'width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:12px;margin-bottom:10px'}):null,
+    photoEditor(v, imgs),
+    line('사업자','('+(v.biz_no||'-')+') '+(v.biz_owner||'')),
+    v.biz_file_url? el('div',{style:'padding:8px 0'},el('span',{class:'badge b-approved'},'사업자등록증 첨부됨')):
+      el('div',{style:'padding:8px 0'},el('span',{class:'badge b-rejected'},'서류 미첨부')),
+    line('주소',(v.address||'')+' '+(v.address_detail||'')),
+    el('div',{style:'display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f4f2f7;font-size:13px'},[
+      el('span',{style:'width:88px;flex:none;color:#8d8697;font-weight:800;font-size:12px'},'좌표'),
+      el('span',{style:'flex:1;min-width:0'}, v.lat&&v.lng? v.lat+', '+v.lng : '미입력 (지도에 표시되지 않음)'),
+      el('button',{class:'btn sm ghost',onclick:async()=>{
+        if(!v.address){ toast('주소가 없어 조회할 수 없습니다'); return; }
+        toast('좌표 조회 중…');
+        try{
+          const r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=kr&q='+encodeURIComponent([v.address,v.address_detail].filter(Boolean).join(' ')));
+          const j = await r.json();
+          if(j && j[0]){
+            const lat=+(+j[0].lat).toFixed(6), lng=+(+j[0].lon).toFixed(6);
+            await DB.updateVendor(v.id,{lat,lng}); v.lat=lat; v.lng=lng;
+            toast('좌표를 찾았습니다'); vendorDetail(v);
+          } else toast('좌표를 찾지 못했습니다. 주소를 확인해 주세요.');
+        }catch(e){ toast('조회 실패'); }
+      }},'좌표 재조회')
+    ]),
+    line('전화',v.tel), line('담당자',(v.manager_name||'')+' '+(v.manager_phone||'')),
+    line('시작가',v.price_from? won(v.price_from)+'원':'-'),
+    v.cat==='hall'? line('보증인원',(v.guarantee||'-')+'명 · 식대 '+won(v.meal_price||0)+'원'):null,
+    v.cat==='hall'? line('홀타입',(v.hall_types||[]).join(', ')):null,
+    hallEditor(v),
+    line('소개',v.intro), line('상세',v.detail),
+    line('채널',[v.kakao_url,v.insta_url,v.homepage].filter(Boolean).join(' / ')),
+    prods.length? el('div',{style:'margin-top:12px'},[
+      el('div',{class:'muted',style:'margin-bottom:6px'},'상품 '+prods.length+'개'),
+      ...prods.map(p=>el('div',{style:'display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid #f4f2f7'},[
+        el('span',{},p.name),el('b',{},won(p.price)+'원')]))
+    ]):null,
+    internalEditor(v, internal),
+    tierEditor(v),
+    el('div',{style:'display:flex;gap:8px;margin-top:18px'},[
+      el('button',{class:'btn ghost',style:'flex:1;padding:12px',onclick:closeModal},'닫기'),
+      v.status==='pending'? el('button',{class:'btn',style:'flex:1;padding:12px',onclick:async()=>{await doApprove(v);closeModal();}},'승인'):null
+    ].filter(Boolean))
+  ]);
+}
+
+function dataChecklist(v,imgs,prods,internal){
+  const pr = v.cat==='hall'?[3,5]:[10,20];
+  const items=[
+    ['주소',!!v.address],['전화',!!v.tel],['홈페이지',!!v.homepage],['인스타',!!v.insta_url],
+    ['사진 '+imgs.length+'장 (기준 '+pr[0]+'~'+pr[1]+')', imgs.length>=pr[0]],
+    ['고객상품표', prods.length>0],
+    ['단가표·입금가', !!(internal&&(((internal.cost_table||[]).length>0)||internal.deposit_price))]
+  ];
+  if(v.cat==='hall') items.push(['층/홀 명칭',(v.halls||[]).length>0],['뷔페 층수',!!v.buffet_floor]);
+  const done=items.filter(i=>i[1]).length;
+  return el('div',{style:'background:#faf8fc;border:1px solid #eee8f4;border-radius:12px;padding:12px 14px;margin-bottom:12px'},[
+    el('div',{style:'font-weight:800;font-size:12.5px;margin-bottom:8px'},'데이터 수집 체크 '+done+'/'+items.length),
+    el('div',{style:'display:flex;flex-wrap:wrap;gap:6px'},items.map(([k,ok])=>
+      el('span',{class:'badge '+(ok?'b-approved':'b-rejected')},(ok?'✓ ':'✗ ')+k)))
+  ]);
+}
+
+function hallEditor(v){
+  if(v.cat!=='hall') return null;
+  const inpS='width:100%;padding:8px;border:1px solid #e5e0ec;border-radius:8px;font-size:13px;box-sizing:border-box';
+  const ta=el('textarea',{rows:3,placeholder:'층수 | 홀 명칭 | 대관료  (한 줄에 하나)\n예) 3F | 그랜드홀 | 날짜에 따라 협의',style:inpS+';resize:vertical;font-family:inherit'},
+    (v.halls||[]).map(h=>[h.floor,h.name,h.rental].filter(Boolean).join(' | ')).join('\n'));
+  const bf=el('input',{value:v.buffet_floor||'',placeholder:'뷔페 층수 예) 2F',style:inpS});
+  const pn=el('input',{value:v.price_note||'',placeholder:'금액 메모 예) 대관료·식대 날짜에 따라 협의',style:inpS});
+  return el('div',{style:'margin:10px 0;padding:12px 14px;border:1px solid #eee8f4;border-radius:12px'},[
+    el('div',{style:'font-weight:800;font-size:12.5px;margin-bottom:8px'},'웨딩홀 정보 (층 · 뷔페 · 금액)'),
+    ta,
+    el('div',{style:'display:grid;grid-template-columns:1fr 2fr;gap:6px;margin-top:6px'},[bf,pn]),
+    el('button',{class:'btn sm',style:'margin-top:8px',onclick:async()=>{
+      const halls=ta.value.split('\n').map(s=>s.trim()).filter(Boolean).map(sr=>{const p=sr.split('|').map(x=>x.trim());return{floor:p[0]||'',name:p[1]||'',rental:p[2]||''};});
+      try{ await DB.updateVendor(v.id,{halls,buffet_floor:bf.value||null,price_note:pn.value||null}); Object.assign(v,{halls,buffet_floor:bf.value,price_note:pn.value}); toast('저장했습니다'); }
+      catch(e){ toast('저장 실패: '+(e.message||e)); }
+    }},'저장')
+  ]);
+}
+
+function internalEditor(v, internal){
+  const rows=((internal&&internal.cost_table&&internal.cost_table.length)?internal.cost_table:[{name:'',sale:'',deposit:''}]).map(r=>({...r}));
+  const box=el('div');
+  const inp=(val,ph,w)=>el('input',{value:val==null?'':val,placeholder:ph,style:'flex:'+w+';min-width:0;padding:8px;border:1px solid #e5e0ec;border-radius:8px;font-size:13px'});
+  const draw=()=>{
+    box.innerHTML='';
+    rows.forEach((r,i)=>{
+      const n=inp(r.name,'상품명 예) A상품 20p',2), s=inp(r.sale,'판매가',1), d=inp(r.deposit,'입금가',1);
+      n.oninput=()=>r.name=n.value; s.oninput=()=>r.sale=s.value; d.oninput=()=>r.deposit=d.value;
+      box.appendChild(el('div',{style:'display:flex;gap:6px;margin-bottom:6px'},[n,s,d,
+        el('button',{class:'btn sm ghost',onclick:()=>{rows.splice(i,1);draw();}},'✕')]));
+    });
+  };
+  draw();
+  const memo=el('input',{value:(internal&&internal.memo)||'',placeholder:'내부 메모 (추가금 리베이트, 정산 조건 등)',style:'width:100%;padding:8px;border:1px solid #e5e0ec;border-radius:8px;font-size:13px;margin:2px 0 8px;box-sizing:border-box'});
+  return el('div',{style:'margin:10px 0;padding:12px 14px;border:1px solid #ffe3c8;background:#fffaf4;border-radius:12px'},[
+    el('div',{style:'font-weight:800;font-size:12.5px;margin-bottom:2px'},'업체 단가표 · 입금가 (내부용)'),
+    el('div',{class:'muted',style:'font-size:11.5px;margin-bottom:8px'},'관리자와 해당 업체만 볼 수 있으며 이용자 화면에는 노출되지 않습니다.'),
+    box, memo,
+    el('div',{style:'display:flex;gap:6px'},[
+      el('button',{class:'btn sm ghost',onclick:()=>{rows.push({name:'',sale:'',deposit:''});draw();}},'+ 행 추가'),
+      el('button',{class:'btn sm',onclick:async()=>{
+        const cost_table=rows.filter(r=>r.name).map(r=>({name:r.name,sale:+String(r.sale).replace(/[^\d]/g,'')||0,deposit:+String(r.deposit).replace(/[^\d]/g,'')||0}));
+        try{ await DB.saveVendorInternal(v.id,{cost_table,memo:memo.value||null}); toast('단가표를 저장했습니다'); }
+        catch(e){ toast('저장 실패: '+(e.message||e)); }
+      }},'저장')
+    ])
+  ]);
+}
+
+function photoEditor(v, imgs){
+  return el('div',{style:'margin-bottom:14px'},[
+    el('div',{style:'display:flex;gap:8px;flex-wrap:wrap'},[
+      el('label',{class:'btn sm ghost',style:'cursor:pointer'},[
+        v.cover_url? '대표사진 변경':'대표사진 업로드',
+        el('input',{type:'file',accept:'image/*',style:'display:none',onchange:async e=>{
+          const f=e.target.files[0]; if(!f) return;
+          try{ const url=await DB.uploadMedia(f,'vendor','vendor-media'); await DB.updateVendor(v.id,{cover_url:url}); v.cover_url=url; toast('대표사진을 업로드했습니다'); vendorDetail(v); }
+          catch(err){ toast('업로드 실패: '+(err.message||err)); }
+        }})
+      ]),
+      el('label',{class:'btn sm ghost',style:'cursor:pointer'},[
+        '갤러리 사진 추가',
+        el('input',{type:'file',accept:'image/*',multiple:true,style:'display:none',onchange:async e=>{
+          const files=[...e.target.files]; if(!files.length) return;
+          try{
+            for(const f of files){ const url=await DB.uploadMedia(f,'vendor','vendor-media'); await DB.addVendorImage(v.id,url,imgs.length); }
+            toast(files.length+'장 추가했습니다'); vendorDetail(v);
+          }catch(err){ toast('업로드 실패: '+(err.message||err)); }
+        }})
+      ])
+    ]),
+    imgs.length? el('div',{style:'display:flex;gap:8px;flex-wrap:wrap;margin-top:10px'}, imgs.map(im=>
+      el('div',{style:'position:relative;width:64px;height:64px'},[
+        el('img',{src:im.url,style:'width:100%;height:100%;object-fit:cover;border-radius:8px'}),
+        el('button',{class:'btn sm ghost',style:'position:absolute;top:-6px;right:-6px;width:20px;height:20px;padding:0;line-height:1;border-radius:50%;background:#fff',onclick:async()=>{
+          try{ await DB.removeVendorImage(im.id); toast('삭제했습니다'); vendorDetail(v); }catch(err){ toast('삭제 실패'); }
+        }},'✕')
+      ])
+    )) : el('p',{class:'muted',style:'margin-top:8px'},'갤러리 사진이 없습니다')
+  ]);
+}
+
+function tierEditor(v){
+  const draft = {tier:v.tier||'basic', featured:!!v.featured, sort_weight:v.sort_weight||0};
+  const fld=(label,node)=>el('div',{class:'field'},[el('label',{},label),node]);
+  return el('div',{style:'margin-top:16px;padding-top:16px;border-top:1px solid #f4f2f7'},[
+    el('div',{style:'font-weight:800;font-size:12px;color:#8d8697;margin-bottom:8px'},'노출 설정 · 요금제'),
+    el('div',{style:'display:grid;grid-template-columns:1fr 1fr;gap:10px'},[
+      fld('요금제', el('select',{class:'inp',onchange:e=>draft.tier=e.target.value},
+        [['basic','베이직 (무료)'],['plus','플러스 (월 9.9만원)'],['premium','프리미엄 (월 29만원)']]
+          .map(([k,l])=>el('option',{value:k,selected:draft.tier===k},l)))),
+      fld('정렬 가중치', el('input',{class:'inp',type:'number',value:draft.sort_weight,oninput:e=>draft.sort_weight=e.target.value|0}))
+    ]),
+    el('label',{style:'display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px;font-weight:700;cursor:pointer'},[
+      el('input',{type:'checkbox',checked:draft.featured,onchange:e=>draft.featured=e.target.checked}),
+      '홈 배너 · 추천 우선 노출 (featured)'
+    ]),
+    el('p',{class:'muted',style:'margin-top:8px;line-height:1.6'},'플러스는 카테고리 상단·검색 가중치, 프리미엄은 여기에 더해 홈 배너·지도 핀 강조·랭킹 우선 편성까지 적용됩니다. 가중치가 높을수록 목록 상단에 노출됩니다.'),
+    el('button',{class:'btn sm',style:'margin-top:12px',onclick:async()=>{
+      try{ const r=await DB.updateVendor(v.id,draft); if(r) Object.assign(v,r); toast('노출 설정을 저장했습니다'); closeModal(); render(); }
+      catch(e){ S.err=friendly(e); render(); }
+    }},'노출 설정 저장')
+  ]);
+}
+
+/* ══════════ 상담 ══════════ */
+function consults(){
+  const counts={}; S.consults.forEach(c=>counts[c.status]=(counts[c.status]||0)+1);
+  const list=S.cFilter==='all'? S.consults : S.consults.filter(c=>c.status===S.cFilter);
+  return el('div',{class:'card'},[
+    el('h2',{class:'sec'},'빠른상담 신청'),
+    el('p',{class:'seclead'},'접수 → 상담중 → 연결완료 순으로 처리하세요. 연결완료 시 건당 수수료가 청구 대상이 됩니다.'),
+    el('div',{class:'filters'}, [['접수완료','접수'],['상담중','상담중'],['연결완료','연결완료'],['종료','종료'],['all','전체']]
+      .map(([k,label])=>el('button',{class:'chip'+(S.cFilter===k?' on':''),onclick:()=>{S.cFilter=k;render();}},
+        label+' '+(k==='all'? S.consults.length : (counts[k]||0))))),
+    list.length? el('div',{class:'tbwrap'},el('table',{},[
+      el('thead',{},el('tr',{},['신청자','연락처','대상','희망시간','접수일','상태','수수료',''].map(h=>el('th',{},h)))),
+      el('tbody',{}, list.map(c=>{
+        const st=CSTATUS[c.status]||CSTATUS['접수완료'];
+        return el('tr',{},[
+          el('td',{},[el('b',{},c.name),c.memo? el('div',{class:'muted'},c.memo):null]),
+          el('td',{},el('a',{href:'tel:'+c.phone},c.phone)),
+          el('td',{},c.target||'-'),
+          el('td',{class:'muted'},c.wish_time||'-'),
+          el('td',{class:'muted'},dt(c.created_at)),
+          el('td',{},el('span',{class:'badge '+st[1]},st[0])),
+          el('td',{class:'muted'},({none:'-',billable:'청구대상',billed:'청구됨',paid:'수납'})[c.fee_status||'none']),
+          el('td',{},el('div',{style:'display:flex;gap:6px;justify-content:flex-end'},[
+            c.status==='접수완료'? el('button',{class:'btn sm',onclick:()=>cSet(c,{status:'상담중'})},'상담시작'):null,
+            c.status==='상담중'? el('button',{class:'btn sm',onclick:()=>cSet(c,{status:'연결완료',fee_status:'billable'})},'연결완료'):null,
+            c.status!=='종료'? el('button',{class:'btn sm ghost',onclick:()=>cSet(c,{status:'종료'})},'종료'):null
+          ].filter(Boolean)))
+        ]);
+      }))
+    ])) : el('div',{class:'empty'},'해당 상태의 상담이 없습니다')
+  ]);
+}
+async function cSet(c,patch){
+  try{ await DB.updateConsult(c.id,{...patch,handled_at:new Date().toISOString()});
+       Object.assign(c,patch); toast('처리했습니다'); render(); }
+  catch(e){ S.err=friendly(e); render(); }
+}
+
+/* ══════════ 예약/주문 ══════════ */
+function orders(){
+  const PS={pending:['결제대기','b-pending'],paid:['결제완료','b-approved'],failed:['실패','b-rejected'],canceled:['취소','b-draft'],refunded:['환불','b-suspended']};
+  return el('div',{class:'card'},[
+    el('h2',{class:'sec'},'예약 · 주문'),
+    el('p',{class:'seclead'},'예약금 결제 연동(토스페이먼츠/포트원) 전까지는 수동으로 상태를 관리합니다.'),
+    S.orders.length? el('div',{class:'tbwrap'},el('table',{},[
+      el('thead',{},el('tr',{},['주문번호','내용','예약금','총액','결제','상태','일시',''].map(h=>el('th',{},h)))),
+      el('tbody',{},S.orders.map(o=>{
+        const ps=PS[o.pay_status||'pending']||PS.pending;
+        return el('tr',{},[
+          el('td',{},el('b',{},o.id)),
+          el('td',{},o.summary||'-'),
+          el('td',{},won(o.total)+'원'),
+          el('td',{class:'muted'},won(o.order_total)+'원'),
+          el('td',{},el('span',{class:'badge '+ps[1]},ps[0])),
+          el('td',{class:'muted'},o.status||'-'),
+          el('td',{class:'muted'},dt(o.created_at)),
+          el('td',{},el('div',{style:'display:flex;gap:6px;justify-content:flex-end'},[
+            (o.pay_status!=='paid')? el('button',{class:'btn sm',onclick:()=>oSet(o,{pay_status:'paid',paid_at:new Date().toISOString(),status:'예약금 결제완료'})},'입금확인'):null,
+            (o.pay_status==='paid')? el('button',{class:'btn sm ghost',onclick:()=>oSet(o,{pay_status:'refunded',status:'환불완료'})},'환불'):null,
+            el('button',{class:'btn sm ghost',onclick:()=>oSet(o,{pay_status:'canceled',status:'취소',canceled_at:new Date().toISOString()})},'취소')
+          ].filter(Boolean)))
+        ]);
+      }))
+    ])) : el('div',{class:'empty'},'예약 내역이 없습니다')
+  ]);
+}
+async function oSet(o,patch){
+  try{ await DB.updateOrder(o.id,patch); Object.assign(o,patch); toast('처리했습니다'); render(); }
+  catch(e){ S.err=friendly(e); render(); }
+}
+
+/* ══════════ 광고 ══════════ */
+function ads(){
+  const master=S.ads._master!==false;
+  const approved=S.vendors.filter(v=>v.status==='approved');
+  const box=el('div');
+
+  box.appendChild(el('div',{class:'card'},[
+    el('div',{style:'display:flex;align-items:center;gap:12px;margin-bottom:6px'},[
+      el('div',{style:'flex:1'},[el('h2',{class:'sec'},'광고 유닛 on/off'),
+        el('p',{class:'seclead',style:'margin:0'},'끄면 이용자 사이트에서 해당 영역이 사라집니다.')]),
+      el('button',{class:'sw'+(master?' on':''),title:'전체',onclick:()=>adToggle('_master',!master)})
+    ]),
+    el('div',{style:'margin-top:12px'}, AD_UNITS.map(([id,label])=>{
+      const on=S.ads[id]!==false;
+      return el('div',{class:'adrow'},[
+        el('div',{},[el('b',{},label),el('span',{class:'muted'},'unit: '+id)]),
+        el('span',{class:'muted'},S.slots.filter(s=>s.unit===id).length+'개 배정'),
+        el('button',{class:'sw'+(on&&master?' on':''),disabled:!master,onclick:()=>adToggle(id,!on)})
+      ]);
+    }))
+  ]));
+
+  box.appendChild(el('div',{class:'card'},[
+    el('div',{style:'display:flex;align-items:center;gap:10px;margin-bottom:14px'},[
+      el('div',{style:'flex:1'},[el('h2',{class:'sec'},'광고 슬롯 배정'),
+        el('p',{class:'seclead',style:'margin:0'},'어느 업체를 어느 영역에 노출할지 지정합니다.')]),
+      el('button',{class:'btn',onclick:()=>slotForm(null,approved)},'+ 슬롯 추가')
+    ]),
+    S.slots.length? el('div',{class:'tbwrap'},el('table',{},[
+      el('thead',{},el('tr',{},['영역','업체','헤드라인','기간','노출/클릭','비용','상태',''].map(h=>el('th',{},h)))),
+      el('tbody',{},S.slots.map(s=>{
+        const v=approved.find(x=>x.id===s.vendor_id);
+        const st=AD_STATUS[s.status||'approved']||AD_STATUS.approved;
+        const rate=AD_RATE[s.unit]; const cost=adCost(s);
+        return el('tr',{},[
+          el('td',{},el('b',{},(AD_UNITS.find(u=>u[0]===s.unit)||[,s.unit])[1])),
+          el('td',{},v? v.name : el('span',{class:'muted'},'직접 입력')),
+          el('td',{},s.headline||'-'),
+          el('td',{class:'muted'},(day(s.starts_at))+' ~ '+(day(s.ends_at))),
+          el('td',{},[el('div',{},(s.impressions||0)+' 노출'),el('div',{class:'muted'},(s.clicks||0)+' 클릭')]),
+          el('td',{}, rate? el('div',{},[el('div',{},won(cost)+'원'),el('div',{class:'muted'},(rate.kind==='cpm'?'CPM ':'CPC ')+won(rate.amount)+'원')]) : won(s.price)+'원'),
+          el('td',{},el('span',{class:'badge '+st[1]},st[0])),
+          el('td',{},el('div',{style:'display:flex;gap:6px;justify-content:flex-end'},[
+            s.status==='pending'? el('button',{class:'btn sm',onclick:async()=>{
+              try{ const r=await DB.saveAdSlot({id:s.id,status:'approved',active:true}); if(r) Object.assign(s,r); toast('승인했습니다'); render(); }
+              catch(e){ S.err=friendly(e); render(); }
+            }},'승인'):null,
+            s.status==='pending'? el('button',{class:'btn sm ghost',onclick:async()=>{
+              try{ const r=await DB.saveAdSlot({id:s.id,status:'rejected',active:false}); if(r) Object.assign(s,r); toast('반려했습니다'); render(); }
+              catch(e){ S.err=friendly(e); render(); }
+            }},'반려'):null,
+            rate && cost>0 && v? el('button',{class:'btn sm line',onclick:async()=>{
+              try{
+                await DB.saveBilling({vendor_id:v.id, kind:'ad', period:new Date().toISOString().slice(0,7), amount:cost, memo:(AD_UNITS.find(u=>u[0]===s.unit)||[,s.unit])[1]+' · '+(s.impressions||0)+'노출/'+(s.clicks||0)+'클릭', status:'unpaid'});
+                toast('정산에 반영했습니다'); go('billing');
+              }catch(e){ toast(friendly(e)); }
+            }},'정산 반영'):null,
+            el('button',{class:'btn sm line',onclick:()=>slotForm(s,approved)},'수정'),
+            el('button',{class:'btn sm ghost',onclick:async()=>{
+              await DB.removeAdSlot(s.id); S.slots=S.slots.filter(x=>x.id!==s.id); toast('삭제했습니다'); render();
+            }},'삭제')
+          ].filter(Boolean)))
+        ]);
+      }))
+    ])) : el('div',{class:'empty'},'배정된 광고 슬롯이 없습니다')
+  ]));
+  return box;
+}
+async function adToggle(id,val){
+  try{ await DB.saveAdUnit(id,val); S.ads[id]=val; render(); }
+  catch(e){ S.err=friendly(e); render(); }
+}
+function slotForm(slot,approved){
+  const f = slot? {...slot} : {unit:'hero',active:true,price:0,sort:0,status:'approved'};
+  const fld=(label,node)=>el('div',{class:'field'},[el('label',{},label),node]);
+  const needsImage = f.unit!=='strip' && f.unit!=='sticky';
+  const unitHint = {
+    hero:'홈 상단 큰 배너 · 이미지+제목+부제가 함께 보입니다',
+    strip:'카테고리 하단 텍스트 띠배너 · 이미지 없이 문구만 노출됩니다',
+    brand:'홈 중간 카드 3개 그리드 · 이미지가 꼭 필요합니다',
+    infeed:'피드 사이 네이티브 카드 · 이미지가 꼭 필요합니다',
+    sponsor:'검색결과 상단 리스트 · 이미지+가격이 함께 보입니다',
+    sticky:'하단 고정 바 · 이미지 없이 문구만 노출됩니다',
+    popup:'첫 방문 팝업 · 큰 이미지가 꼭 필요합니다'
+  }[f.unit] || '';
+  openModal([
+    el('h2',{class:'sec'}, f.id?'광고 슬롯 수정':'광고 슬롯 추가'),
+    el('p',{class:'seclead'},unitHint),
+    fld('노출 영역', el('select',{class:'inp',onchange:e=>{ f.unit=e.target.value; slotForm(f,approved); }},
+      AD_UNITS.map(([id,label])=>el('option',{value:id,selected:f.unit===id},label)))),
+    fld('업체 (선택 시 대표사진·상호 자동 채움)', el('select',{class:'inp',onchange:e=>{
+        f.vendor_id=e.target.value||null;
+        const v=approved.find(x=>x.id===f.vendor_id);
+        if(v){ if(!f.headline) f.headline=v.name; if(!f.image_url) f.image_url=v.cover_url||''; }
+        slotForm(f,approved);
+      }},
+      [el('option',{value:''},'직접 입력')].concat(approved.map(v=>el('option',{value:v.id,selected:f.vendor_id===v.id},v.name))))),
+    fld('헤드라인 (선택 · 이미지만으로도 등록 가능)', el('input',{class:'inp',value:f.headline||'',oninput:e=>f.headline=e.target.value,placeholder:'예: 오션뷰 채플, 8월 특가'})),
+    fld('보조 문구', el('input',{class:'inp',value:f.sub||'',oninput:e=>f.sub=e.target.value})),
+    (f.unit==='hero'||f.unit==='sticky')? fld('버튼 문구', el('input',{class:'inp',value:f.cta||'',oninput:e=>f.cta=e.target.value,placeholder:'예: 지금 예약하기 (비우면 "자세히 보기")'})) : null,
+    needsImage? fld('아이콘(이모지, 선택)', el('input',{class:'inp',value:f.icon||'',oninput:e=>f.icon=e.target.value,placeholder:'예: 💍 (사진 위/기본배경 위에 표시)'})) : null,
+    needsImage? fld('기본 배경(사진 없을 때)', el('select',{class:'inp',onchange:e=>f.bg_preset=e.target.value||null},
+      [['','없음'],['rose','로즈'],['navy','네이비'],['cream','크림'],['sage','세이지'],['lavender','라벤더']].map(([v,l])=>el('option',{value:v,selected:(f.bg_preset||'')===v},l)))) : null,
+    needsImage? fld('이미지', el('div',{},[
+      f.image_url? el('img',{src:f.image_url,style:'width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:10px;margin-bottom:8px'}):null,
+      el('label',{class:'btn sm ghost',style:'cursor:pointer'},[
+        f.image_url?'이미지 변경':'이미지 업로드',
+        el('input',{type:'file',accept:'image/*',style:'display:none',onchange:async e=>{
+          const file=e.target.files[0]; if(!file) return;
+          try{ f.image_url=await DB.uploadMedia(file,'ad','vendor-media'); toast('업로드했습니다'); slotForm(f,approved); }
+          catch(err){ toast('업로드 실패: '+(err.message||err)); }
+        }})
+      ])
+    ])) : null,
+    fld('링크 URL', el('input',{class:'inp',value:f.link_url||'',oninput:e=>f.link_url=e.target.value,placeholder:'비우면 업체 상세로 연결'})),
+    el('div',{style:'display:grid;grid-template-columns:1fr 1fr;gap:10px'},[
+      fld('시작일', el('input',{class:'inp',type:'date',value:f.starts_at||'',oninput:e=>f.starts_at=e.target.value||null})),
+      fld('종료일', el('input',{class:'inp',type:'date',value:f.ends_at||'',oninput:e=>f.ends_at=e.target.value||null}))
+    ]),
+    el('div',{style:'display:grid;grid-template-columns:1fr 1fr;gap:10px'},[
+      fld('월 광고비(원)', el('input',{class:'inp',inputmode:'numeric',value:f.price||0,oninput:e=>f.price=e.target.value.replace(/[^0-9]/g,'')|0})),
+      fld('정렬 순서', el('input',{class:'inp',inputmode:'numeric',value:f.sort||0,oninput:e=>f.sort=e.target.value.replace(/[^0-9]/g,'')|0}))
+    ]),
+    el('div',{style:'display:flex;gap:8px;margin-top:14px'},[
+      el('button',{class:'btn ghost',style:'flex:1;padding:12px',onclick:closeModal},'취소'),
+      el('button',{class:'btn',style:'flex:1;padding:12px',onclick:async()=>{
+        try{ const saved=await DB.saveAdSlot(f);
+             if(saved){ const i=S.slots.findIndex(x=>x.id===saved.id); if(i>=0) S.slots[i]=saved; else S.slots.push(saved); }
+             closeModal(); toast('저장했습니다'); render(); }
+        catch(e){ closeModal(); S.err=friendly(e); render(); }
+      }},'저장')
+    ])
+  ]);
+}
+
+/* ══════════ 회원 ══════════ */
+function members(){
+  const withDate=S.members.filter(m=>m.wedding_date).length;
+  const onboarded=S.members.filter(m=>m.onboarded).length;
+  return el('div',{},[
+    el('div',{class:'kpis'},[
+      ['전체 회원',won(S.members.length)],['예식일 입력',won(withDate)],
+      ['온보딩 완료',won(onboarded)],['업체 계정',won(S.members.filter(m=>m.role==='vendor').length)]
+    ].map(k=>el('div',{class:'kpi'},[el('span',{},k[0]),el('b',{},k[1])]))),
+    el('div',{class:'card',style:'margin-top:14px'},[
+      el('h2',{class:'sec'},'회원 목록'),
+      el('p',{class:'seclead'},'개인화 추천에 쓰이는 조건이 얼마나 채워졌는지 확인할 수 있습니다.'),
+      S.members.length? el('div',{class:'tbwrap'},el('table',{},[
+        el('thead',{},el('tr',{},['이름','연락처','예식일','지역','예산','하객','역할','가입일'].map(h=>el('th',{},h)))),
+        el('tbody',{},S.members.map(m=>el('tr',{},[
+          el('td',{},el('b',{},m.name||'-')),
+          el('td',{class:'muted'},m.phone||'-'),
+          el('td',{},m.wedding_date? day(m.wedding_date) : el('span',{class:'muted'},m.is_date_tbd?'미정':'-')),
+          el('td',{class:'muted'},m.region||'-'),
+          el('td',{},m.budget? won(m.budget)+'원' : '-'),
+          el('td',{},m.guests? m.guests+'명' : '-'),
+          el('td',{},el('span',{class:'badge '+(m.role==='vendor'?'b-doing':m.role==='admin'?'b-new':'b-draft')},m.role||'member')),
+          el('td',{class:'muted'},day(m.created_at))
+        ])))
+      ])) : el('div',{class:'empty'},'회원이 없습니다')
+    ])
+  ]);
+}
+
+/* ══════════ 정산 ══════════ */
+function billing(){
+  const period = new Date().toISOString().slice(0,7);
+  const sum = k => S.billings.filter(b=>b.kind===k).reduce((a,b)=>a+(b.amount|0),0);
+  const unpaid = S.billings.filter(b=>b.status==='unpaid').reduce((a,b)=>a+(b.amount|0),0);
+  return el('div',{},[
+    el('div',{class:'kpis'},[
+      ['미수금',won(unpaid)+'원'],['입점료',won(sum('subscription'))+'원'],
+      ['광고',won(sum('ad'))+'원'],['수수료',won(sum('consult_fee')+sum('booking_fee'))+'원']
+    ].map(k=>el('div',{class:'kpi'},[el('span',{},k[0]),el('b',{style:'font-size:20px'},k[1])]))),
+    el('div',{class:'card',style:'margin-top:14px'},[
+      el('div',{style:'display:flex;align-items:center;gap:10px;margin-bottom:14px'},[
+        el('div',{style:'flex:1'},[el('h2',{class:'sec'},'청구 내역'),
+          el('p',{class:'seclead',style:'margin:0'},'입점료·광고비·수수료를 업체별로 기록합니다.')]),
+        el('button',{class:'btn',onclick:()=>billForm(period)},'+ 청구 추가')
+      ]),
+      S.billings.length? el('div',{class:'tbwrap'},el('table',{},[
+        el('thead',{},el('tr',{},['업체','항목','기간','금액','상태','메모',''].map(h=>el('th',{},h)))),
+        el('tbody',{},S.billings.map(b=>{
+          const v=S.vendors.find(x=>x.id===b.vendor_id);
+          const KIND={subscription:'입점료',ad:'광고',consult_fee:'상담수수료',booking_fee:'예약수수료'};
+          return el('tr',{},[
+            el('td',{},el('b',{},v?v.name:'-')),
+            el('td',{},KIND[b.kind]||b.kind),
+            el('td',{class:'muted'},b.period||'-'),
+            el('td',{},el('b',{},won(b.amount)+'원')),
+            el('td',{},el('span',{class:'badge '+(b.status==='paid'?'b-approved':b.status==='void'?'b-draft':'b-pending')},
+              ({unpaid:'미수',paid:'수납',void:'취소'})[b.status]||b.status)),
+            el('td',{class:'muted'},b.memo||'-'),
+            el('td',{},b.status==='unpaid'? el('button',{class:'btn sm',onclick:async()=>{
+              try{ const r=await DB.saveBilling({id:b.id,status:'paid',paid_at:new Date().toISOString()});
+                   if(r) Object.assign(b,r); toast('수납 처리했습니다'); render(); }
+              catch(e){ S.err=friendly(e); render(); }
+            }},'수납'):null)
+          ]);
+        }))
+      ])) : el('div',{class:'empty'},'청구 내역이 없습니다')
+    ])
+  ]);
+}
+function billForm(period){
+  const f={kind:'subscription',period,amount:0,status:'unpaid'};
+  const fld=(label,node)=>el('div',{class:'field'},[el('label',{},label),node]);
+  openModal([
+    el('h2',{class:'sec'},'청구 추가'),
+    fld('업체', el('select',{class:'inp',onchange:e=>f.vendor_id=e.target.value},
+      [el('option',{value:''},'선택')].concat(S.vendors.map(v=>el('option',{value:v.id},v.name))))),
+    fld('항목', el('select',{class:'inp',onchange:e=>f.kind=e.target.value},
+      [['subscription','월 입점료'],['ad','광고비'],['consult_fee','상담 연결 수수료'],['booking_fee','예약 성사 수수료']]
+        .map(([k,l])=>el('option',{value:k},l)))),
+    el('div',{style:'display:grid;grid-template-columns:1fr 1fr;gap:10px'},[
+      fld('기간', el('input',{class:'inp',value:f.period,placeholder:'2026-08',oninput:e=>f.period=e.target.value})),
+      fld('금액(원)', el('input',{class:'inp',inputmode:'numeric',value:0,oninput:e=>f.amount=e.target.value.replace(/[^0-9]/g,'')|0}))
+    ]),
+    fld('메모', el('input',{class:'inp',oninput:e=>f.memo=e.target.value})),
+    el('div',{style:'display:flex;gap:8px;margin-top:14px'},[
+      el('button',{class:'btn ghost',style:'flex:1;padding:12px',onclick:closeModal},'취소'),
+      el('button',{class:'btn',style:'flex:1;padding:12px',onclick:async()=>{
+        if(!f.vendor_id){ toast('업체를 선택해 주세요'); return; }
+        try{ const r=await DB.saveBilling(f); if(r) S.billings.unshift(r); closeModal(); toast('청구를 추가했습니다'); render(); }
+        catch(e){ closeModal(); S.err=friendly(e); render(); }
+      }},'추가')
+    ])
+  ]);
+}
+
+/* ══════════ modal ══════════ */
+function openModal(kids){
+  const m=$('#modal'); m.innerHTML='';
+  (Array.isArray(kids)?kids:[kids]).forEach(k=>{ if(k) m.appendChild(k); });
+  $('#mask').classList.add('open');
+}
+function closeModal(){ $('#mask').classList.remove('open'); }
+$('#mask').onclick=e=>{ if(e.target.id==='mask') closeModal(); };
+</script>
+</body>
+</html>

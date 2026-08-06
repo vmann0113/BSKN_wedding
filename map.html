@@ -6,8 +6,6 @@
 <title>지도로 찾는 웨딩 준비 · 웨딩여기</title>
 <link rel="icon" type="image/jpeg" href="./icon.jpg">
 <link rel="apple-touch-icon" href="./icon.jpg">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
 <style>
 @font-face{font-family:'Paperlogy';font-weight:400;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-4Regular.woff2') format('woff2')}
@@ -98,7 +96,12 @@ select.sort{border:1px solid #e6e3ec;border-radius:999px;padding:8px 12px;font-s
 /* ---------- map ---------- */
 #mapwrap{flex:1;position:relative;min-width:0}
 #map{position:absolute;inset:0;background:#e8e6ee}
-.leaflet-container{font-family:'Paperlogy','Pretendard',sans-serif}
+#map *{font-family:'Paperlogy','Pretendard',sans-serif}
+#mapfail{position:absolute;inset:0;z-index:20;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#f4f3f6;padding:28px;text-align:center}
+#mapfail.show{display:flex}
+#mapfail b{font-size:16px;font-weight:800;color:#2b2530}
+#mapfail p{margin:0;font-size:13px;line-height:1.7;color:#6b6475;max-width:340px}
+#mapfail code{background:#fff;border:1px solid #e6e3ec;border-radius:6px;padding:2px 6px;font-size:12px}
 .pin{display:flex;align-items:center;gap:4px;background:#fff;border:1.5px solid #2b2530;border-radius:999px;padding:4px 9px;font-size:12px;font-weight:800;color:#2b2530;white-space:nowrap;box-shadow:0 3px 10px rgba(30,20,40,.22);transition:transform .12s;cursor:pointer}
 .pin i{font-style:normal;font-size:11px}
 .pin:hover{transform:scale(1.07)}
@@ -107,7 +110,7 @@ select.sort{border:1px solid #e6e3ec;border-radius:999px;padding:8px 12px;font-s
 .cprice2{font-size:15px;font-weight:800;color:#ff4d6d;margin-top:1px}
 .tail{position:absolute;left:50%;bottom:-8px;width:12px;height:12px;background:#fff;border-right:2px solid #ff4d6d;border-bottom:2px solid #ff4d6d;transform:translateX(-50%) rotate(45deg);text-decoration:none}
 .pin.dim{opacity:.5}
-.leaflet-marker-icon.selz{z-index:9000!important}
+.nvpin.selz{z-index:9000}
 
 .maptop{position:absolute;left:0;right:0;top:12px;z-index:700;display:flex;justify-content:center;pointer-events:none}
 .research{pointer-events:auto;background:#fff;border:1px solid #e0dce8;border-radius:999px;padding:10px 18px;font-size:13px;font-weight:800;color:#2b2530;box-shadow:0 6px 20px rgba(30,20,40,.16);display:none;align-items:center;gap:7px}
@@ -310,6 +313,11 @@ body.listview #cards{max-width:1180px;margin:0 auto;width:100%}
 
     <div id="mapwrap">
       <div id="map"></div>
+      <div id="mapfail">
+        <b>🗺️ 지도를 불러오지 못했어요</b>
+        <p>네이버 지도 키가 없거나 도메인이 등록되지 않았습니다.<br>네이버 투스 → Maps → Web Dynamic Map 에서 키를 발급하고, <code>map.html</code>의 <code>NAVER_CLIENT_ID</code>에 입력해 주세요.</p>
+        <p>그 사이에도 <b>목록 기능은 정상 동작</b>합니다.</p>
+      </div>
       <div class="maptop"><button class="research" id="research">📍 이 지역에서 다시 검색</button></div>
       <div class="regionjump" id="regionJump"></div>
       <div class="legend" id="legend"></div>
@@ -373,7 +381,97 @@ body.listview #cards{max-width:1180px;margin:0 auto;width:100%}
      3) 아래 NAVER_CLIENT_ID 에 발급받은 Client ID 입력
      → 가격 핀 / 반경 / 내 위치 로직은 그대로 이식됩니다
    ===================================================== */
-var NAVER_CLIENT_ID = ''; // 예: 'abcd1234efg'
+var NAVER_CLIENT_ID = 'ztbd44occ6';
+
+/* ============ Naver Maps 어댑터 (Leaflet 호환 표면) ============ */
+var NV = { ok:false };
+function mapFail(){ var el=document.getElementById('mapfail'); if(el) el.classList.add('show'); }
+window.navermap_authFailure = function(){ mapFail(); };
+function loadNaver(cb){
+  if(!NAVER_CLIENT_ID){ cb(false); return; }
+  if(window.naver && window.naver.maps){ cb(true); return; }
+  var s=document.createElement('script');
+  s.src='https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId='+encodeURIComponent(NAVER_CLIENT_ID);
+  s.async=true;
+  s.onload=function(){ cb(!!(window.naver&&window.naver.maps)); };
+  s.onerror=function(){ cb(false); };
+  document.head.appendChild(s);
+}
+function LL(a,b){ return new naver.maps.LatLng(a,b); }
+function bottomPad(){ return window.innerWidth<=900 && state.view==='map' ? 176 : 40; }
+
+function NMap(elId, center, zoom){
+  var self=this;
+  this._m=new naver.maps.Map(elId,{
+    center:LL(center[0],center[1]), zoom:zoom, minZoom:7,
+    zoomControl:true,
+    zoomControlOptions:{position:naver.maps.Position.RIGHT_TOP, style:naver.maps.ZoomControlStyle.SMALL},
+    logoControlOptions:{position:naver.maps.Position.BOTTOM_LEFT},
+    scaleControl:false, mapDataControl:false, tileTransition:true
+  });
+  this._programmatic=false;
+  this._born=Date.now();
+}
+NMap.prototype._on=function(ev,fn){ try{ naver.maps.Event.addListener(this._m,ev,fn); }catch(e){} };
+NMap.prototype.on=function(ev,fn){
+  var self=this;
+  if(ev==='moveend'){ this._on('idle',function(){ if(Date.now()-self._born<1600) return; fn(); }); }
+  else if(ev==='zoomstart'){ this._on('zooming',fn); this._on('zoom_changed',fn); }
+  else this._on(ev,fn);
+};
+NMap.prototype.getBounds=function(){
+  var b=this._m.getBounds();
+  return { _b:b, contains:function(ll){ try{ return b.hasLatLng(LL(ll[0],ll[1])); }catch(e){ return true; } } };
+};
+NMap.prototype.fitBounds=function(b,opt){
+  var bounds;
+  if(Array.isArray(b)){
+    if(!b.length) return;
+    bounds=new naver.maps.LatLngBounds(LL(b[0][0],b[0][1]),LL(b[0][0],b[0][1]));
+    b.forEach(function(p){ bounds.extend(LL(p[0],p[1])); });
+  } else bounds=(b&&b._b)||b;
+  if(!bounds) return;
+  var p=(opt&&opt.padding)||[40,40];
+  try{ this._m.fitBounds(bounds,{top:p[1],right:p[0],bottom:Math.max(p[1],bottomPad()),left:p[0]}); }catch(e){}
+  if(opt&&opt.maxZoom && this._m.getZoom()>opt.maxZoom) this._m.setZoom(opt.maxZoom);
+};
+NMap.prototype.setView=function(c,z){ try{ this._m.morph(LL(c[0],c[1]), z||this._m.getZoom()); }catch(e){ this._m.setCenter(LL(c[0],c[1])); } };
+NMap.prototype.panTo=function(c){ try{ this._m.panTo(LL(c[0],c[1])); }catch(e){} };
+NMap.prototype.invalidateSize=function(){ try{ this._m.refresh(true); }catch(e){} };
+NMap.prototype.hasLayer=function(o){ return !!(o && o._m && o._m.getMap()); };
+NMap.prototype.removeLayer=function(o){ if(o&&o._m) o._m.setMap(null); };
+
+function NMarker(pos, ico, opt){
+  this._m=new naver.maps.Marker({
+    position:LL(pos[0],pos[1]),
+    icon:{content:'<div class="nvpin">'+ico.html+'</div>', anchor:new naver.maps.Point(0,0)},
+    zIndex:ico.sel?9000:200, title:(opt&&opt.title)||''
+  });
+  this._m.setMap(null);
+}
+Object.defineProperty(NMarker.prototype,'_icon',{get:function(){ try{ return this._m.getElement().firstChild; }catch(e){ return null; } }});
+NMarker.prototype.on=function(ev,fn){ try{ naver.maps.Event.addListener(this._m,ev,fn); }catch(e){} };
+NMarker.prototype.addTo=function(mp){ this._m.setMap(mp._m); return this; };
+NMarker.prototype.setIcon=function(ico){
+  this._m.setIcon({content:'<div class="nvpin'+(ico.sel?' selz':'')+'">'+ico.html+'</div>', anchor:new naver.maps.Point(0,0)});
+  this._m.setZIndex(ico.sel?9000:200);
+};
+function NCircle(center, radius){
+  this._m=new naver.maps.Circle({center:LL(center[0],center[1]), radius:radius,
+    strokeColor:'#ff4d6d', strokeWeight:1.5, strokeStyle:'shortdash', strokeOpacity:.9,
+    fillColor:'#ff4d6d', fillOpacity:.05, clickable:false});
+}
+NCircle.prototype.addTo=function(mp){ this._m.setMap(mp._m); return this; };
+NCircle.prototype.getBounds=function(){ try{ return {_b:this._m.getBounds()}; }catch(e){ return null; } };
+
+/* 지도 없이도 목록이 동작하도록 하는 스텁 */
+function StubMap(){ this._programmatic=false; }
+StubMap.prototype.on=function(){}; StubMap.prototype.getBounds=function(){ return {contains:function(){return true;}}; };
+StubMap.prototype.fitBounds=function(){}; StubMap.prototype.setView=function(){}; StubMap.prototype.panTo=function(){};
+StubMap.prototype.invalidateSize=function(){}; StubMap.prototype.hasLayer=function(){ return false; }; StubMap.prototype.removeLayer=function(){};
+function StubMarker(){} StubMarker.prototype.on=function(){}; StubMarker.prototype.addTo=function(){return this;}; StubMarker.prototype.setIcon=function(){};
+Object.defineProperty(StubMarker.prototype,'_icon',{get:function(){return null;}});
+function StubCircle(){} StubCircle.prototype.addTo=function(){return this;}; StubCircle.prototype.getBounds=function(){return null;};
 
 /* ===================== data ===================== */
 var CATS = {
@@ -381,56 +479,60 @@ var CATS = {
   studio:{name:'스튜디오', color:'#7c5cff', icon:'📸', unit:'패키지'},
   dress: {name:'드레스',   color:'#ff8fab', icon:'👰', unit:'패키지'},
   makeup:{name:'메이크업', color:'#12b3a6', icon:'💄', unit:'패키지'},
-  hanbok:{name:'한복',     color:'#f5a623', icon:'🎎', unit:'대여'}
+  hanbok:{name:'한복',     color:'#f5a623', icon:'🎎', unit:'대여'},
+  suit:     {name:'예복',     color:'#5b6ee8', icon:'🤵', unit:'맞춤'},
+  jewelry:  {name:'예물',     color:'#c98a2b', icon:'💍', unit:'세트'},
+  honeymoon:{name:'신혼여행', color:'#2fb3a1', icon:'✈️', unit:'패키지'}
 };
 var REGIONS = {
   '부산':[35.1600,129.0700,11], '창원':[35.2270,128.6810,12], '마산':[35.1990,128.5690,13],
   '김해':[35.2300,128.8700,12], '양산':[35.3080,129.0100,13], '진주':[35.1900,128.1100,12], '울산':[35.5450,129.3250,12]
 };
 var ITEMS = [
-  // 웨딩홀
-  ['h1','hall','그랜디스 웨딩홀','부산','서면',35.1585,129.0602,1500000,4.8,342,['5F 채플','보증 250명','발렛']],
-  ['h2','hall','라움 컨벤션','부산','센텀시티',35.1692,129.1305,2000000,4.9,521,['그랜드볼룸','보증 300명','주차 500대']],
-  ['h3','hall','해운대 아쿠아채플','부산','해운대',35.1628,129.1640,1800000,4.7,288,['오션뷰','단독홀','보증 220명']],
-  ['h4','hall','광안리 오션뷰홀','부산','광안리',35.1535,129.1188,1650000,4.6,197,['야경','하우스웨딩','보증 180명']],
-  ['h5','hall','아펠가모 창원','창원','상남동',35.2272,128.6815,1200000,4.7,254,['크리스탈홀','보증 200명']],
-  ['h6','hall','김해 더컨벤션','김해','내외동',35.2382,128.8735,1000000,4.5,176,['아이보리홀','보증 180명']],
-  ['h7','hall','양산 노블레스','양산','물금',35.3082,129.0105,900000,4.4,132,['가성비','보증 150명']],
-  ['h8','hall','울산 메종드루체','울산','삼산동',35.5382,129.3305,1300000,4.6,209,['루체홀','발렛','보증 220명']],
-  ['h9','hall','진주 라비아채플','진주','초전',35.2052,128.1182,1100000,4.5,143,['가든채플','보증 170명']],
-  ['h10','hall','마산 아름컨벤션','마산','합성동',35.1992,128.5695,950000,4.3,118,['역세권','보증 160명']],
-  // 스튜디오
-  ['s1','studio','세렌디피티 스튜디오','부산','광안리',35.1520,129.1170,700000,4.9,412,['자연광','원본 300컷','야외스냅']],
-  ['s2','studio','모먼트필름 스튜디오','창원','상남동',35.2260,128.6800,850000,4.8,336,['필름감성','원본 500컷']],
-  ['s3','studio','화이트룸 스튜디오','김해','내외동',35.2382,128.8735,780000,4.7,221,['미니멀','한옥세트']],
-  ['s4','studio','라피네 스튜디오','창원','상남동',35.2260,128.6800,650000,4.6,188,['가성비','수정 30컷']],
-  ['s5','studio','온스튜디오','김해','장유',35.1955,128.8065,600000,4.5,97,['야외정원','반일촬영']],
-  // 드레스
-  ['d1','dress','끌로에 웨딩드레스','부산','서면',35.1592,129.0610,900000,4.8,298,['임포트','본식2벌']],
-  ['d2','dress','아뜰리에 브라이드','울산','성남동',35.5562,129.3172,1100000,4.9,351,['머메이드','VIP피팅']],
-  ['d3','dress','벨라지오 드레스','진주','초전동',35.2052,128.1182,820000,4.6,164,['볼륨라인','헤드피스']],
-  ['d4','dress','메종드로브','창원','의창구',35.2542,128.6405,750000,4.5,121,['가성비','촬영2벌']],
-  ['d5','dress','브라이덜하우스','울산','성남동',35.5562,129.3172,800000,4.6,139,['클래식','부케포함']],
-  // 메이크업
-  ['m1','makeup','라뷰티 메이크업','부산','해운대',35.1635,129.1650,500000,4.8,276,['물광','헬퍼동행']],
-  ['m2','makeup','제니하우스 창원점','창원','상남동',35.2275,128.6820,620000,4.9,402,['원장지정','혼주포함']],
-  ['m3','makeup','뮤즈 메이크업','양산','물금',35.3075,129.0095,480000,4.6,158,['내추럴','속눈썹']],
-  ['m4','makeup','미네르바','창원','상남동',35.2275,128.6820,450000,4.5,112,['가성비','리허설']],
-  ['m5','makeup','글로우 스튜디오','양산','물금',35.3075,129.0095,420000,4.4,88,['화사','출장가능']],
-  // 한복
-  ['b1','hanbok','예단 한복','부산','부산진구',35.1600,129.0560,600000,4.7,143,['폐백','전통혼례']],
-  ['b2','hanbok','곱디 한복','김해','내외동',35.2375,128.8720,520000,4.5,96,['생활한복','혼주']],
-  ['b3','hanbok','담다 한복','부산','남포동',35.0995,129.0318,580000,4.6,108,['맞춤제작','소품']],
-  ['b4','hanbok','한올한복','창원','상남동',35.2265,128.6795,490000,4.4,74,['대여','혼주2인']]
 ].map(function(a){
   var g=(a[10].join(' ').match(/보증\s*(\d+)/)||[])[1];
   return {id:a[0],cat:a[1],name:a[2],region:a[3],dong:a[4],lat:a[5],lng:a[6],price:a[7],rate:a[8],rev:a[9],tags:a[10],guarantee:g?+g:null};
 });
+var MOCK_ITEMS = ITEMS.slice();
+
+function ratingLine(it){
+  return (it.rev>0) ? '⭐ <b>'+it.rate.toFixed(1)+'</b> ('+it.rev.toLocaleString('ko-KR')+')' : '<b style="color:#12b3a6">신규 등록</b>';
+}
+function isUuid(v){ return typeof v==='string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v); }
+function loadLiveItems(){
+  import('./db.js').then(function(db){
+    if(!db || !db.ready || !db.ready()) return;
+    db.listPublicVendors({limit:300}).then(function(rows){
+      if(!rows || !rows.length) return;
+      var liveItems = rows.filter(function(v){ return CATS[v.cat] && v.lat && v.lng; }).map(function(v){
+        var tags = (v.cat==='hall'? (v.hall_types||[]).slice() : []);
+        if(v.guarantee) tags.push('보증 '+v.guarantee+'명');
+        if(!tags.length) tags.push(CATS[v.cat].name);
+        return {id:v.id, cat:v.cat, name:v.name, region:v.region||'', dong:v.sigungu||'',
+          lat:v.lat, lng:v.lng, price:v.price_from||0, rate:0, rev:0, tags:tags,
+          guarantee:v.guarantee||null, tel:v.tel||null};
+      });
+      if(!liveItems.length) return;
+      var liveCats={}; liveItems.forEach(function(it){ liveCats[it.cat]=1; });
+      var fallback = MOCK_ITEMS.filter(function(it){ return !liveCats[it.cat]; });
+      var merged = liveItems.concat(fallback);
+      ITEMS.length=0; Array.prototype.push.apply(ITEMS, merged);
+      Object.keys(markers).forEach(function(id){ try{ map.removeLayer(markers[id]); }catch(e){} });
+      markers={};
+      ITEMS.forEach(function(it){
+        var mk = NV.ok? new NMarker([it.lat,it.lng], pinIcon(it,false), {title:it.name}) : new StubMarker();
+        if(NV.ok) mk.on('click',function(){ select(it.id,true); });
+        markers[it.id]=mk;
+      });
+      render();
+    }).catch(function(e){ console.warn('실 데이터 로드 실패', e); });
+  }).catch(function(){});
+}
 
 /* ===================== state ===================== */
 var WKEY='bskn_wish_v1';
 var state = {
-  cats:{hall:true,studio:true,dress:true,makeup:true,hanbok:true},
+  cats:{hall:true,studio:true,dress:true,makeup:true,hanbok:true,suit:true,jewelry:true,honeymoon:true},
   maxPrice:2000000, sort:'dist', q:'', region:null,
   center:null, radius:10, useRadius:true, located:false,
   wMonth:'2026.10', wGuests:250, wFilterOn:false,
@@ -527,7 +629,7 @@ function buildChips(){
   wrap.appendChild(sel);
 
   var clr=document.createElement('button'); clr.className='clr'; clr.textContent='선택초기화';
-  clr.onclick=function(){ state.cats={hall:true,studio:true,dress:true,makeup:true,hanbok:true}; state.maxPrice=2000000; state.q=''; document.getElementById('q').value=''; state.bounds=null; state.region=null; state.useRadius=true; state.radius=10; drawRadius(); buildChips(); buildRegionJump(); render(); if(radiusCircle){ map._programmatic=true; map.fitBounds(radiusCircle.getBounds(),{padding:[40,40]}); } };
+  clr.onclick=function(){ state.cats=Object.assign({},ALL_CATS_ON); state.maxPrice=2000000; state.q=''; document.getElementById('q').value=''; state.bounds=null; state.region=null; state.useRadius=true; state.radius=10; drawRadius(); buildChips(); buildRegionJump(); render(); if(radiusCircle){ map._programmatic=true; map.fitBounds(radiusCircle.getBounds(),{padding:[40,40]}); } };
   wrap.appendChild(clr);
 }
 
@@ -556,17 +658,18 @@ function buildRegionJump(){
 
 /* ===================== map ===================== */
 function initMap(){
-  map = L.map('map',{zoomControl:false, attributionControl:true}).setView([35.1600,129.0700,11][0]?[35.1600,129.0700]:[35.16,129.07],12);
-  L.control.zoom({position:'topright'}).addTo(map);
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
-    maxZoom:19, attribution:'© OpenStreetMap contributors'
-  }).addTo(map);
+  if(!NV.ok){
+    map=new StubMap();
+    ITEMS.forEach(function(it){ markers[it.id]=new StubMarker(); });
+    mapFail();
+    return;
+  }
+  map=new NMap('map',[35.1600,129.0700],11);
 
   ITEMS.forEach(function(it){
-    var c=CATS[it.cat];
-    var m=L.marker([it.lat,it.lng],{icon:pinIcon(it,false), riseOnHover:true, title:it.name});
-    m.on('click',function(){ select(it.id,true); });
-    markers[it.id]=m;
+    var mk=new NMarker([it.lat,it.lng], pinIcon(it,false), {title:it.name});
+    mk.on('click',function(){ select(it.id,true); });
+    markers[it.id]=mk;
   });
 
   map.on('moveend',function(){
@@ -585,11 +688,9 @@ function drawRadius(){
   if(radiusCircle){ map.removeLayer(radiusCircle); radiusCircle=null; }
   if(meMarker){ map.removeLayer(meMarker); meMarker=null; }
   if(!state.center) return;
-  if(state.useRadius){
-    radiusCircle=L.circle(state.center,{radius:state.radius*1000,color:'#ff4d6d',weight:1.5,dashArray:'5 5',fillColor:'#ff4d6d',fillOpacity:.05,interactive:false}).addTo(map);
-  }
-  meMarker=L.marker(state.center,{interactive:false,icon:L.divIcon({className:'',iconSize:null,iconAnchor:[0,0],
-    html:'<div style="transform:translate(-50%,-50%);width:18px;height:18px;border-radius:50%;background:#2f7bff;border:3px solid #fff;box-shadow:0 0 0 6px rgba(47,123,255,.18),0 2px 6px rgba(0,0,0,.3)"></div>'})}).addTo(map);
+  var MK=NV.ok?NMarker:StubMarker, CI=NV.ok?NCircle:StubCircle;
+  if(state.useRadius){ radiusCircle=new CI(state.center, state.radius*1000).addTo(map); }
+  meMarker=new MK(state.center,{html:'<div style="transform:translate(-50%,-50%);width:18px;height:18px;border-radius:50%;background:#2f7bff;border:3px solid #fff;box-shadow:0 0 0 6px rgba(47,123,255,.18),0 2px 6px rgba(0,0,0,.3)"></div>'}).addTo(map);
 }
 function applyCenter(c,fly){
   state.center=c; state.bounds=null; drawRadius(); buildChips(); render();
@@ -610,21 +711,18 @@ function locate(userAsked){
 function pinIcon(it,sel){
   var c=CATS[it.cat];
   if(sel){
-    return L.divIcon({className:'',iconSize:null,iconAnchor:[0,0],
-      html:'<div class="callout" style="transform:translate(-50%,-118%)">'+
+    return {sel:true, html:'<div class="callout" style="transform:translate(-50%,-118%)">'+
              '<div class="cline">'+c.icon+' '+it.name+'</div>'+
              '<div class="cprice2">'+man(it.price)+'원~</div>'+
-             '<s class="tail"></s>'+
-           '</div>'});
+             '<s class="tail"></s></div>'};
   }
-  return L.divIcon({className:'',iconSize:null,iconAnchor:[0,0],
-    html:'<div class="pin" style="border-color:'+c.color+';color:'+c.color+';transform:translate(-50%,-135%)"><i>'+c.icon+'</i>'+man(it.price)+'</div>'});
+  return {sel:false, html:'<div class="pin" style="border-color:'+c.color+';color:'+c.color+';transform:translate(-50%,-135%)"><i>'+c.icon+'</i>'+man(it.price)+'</div>'};
 }
 function syncMarkers(list){
   var ids={}; list.forEach(function(i){ ids[i.id]=1; });
   ITEMS.forEach(function(it){
     var m=markers[it.id];
-    if(ids[it.id]){ if(!map.hasLayer(m)) m.addTo(map); m.setIcon(pinIcon(it,state.selected===it.id)); if(m._icon){ m._icon.classList.toggle('selz',state.selected===it.id); } }
+    if(ids[it.id]){ if(!map.hasLayer(m)) m.addTo(map); m.setIcon(pinIcon(it,state.selected===it.id)); }
     else if(map.hasLayer(m)) map.removeLayer(m);
   });
 }
@@ -640,7 +738,7 @@ function cardEl(it){
     '<div class="cbody">'+
       '<div class="cloc">📍 '+it.region+' · '+it.dong+(itemDist(it)!=null? ' · <b style="color:#2f7bff">'+distLabel(itemDist(it))+'</b>':'')+'</div>'+
       '<div class="cname">'+it.name+'</div>'+
-      '<div class="crate">⭐ <b>'+it.rate.toFixed(1)+'</b> ('+it.rev.toLocaleString('ko-KR')+') · '+c.name+
+      '<div class="crate">'+ratingLine(it)+' · '+c.name+
    (state.wFilterOn&&it.guarantee? ' · <b style="color:#12b3a6">보증 '+it.guarantee+'명 ✓</b>':'')+'</div>'+
       '<div class="ctags">'+it.tags.slice(0,2).map(function(t){return '<span class="ctag">'+t+'</span>';}).join('')+'</div>'+
       '<div class="cprice">'+
@@ -710,13 +808,13 @@ function openSheet(it){
     '<div class="sbody">'+
       '<div style="display:inline-block;background:'+c.color+';color:#fff;font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px">'+c.icon+' '+c.name+'</div>'+
       '<h2 style="margin-top:9px">'+it.name+'</h2>'+
-      '<div class="smeta">📍 '+it.region+' '+it.dong+' · ⭐ '+it.rate.toFixed(1)+' ('+it.rev.toLocaleString('ko-KR')+'개 후기)</div>'+
+      '<div class="smeta">📍 '+it.region+' '+it.dong+' · '+ratingLine(it)+(it.rev>0?' 개 후기':'')+'</div>'+
       '<div class="sgal">'+[1,2,3].map(function(n){return '<div><img loading="lazy" src="'+img('bw-'+it.id+'-'+n,240,240)+'" alt=""></div>';}).join('')+'</div>'+
       '<div class="ssec">'+(it.cat==='hall'?'예상 견적':'상품 구성')+'</div>'+pkHtml+
       '<div class="ssec">한눈에 보기</div>'+
       '<div class="sinfo">'+it.tags.map(function(t){return '· '+t;}).join('<br>')+'<br>· 주차 가능 · 방문 상담 예약제</div>'+
       '<div class="sacts">'+
-        '<a href="tel:051-000-0000">📞 전화</a>'+
+        '<a href="tel:'+(it.tel||'051-000-0000')+'">📞 전화</a>'+
         '<button id="sConsult">빠른상담</button>'+
         '<a class="fill" href="index.html#'+(it.cat==='hall'?'h':'v')+'='+it.id+'">상세보기</a>'+
       '</div>'+
@@ -725,6 +823,7 @@ function openSheet(it){
   sheet.classList.add('open');
   sheet.querySelector('.sclose').onclick=function(){ sheet.classList.remove('open'); };
   sheet.querySelector('#sConsult').onclick=function(){
+    currentConsultItem = it;
     document.getElementById('consultTarget').textContent='문의 대상 · '+it.name+' ('+c.name+')';
     document.getElementById('consultMask').classList.add('open');
   };
@@ -736,7 +835,7 @@ function openSheet(it){
 document.getElementById('q').oninput=function(){ state.q=this.value; render(); };
 document.getElementById('wishBtn').onclick=function(){
   if(!state.wish.length){ toast('아직 찜한 업체가 없어요'); return; }
-  state.cats={hall:true,studio:true,dress:true,makeup:true,hanbok:true};
+  state.cats=Object.assign({},ALL_CATS_ON);
   state.bounds=null; state.q=''; document.getElementById('q').value='';
   var only={}; state.wish.forEach(function(id){only[id]=1;});
   var box=document.getElementById('cards'); box.innerHTML='';
@@ -781,9 +880,17 @@ document.getElementById('wishBtn').onclick=function(){
   hint();
 })();
 
+var currentConsultItem = null;
+var ALL_CATS_ON = {hall:true,studio:true,dress:true,makeup:true,hanbok:true,suit:true,jewelry:true,honeymoon:true};
 document.getElementById('consultGo').onclick=function(){
+  var name=document.getElementById('cName').value||'고객', phone=document.getElementById('cPhone').value||'010-0000-0000';
+  var wishTime=document.getElementById('cTime').value, target=currentConsultItem?currentConsultItem.name:'';
+  var vendorId = (currentConsultItem && isUuid(currentConsultItem.id)) ? currentConsultItem.id : null;
   document.getElementById('consultMask').classList.remove('open');
   toast('상담 신청이 접수되었어요 · 곧 연락드립니다');
+  import('./db.js').then(function(db){
+    if(db && db.ready && db.ready()) db.createConsult(null, {name:name, phone:phone, target:target, wishTime:wishTime, vendorId:vendorId}).catch(function(e){ console.warn('상담 저장 실패', e); });
+  }).catch(function(){});
 };
 document.getElementById('consultMask').onclick=function(e){ if(e.target===this) this.classList.remove('open'); };
 
@@ -819,12 +926,17 @@ if(window.visualViewport) window.visualViewport.addEventListener('resize', refit
 document.getElementById('locBtn').onclick=function(){ locate(true); };
 document.getElementById('tabWish').onclick=function(){ document.getElementById('wishBtn').click(); };
 
-initMap();
-buildChips(); buildLegend(); buildRegionJump(); saveWish(); setView('list'); render();
-locate(false);
+function boot(){
+  initMap();
+  buildChips(); buildLegend(); buildRegionJump(); saveWish(); setView('list'); render();
+  locate(false);
+  deepLink();
+  loadLiveItems();
+}
+loadNaver(function(ok){ NV.ok=ok; boot(); });
 
 /* deep link: map.html#cat=studio or #region=부산 */
-(function(){
+function deepLink(){
   var h=location.hash.replace('#','');
   if(!h) return;
   var p={}; h.split('&').forEach(function(kv){ var a=kv.split('='); p[a[0]]=decodeURIComponent(a[1]||''); });
@@ -832,7 +944,7 @@ locate(false);
   if(p.view==='map'){ setView('map'); }
   if(p.region && REGIONS[p.region]){ state.region=p.region; var c=REGIONS[p.region]; map.setView([c[0],c[1]],c[2]); buildRegionJump(); }
   render();
-})();
+}
 </script>
 </body>
 </html>

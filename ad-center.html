@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>광고센터 · 웨딩여기</title>
+<link rel="icon" type="image/jpeg" href="./icon.jpg">
+<link rel="apple-touch-icon" href="./icon.jpg">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<style>
+@font-face{font-family:'Paperlogy';font-weight:400;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-4Regular.woff2') format('woff2')}
+@font-face{font-family:'Paperlogy';font-weight:600;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-6SemiBold.woff2') format('woff2')}
+@font-face{font-family:'Paperlogy';font-weight:800;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-8ExtraBold.woff2') format('woff2')}
+
+*{box-sizing:border-box}
+:root{--sab:env(safe-area-inset-bottom,0px)}
+html,body{margin:0;padding:0}
+body{font-family:'Paperlogy','Pretendard',system-ui,-apple-system,sans-serif;background:#f4f3f6;color:#2b2530;letter-spacing:-.01em;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+button,a{-webkit-tap-highlight-color:rgba(255,77,109,.12);touch-action:manipulation}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit}
+a{color:#ff4d6d;text-decoration:none}
+a:hover{color:#e03e5c}
+img{max-width:100%}
+
+header{position:sticky;top:0;z-index:80;background:#fff;border-bottom:1px solid #ecebf0}
+.hrow{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px clamp(14px,3vw,28px);min-width:0}
+.brand{display:flex;align-items:center;gap:9px;color:#2b2530;min-width:0}
+.brand i{width:32px;height:32px;border-radius:10px;overflow:hidden;flex:none;display:block}
+.brand i img{width:100%;height:100%;object-fit:cover;display:block}
+.brand b{font-size:16px;font-weight:800;white-space:nowrap}
+.brand small{display:block;font-size:11px;color:#a49dae;font-weight:700;margin-top:1px}
+.hsp{margin-left:auto;display:flex;align-items:center;gap:8px;flex:none}
+.hbtn{background:#fff;border:1px solid #e6e3ec;border-radius:10px;padding:9px 13px;font-size:13px;font-weight:700;color:#2b2530}
+.hbtn:hover{border-color:#d9d4e2}
+
+.wrap{max-width:1080px;margin:0 auto;padding:clamp(18px,3vw,34px) clamp(14px,3vw,28px) 80px}
+.card{background:#fff;border:1px solid #ecebf0;border-radius:18px;padding:clamp(18px,2.6vw,26px)}
+.card + .card{margin-top:16px}
+h1.pt{font-size:clamp(22px,3.4vw,30px);font-weight:800;margin:0 0 8px;line-height:1.3}
+p.sub{margin:0;font-size:14px;line-height:1.75;color:#6b6475}
+h2.sec{font-size:17px;font-weight:800;margin:0 0 4px}
+.seclead{font-size:13px;color:#8d8697;margin:0 0 18px;font-weight:600}
+
+.field{margin-bottom:15px}
+.field > label{display:block;font-size:12.5px;font-weight:800;color:#4a4550;margin-bottom:7px}
+.field .req{color:#ff4d6d;margin-left:3px}
+.inp,select.inp,textarea.inp{width:100%;background:#faf9fb;border:1px solid #e6e3ec;border-radius:12px;padding:13px 14px;font-size:15px;font-weight:500;color:#2b2530;outline:none}
+.inp:focus{border-color:#ff4d6d;background:#fff}
+.row{display:grid;gap:12px}
+.row.c2{grid-template-columns:1fr 1fr}
+.btn{border:none;border-radius:13px;padding:14px 20px;font-size:15px;font-weight:800;background:#ff4d6d;color:#fff}
+.btn:hover{background:#f03b5c}
+.btn.ghost{background:#f4f3f6;color:#2b2530}
+.btn.ghost:hover{background:#ebe9ef}
+.btn.line{background:#fff;border:1px solid #e6e3ec;color:#2b2530}
+.btn.sm{padding:9px 13px;font-size:13px;border-radius:10px}
+.btn:disabled{background:#f2f0f5;color:#b6aebd;cursor:not-allowed}
+.btnrow{display:flex;gap:10px;margin-top:22px}
+.btnrow .btn{flex:1}
+.err{background:#fff1f3;border:1px solid #ffd3da;color:#c3283f;border-radius:12px;padding:12px 14px;font-size:13px;font-weight:700;line-height:1.6;margin-bottom:14px}
+
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.kpi{background:#faf9fb;border:1px solid #ecebf0;border-radius:14px;padding:16px 12px}
+.kpi b{display:block;font-size:22px;font-weight:800;color:#ff4d6d}
+.kpi span{display:block;font-size:12px;color:#8d8697;font-weight:700;margin-top:4px}
+
+.ftable{width:100%;border-collapse:collapse;font-size:13.5px}
+.ftable th,.ftable td{text-align:left;padding:12px 10px;border-bottom:1px solid #f0eef4}
+.ftable th{font-size:12px;color:#8d8697;font-weight:800}
+.ftable td b{font-weight:800}
+.tbwrap{overflow-x:auto}
+
+.badge{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:4px 10px;font-size:11.5px;font-weight:800;flex:none}
+.b-pending{background:#fff5e6;color:#a86a00}
+.b-approved{background:#eefaf3;color:#1c7a4a}
+.b-rejected{background:#fff1f3;color:#c3283f}
+
+.arow{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:14px;margin-bottom:10px}
+.athumb{width:64px;height:64px;border-radius:12px;background:#f0eef4;flex:none;object-fit:cover;display:flex;align-items:center;justify-content:center;font-size:20px}
+.ameta{flex:1;min-width:0}
+.ameta b{display:block;font-size:15px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ameta span{display:block;font-size:12.5px;color:#8d8697;font-weight:600;margin-top:3px}
+
+.cover{width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#f0eef4;border:1px solid #ecebf0;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+.cover img{width:100%;height:100%;object-fit:cover}
+.muted{color:#a49dae;font-size:12.5px;font-weight:600}
+.empty{text-align:center;padding:34px 10px;color:#a49dae;font-size:13.5px;font-weight:600}
+
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:26px;z-index:9000;background:#2b2530;color:#fff;border-radius:999px;padding:13px 22px;font-size:13.5px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:90vw;text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(-6px)}
+
+@media(max-width:640px){
+  input,select,textarea{font-size:16px!important}
+  .brand small{display:none}
+  .row.c2{grid-template-columns:1fr}
+  .kpis{grid-template-columns:1fr}
+  .btnrow{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hrow">
+    <a class="brand" href="index.html"><i><img src="./icon.jpg" alt="웨딩여기"></i>
+      <span><b>웨딩여기</b><small>광고센터</small></span></a>
+    <div class="hsp" id="hsp">
+      <a class="hbtn" href="index.html">이용자 사이트</a>
+      <a class="hbtn" href="vendor.html">파트너센터</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap" id="root">
+  <div class="card"><p class="sub">불러오는 중…</p></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import * as DB from './db.js';
+
+const RATE = [
+  {id:'hero',   name:'메인 히어로 배너', pos:'홈 최상단 캐러셀',   size:'1200×420', rate:'월 300만원',  image:true, monthly:3000000},
+  {id:'strip',  name:'띠배너',           pos:'카테고리 하단',       size:'1200×90',  rate:'월 120만원',  image:false, monthly:1200000},
+  {id:'brand',  name:'스폰서 브랜드관',  pos:'홈 중간 카드 3칸',    size:'400×260',  rate:'월 200만원',  image:true, monthly:2000000},
+  {id:'infeed', name:'인피드 네이티브',  pos:'피드 첫 카드 위',     size:'카드형',    rate:'CPM 8,000원', image:true},
+  {id:'sponsor',name:'검색 스폰서 링크', pos:'검색결과 최상단',     size:'리스트형',  rate:'CPC 900원',   image:true},
+  {id:'sticky', name:'하단 스티키 바',   pos:'전 화면 하단 고정',   size:'1200×64',  rate:'월 180만원',  image:false, monthly:1800000},
+  {id:'popup',  name:'첫 방문 팝업',     pos:'홈 진입 시 1회',      size:'330×440',  rate:'월 90만원',   image:true, monthly:900000}
+];
+const RATE_BY_ID = Object.fromEntries(RATE.map(r=>[r.id,r]));
+const SLOT_CAP = {hero:5, strip:3, brand:3, infeed:4, sponsor:3, sticky:3, popup:2};
+const RATE_BENEFIT = {
+  hero:'홈 진입 시 가장 먼저 보이는 자리 · 브랜드 인지도 효과 최고',
+  strip:'카테고리 이동 전 누구나 지나치는 길목 · 가벼운 리마인드용',
+  brand:'신뢰감 있는 카드형 노출 · 사진이 좋을수록 클릭 전환 높음',
+  infeed:'실제 업체처럼 자연스럽게 섞여 노출 · 거부감 적고 체류시간 김',
+  sponsor:'구매 의도가 가장 높은 검색 순간에 노출 · 클릭한 만큼만 과금',
+  sticky:'페이지를 넘겨도 항상 붙어있음 · 세션 내내 반복 각인',
+  popup:'첫 방문 시 무조건 확인하게 됨 · 신규 이용자에게 강한 임팩트'
+};
+const STATUS = {pending:['승인대기','b-pending'], approved:['노출중','b-approved'], rejected:['반려됨','b-rejected']};
+const BG_PRESETS = [
+  ['rose','로즈','linear-gradient(135deg,#ffd6e0,#ff9bb3)'],
+  ['navy','네이비','linear-gradient(135deg,#2b2530,#4a4550)'],
+  ['cream','크림','linear-gradient(135deg,#fff3e0,#ffd9a0)'],
+  ['sage','세이지','linear-gradient(135deg,#dcece0,#a9cdb3)'],
+  ['lavender','라벤더','linear-gradient(135deg,#e8e0f5,#c3aee6)']
+];
+const BG_PRESET_CSS = Object.fromEntries(BG_PRESETS.map(([id,,css])=>[id,css]));
+const ICONS = ['💍','💐','🥂','🎂','✨','👰','🤵','🎁'];
+function adPreviewNode(unit, d){
+  d = d||{};
+  const headline = d.headline || '';
+  const sub = d.sub || '';
+  const textless = !headline && !sub;
+  const img = d.image_url || '';
+  const adv = d.advertiser || '업체명';
+  const cta = d.cta || '자세히 보기';
+  const icon = d.icon || '';
+  const textSize = d.text_size || 'md';
+  const ctaPos = d.cta_pos || '';
+  const visualBg = img? ("background-image:url('"+img+"');background-size:cover;background-position:center") : (d.bg_preset? ('background:'+BG_PRESET_CSS[d.bg_preset]) : 'background:linear-gradient(135deg,#efe6ee,#ddd0d8)');
+  const showIcon = icon && !img;
+  const adTagSm = el('span',{style:'position:absolute;right:8px;top:6px;font-size:8.5px;color:#b6aebd;font-weight:700;z-index:2'},'광고');
+
+  if(unit==='hero'){
+    const heroTitleSize = {sm:'15px', md:'clamp(20px,3vw,30px)', lg:'clamp(26px,4vw,38px)'}[textSize];
+    const heroBg = img? ("background-image:linear-gradient(140deg,rgba(20,14,24,.15),rgba(20,14,24,.6)),url('"+img+"');background-size:cover;background-position:center")
+      : (d.bg_preset? ('background:'+BG_PRESET_CSS[d.bg_preset]) : 'background:linear-gradient(140deg,#2b2530,#4a4550)');
+    return el('div',{style:'position:relative;width:100%;max-width:1180px;aspect-ratio:1200/420;border-radius:20px;overflow:hidden;padding:clamp(24px,3.4vw,40px) clamp(20px,3vw,34px);color:#fff;display:flex;align-items:center;box-sizing:border-box;'+heroBg},[
+      textless? el('span',{style:'position:absolute;left:14px;top:14px;background:rgba(0,0,0,.4);color:#fff;font-size:10px;font-weight:700;padding:4px 10px;border-radius:999px'},'광고') : null,
+      !textless? el('div',{style:'flex:1;min-width:0;'+(ctaPos==='center'?'display:flex;flex-direction:column;align-items:center;text-align:center':'')},[
+        el('div',{style:'display:inline-block;background:rgba(255,255,255,.22);border-radius:999px;padding:4px 11px;font-size:11px;font-weight:800;width:fit-content'}, adv+' · 프로모션'),
+        el('div',{style:'font-weight:800;font-size:'+heroTitleSize+';margin-top:10px;line-height:1.25'}, headline),
+        sub? el('div',{style:'font-size:13.5px;opacity:.92;margin-top:7px;line-height:1.5'}, sub):null,
+        el('div',{style:'display:inline-flex;align-items:center;background:#fff;color:#2b2530;border-radius:10px;padding:10px 16px;font-size:13.5px;font-weight:800;margin-top:16px;width:fit-content'}, cta)
+      ]) : null,
+      showIcon? el('span',{style:'flex:none;font-size:clamp(40px,6vw,70px);margin-left:14px'}, icon) : null
+    ].filter(Boolean));
+  }
+  if(unit==='strip') return el('div',{style:'width:100%;max-width:1180px;background:#fff;border-top:1px solid #f2f0f5;border-bottom:1px solid #ecebf0;padding:12px clamp(16px,4vw,40px);display:flex;align-items:center;gap:12px;box-sizing:border-box'},[
+    el('span',{style:'font-size:22px'},icon||'💍'),
+    el('div',{style:'flex:1;min-width:0'},[
+      el('div',{style:'font-size:14px;font-weight:800'}, headline||'헤드라인을 입력해 주세요'),
+      sub? el('div',{style:'font-size:12.5px;color:#8b8592;margin-top:2px'}, sub):null
+    ]),
+    el('span',{style:'flex:none;background:#2b2530;color:#fff;border-radius:9px;padding:8px 13px;font-size:12.5px;font-weight:800'},'보기')
+  ]);
+  if(unit==='brand') return el('div',{style:'width:100%;max-width:400px;background:#fff;border:1px solid #ecebf0;border-radius:16px;overflow:hidden'},[
+    el('div',{style:'position:relative;aspect-ratio:16/9;'+visualBg},[
+      el('span',{style:'position:absolute;left:10px;top:10px;background:#ff4d6d;color:#fff;font-size:10.5px;font-weight:800;padding:4px 9px;border-radius:999px'},'광고'),
+      showIcon? el('span',{style:'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:40px'}, icon):null
+    ]),
+    !textless? el('div',{style:'padding:13px 15px 15px'},[
+      el('div',{style:'font-size:15px;font-weight:800;letter-spacing:-.02em'}, headline),
+      sub? el('div',{style:'font-size:12.5px;color:#8b8592;margin-top:3px;line-height:1.45'}, sub):null
+    ]) : null
+  ]);
+  if(unit==='infeed') return el('div',{style:'position:relative;width:100%;max-width:1180px;display:flex;align-items:center;gap:14px;background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:14px 16px;box-sizing:border-box'},[
+    el('div',{style:'position:relative;width:74px;height:74px;border-radius:12px;flex:none;'+visualBg}, showIcon? el('span',{style:'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:26px'}, icon):null),
+    !textless? el('div',{style:'flex:1;min-width:0'},[
+      el('div',{style:'font-size:11.5px;color:#a49dae;font-weight:700'}, adv+' · 스폰서'),
+      el('div',{style:'font-size:15px;font-weight:800;letter-spacing:-.02em;margin-top:2px'}, headline),
+      sub? el('div',{style:'font-size:12.5px;color:#8b8592;margin-top:3px;line-height:1.45'}, sub):null
+    ]) : el('div',{style:'flex:1'}),
+    adTagSm
+  ]);
+  if(unit==='sponsor') return el('div',{style:'width:100%;max-width:1180px;background:#fff;border:1px solid #f0e6f2;border-radius:16px;padding:6px 16px;box-sizing:border-box'},[
+    el('div',{style:'display:flex;align-items:center;justify-content:space-between;padding:11px 0 8px;border-bottom:1px solid #f4f2f6'},[
+      el('span',{style:'font-size:12.5px;font-weight:800;color:#4b4455'},'스폰서 링크'),
+      el('span',{style:'font-size:9.5px;color:#b6aebd;font-weight:700'},'광고')
+    ]),
+    el('div',{style:'display:flex;align-items:center;gap:12px;padding:12px 0'},[
+      el('div',{style:'position:relative;width:46px;height:46px;border-radius:10px;flex:none;'+visualBg}, showIcon? el('span',{style:'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:20px'}, icon):null),
+      !textless? el('div',{style:'flex:1;min-width:0'},[
+        el('div',{style:'font-size:14px;font-weight:800'}, headline),
+        sub? el('div',{style:'font-size:12px;color:#8b8592;margin-top:2px'}, sub):null
+      ]) : el('div',{style:'flex:1'}),
+      el('span',{style:'font-size:13.5px;font-weight:800;color:#ff4d6d;flex:none'}, d.price||'')
+    ])
+  ]);
+  if(unit==='sticky'){
+    const emojiEl = el('span',{style:'font-size:20px'},icon||'🎁');
+    const textEl = el('div',{style:'flex:1;min-width:0'},[
+      el('div',{style:'font-size:13.5px;font-weight:800;color:#fff'}, headline||'헤드라인을 입력해 주세요'),
+      sub? el('div',{style:'font-size:11.5px;color:#b7b0c0;margin-top:1px'}, sub):null
+    ]);
+    const ctaEl = el('span',{style:'flex:none;background:#ff4d6d;color:#fff;border-radius:9px;padding:9px 15px;font-size:12.5px;font-weight:800'}, cta);
+    const kids = ctaPos==='left'? [ctaEl,emojiEl,textEl] : [emojiEl,textEl,ctaEl];
+    return el('div',{style:'width:100%;max-width:1180px;background:#2b2530;border-radius:12px;padding:11px clamp(16px,4vw,40px);display:flex;align-items:center;gap:12px;box-sizing:border-box'}, kids);
+  }
+  // popup
+  const popupTitleSize = {sm:'16px', md:'19px', lg:'23px'}[textSize];
+  return el('div',{style:'width:100%;max-width:330px;background:#fff;border-radius:20px;overflow:hidden'},[
+    el('div',{style:'position:relative;aspect-ratio:4/3;'+visualBg},[
+      showIcon? el('span',{style:'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:56px'}, icon):null,
+      el('span',{style:'position:absolute;right:10px;top:10px;background:rgba(0,0,0,.4);color:#fff;font-size:9.5px;font-weight:700;padding:3px 7px;border-radius:5px'},'광고')
+    ]),
+    el('div',{style:'padding:18px 20px 20px'},[
+      !textless? el('div',{style:'font-size:11.5px;color:#a49dae;font-weight:700'}, adv):null,
+      !textless? el('div',{style:'font-weight:800;font-size:'+popupTitleSize+';margin-top:5px;line-height:1.3;letter-spacing:-.02em'}, headline):null,
+      !textless&&sub? el('div',{style:'font-size:13px;color:#8b8592;margin-top:6px;line-height:1.5'}, sub):null,
+      el('div',{style:'width:100%;margin-top:15px;background:#ff4d6d;color:#fff;text-align:center;border-radius:12px;padding:14px 0;font-size:14.5px;font-weight:800;box-sizing:border-box'}, cta)
+    ])
+  ]);
+}
+
+const $ = s => document.querySelector(s);
+const root = $('#root');
+const el = (t,a={},kids=[]) => {
+  const n=document.createElement(t);
+  for(const p in a){ if(p==='class')n.className=a[p]; else if(p==='html')n.innerHTML=a[p]; else if(p.startsWith('on'))n[p]=a[p]; else if(a[p]!=null&&a[p]!==false)n.setAttribute(p,a[p]); }
+  (Array.isArray(kids)?kids:[kids]).forEach(c=>{ if(c==null||c===false)return; n.appendChild(typeof c==='string'?document.createTextNode(c):c); });
+  return n;
+};
+let _t; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(_t); _t=setTimeout(()=>t.classList.remove('on'),2600); }
+const won = n => (n|0).toLocaleString('ko-KR');
+const day = s => s? new Date(s).toLocaleDateString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit'}) : '-';
+function friendly(e){ const m=(e&&(e.message||String(e)))||''; return m.includes('duplicate')?'이미 등록된 정보가 있습니다.':(m||'문제가 발생했습니다. 다시 시도해 주세요.'); }
+
+const S = { user:null, profile:null, vendors:[], slots:[], adCounts:{}, page:'dash', f:null, err:'', busy:false };
+
+(async function boot(){
+  if(!DB.ready()){ root.innerHTML='<div class="card"><div class="err">Supabase에 연결할 수 없습니다. 잠시 후 새로고침해 주세요.</div></div>'; return; }
+  S.adCounts = await DB.adSlotCounts().catch(()=>({}));
+  try{
+    S.user = await DB.currentUser();
+    if(S.user){
+      S.profile = await DB.ensureProfile(S.user).catch(()=>null);
+      const mine = await DB.myVendors(S.user.id).catch(()=>[]);
+      S.vendors = mine.filter(v=>v.status==='approved');
+      S.slots = await DB.myAdSlots(mine.map(v=>v.id)).catch(()=>[]);
+    }
+  }catch(e){ console.warn('부트 실패', e); S.user = S.user || null; }
+  render();
+})();
+
+function render(){
+  renderHeader();
+  root.innerHTML='';
+  if(!S.user){ root.appendChild(landing()); return; }
+  if(S.page==='form'){
+    if(window.innerWidth < 860){
+      root.appendChild(el('div',{class:'card',style:'text-align:center;padding:32px 20px'},[
+        el('div',{style:'font-size:32px;margin-bottom:10px'},'\ud83d\udcbb'),
+        el('h2',{class:'sec'},'PC\uc5d0\uc11c \uc774\uc6a9\ud574 \uc8fc\uc138\uc694'),
+        el('p',{class:'seclead'},'\uad11\uace0 \uc138\ud305\uc740 \ubbf8\ub9ac\ubcf4\uae30\ub97c \ud568\uaed8 \ud655\uc778\ud558\uba70 \uc791\uc5c5\ud558\ub294 \uac8c \uc88b\uc544 PC \ud654\uba74\uc5d0\uc11c\ub9cc \uc9c0\uc6d0\ub3fc\uc694.'),
+        el('button',{class:'btn ghost',style:'margin-top:8px',onclick:()=>{ S.page='dash'; render(); }},'\u2190 \ubaa9\ub85d\uc73c\ub85c')
+      ]));
+      return;
+    }
+    root.appendChild(form()); return;
+  }
+  root.appendChild(dash());
+}
+function renderHeader(){
+  const h = $('#hsp'); h.innerHTML='';
+  h.appendChild(el('a',{class:'hbtn',href:'index.html'},'이용자 사이트'));
+  h.appendChild(el('a',{class:'hbtn',href:'vendor.html'},'파트너센터'));
+  if(S.user) h.appendChild(el('button',{class:'hbtn',onclick:async()=>{ await DB.signOut(); location.reload(); }},'로그아웃'));
+}
+
+function landing(){
+  return el('div',{class:'card',style:'text-align:center;padding:clamp(24px,4vw,44px)'},[
+    el('div',{style:'font-size:40px;margin-bottom:10px'},'📣'),
+    el('h1',{class:'pt'},'광고센터'),
+    el('p',{class:'sub'},'홈 배너, 검색 상단, 팝업 등 이용자 사이트 전면에 우리 업체를 노출하세요.<br>이용하려면 먼저 파트너 계정으로 로그인해 주세요.'),
+    el('div',{class:'btnrow',style:'max-width:320px;margin:22px auto 0'},[
+      el('a',{class:'btn',href:'vendor.html',style:'display:block;text-align:center;text-decoration:none'},'파트너 로그인하기')
+    ])
+  ]);
+}
+
+function rateCard(){
+  const regions = {};
+  const mark = (unit,node)=>{ regions[unit]=node; node.style.cursor='pointer'; node.onmouseenter=()=>setHL(unit); node.onclick=()=>setHL(unit); return node; };
+  const setHL = (unit)=>{
+    Object.entries(regions).forEach(([k,node])=>{
+      if(!unit){ node.style.opacity='1'; node.style.boxShadow='none'; node.style.zIndex=''; return; }
+      if(k===unit){ node.style.opacity='1'; node.style.boxShadow='0 0 0 3px #ff4d6d'; node.style.zIndex='5'; }
+      else { node.style.opacity='.3'; node.style.boxShadow='none'; node.style.zIndex=''; }
+    });
+  };
+  const dashed = 'border:1.5px dashed #e7b8c2;background:#fff5f7;border-radius:8px;transition:opacity .15s,box-shadow .15s';
+
+  const phone = el('div',{style:'width:220px;flex:none;background:#f4f3f6;border:1px solid #ecebf0;border-radius:22px;padding:10px;position:relative;overflow:hidden',onmouseleave:()=>setHL(null)},[
+    el('div',{style:'display:flex;align-items:center;gap:5px;padding:0 2px 8px'},[el('span',{style:'width:16px;height:16px;border-radius:5px;background:#2b2530;flex:none'}),el('span',{style:'flex:1;height:10px;background:#e6e3ec;border-radius:99px'})]),
+    mark('hero', el('div',{style:dashed+';height:64px;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:800;color:#c3283f;margin-bottom:6px'},'히어로 배너')),
+    mark('strip', el('div',{style:dashed+';height:22px;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:800;color:#c3283f;margin-bottom:8px'},'띠배너')),
+    el('div',{style:'display:flex;gap:6px;margin-bottom:8px'},[0,1,2,3].map(()=>el('span',{style:'width:16px;height:16px;border-radius:50%;background:#e6e3ec;flex:1'}))),
+    mark('brand', el('div',{style:dashed+';height:44px;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:800;color:#c3283f;margin-bottom:8px'},'브랜드관 (3칸)')),
+    el('div',{style:'height:8px;background:#e6e3ec;border-radius:99px;width:60%;margin-bottom:6px'}),
+    el('div',{style:'height:24px;background:#fff;border:1px solid #ecebf0;border-radius:8px;margin-bottom:8px'}),
+    mark('infeed', el('div',{style:dashed+';height:34px;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:800;color:#c3283f;margin-bottom:6px'},'인피드')),
+    el('div',{style:'height:24px;background:#fff;border:1px solid #ecebf0;border-radius:8px'}),
+    mark('sticky', el('div',{style:dashed+';position:absolute;left:8px;right:8px;bottom:8px;height:24px;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:800;color:#c3283f;background:#fff5f7'},'스티키 바')),
+    mark('popup', el('div',{style:dashed+';position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);width:100px;height:70px;opacity:.55;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:800;color:#c3283f;background:#fff'},'첫방문 팝업'))
+  ]);
+
+  const searchPhone = el('div',{style:'width:220px;flex:none;background:#f4f3f6;border:1px solid #ecebf0;border-radius:22px;padding:10px',onmouseleave:()=>setHL(null)},[
+    el('div',{style:'font-size:9px;color:#a49dae;font-weight:700;margin-bottom:6px'},'🔍 검색 화면'),
+    el('div',{style:'height:20px;background:#fff;border:1.5px solid #ff4d6d;border-radius:8px;margin-bottom:8px'}),
+    mark('sponsor', el('div',{style:dashed+';height:44px;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:800;color:#c3283f'},'스폰서 링크'))
+  ]);
+
+  const list = el('div',{style:'flex:1;min-width:220px;display:flex;flex-direction:column;gap:8px'}, RATE.map(r=>{
+    const used = S.adCounts[r.id]||0; const cap = SLOT_CAP[r.id]; const left = cap-used;
+    const slotBadge = left<=0
+      ? el('span',{style:'font-size:10.5px;font-weight:800;color:#c3283f;background:#fff1f3;border-radius:999px;padding:3px 9px;flex:none'},'마감')
+      : el('span',{style:'font-size:10.5px;font-weight:800;color:#1c7a4a;background:#eefaf3;border-radius:999px;padding:3px 9px;flex:none'},'잔여 '+left+'자리');
+    return el('div',{style:'border:1px solid #ecebf0;border-radius:12px;padding:11px 14px;cursor:pointer',
+      onmouseenter:()=>setHL(r.id), onmouseleave:()=>setHL(null), onclick:()=>setHL(r.id)},[
+      el('div',{style:'display:flex;justify-content:space-between;align-items:center;gap:8px'},[
+        el('div',{style:'display:flex;align-items:center;gap:7px;min-width:0'},[el('b',{style:'font-size:13.5px'},r.name), slotBadge]),
+        el('span',{style:'font-size:12.5px;font-weight:800;color:#ff4d6d;white-space:nowrap'},r.rate)
+      ]),
+      el('div',{style:'font-size:11.5px;color:#8d8697;margin-top:3px;line-height:1.5'},RATE_BENEFIT[r.id])
+    ]);
+  }));
+
+  return el('div',{class:'card'},[
+    el('h2',{class:'sec'},'광고 상품·요금표'),
+    el('p',{class:'seclead'},'오른쪽 목록에 마우스를 올리면 왼쪽 목업에서 노출 위치가 강조됩니다. 실제 문구·이미지 미리보기는 광고 신청 화면에서 확인할 수 있어요.'),
+    el('div',{style:'display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start'},[
+      el('div',{style:'display:flex;flex-direction:column;gap:14px'},[phone, searchPhone]),
+      list
+    ])
+  ]);
+}
+
+function dash(){
+  const box = el('div');
+  const counts = {pending:0, approved:0, rejected:0};
+  S.slots.forEach(s=>{ const k=s.status||'approved'; if(counts[k]!=null) counts[k]++; });
+
+  box.appendChild(el('div',{class:'card'},[
+    el('h1',{class:'pt'},(S.profile?.name||'파트너')+'님의 광고'),
+    el('p',{class:'sub'},'등록한 업체를 홈·검색·팝업 등에 노출해 보세요.'),
+    el('div',{class:'kpis',style:'margin-top:18px'},[
+      ['전체',S.slots.length],['승인대기',counts.pending],['노출중',counts.approved]
+    ].map(k=>el('div',{class:'kpi'},[el('b',{},String(k[1])),el('span',{},k[0])]))),
+    el('div',{class:'btnrow'},[
+      S.vendors.length? el('button',{class:'btn',onclick:()=>{
+          if(window.innerWidth < 860){ toast('광고 세팅은 PC에서 이용해 주세요'); return; }
+          newAd();
+        }},'+ 새 광고 신청')
+        : el('a',{class:'btn',href:'vendor.html',style:'display:block;text-align:center;text-decoration:none'},'먼저 업체를 등록·승인받아야 해요')
+    ])
+  ]));
+
+  box.appendChild(rateCard());
+
+  box.appendChild(el('div',{class:'card'},[
+    el('h2',{class:'sec'},'내 광고 '+S.slots.length+'건'),
+    el('p',{class:'seclead'},'승인되면 지정한 영역에 바로 노출됩니다.'),
+    S.slots.length? el('div',{}, S.slots.map(s=>{
+      const v = S.vendors.find(x=>x.id===s.vendor_id);
+      const st = STATUS[s.status||'approved']||STATUS.approved;
+      const unitName = (RATE_BY_ID[s.unit]||{}).name || s.unit;
+      return el('div',{class:'arow'},[
+        s.image_url? el('img',{class:'athumb',src:s.image_url,alt:''}) : el('div',{class:'athumb'},'📣'),
+        el('div',{class:'ameta'},[
+          el('b',{},unitName+' · '+(v?v.name:'-')),
+          el('span',{},(s.headline||'제목 없음')+' · '+day(s.starts_at)+' ~ '+day(s.ends_at)),
+          el('span',{},'노출 '+(s.impressions||0)+' · 클릭 '+(s.clicks||0)),
+          s.status==='rejected' && s.reject_reason? el('span',{style:'color:#c3283f'},'반려 사유: '+s.reject_reason):null
+        ]),
+        el('div',{style:'display:flex;flex-direction:column;gap:8px;align-items:flex-end;flex:none'},[
+          el('span',{class:'badge '+st[1]},st[0]),
+          el('button',{class:'hbtn',onclick:async()=>{
+            if(!confirm('이 광고 신청을 취소할까요?')) return;
+            try{ await DB.removeAdSlot(s.id); S.slots=S.slots.filter(x=>x.id!==s.id); toast('취소했습니다'); render(); }
+            catch(e){ toast(friendly(e)); }
+          }},'취소')
+        ])
+      ]);
+    })) : el('div',{class:'empty'},'아직 신청한 광고가 없습니다')
+  ]));
+  return box;
+}
+
+function newAd(){
+  S.f = {unit:'hero', vendor_id:S.vendors[0]?.id||'', headline:'', sub:'', cta:'', image_url:'', bg_preset:'', icon:'', text_size:'md', cta_pos:'', link_url:'', starts_at:'', ends_at:''};
+  S.err=''; S.page='form'; render();
+}
+
+function form(){
+  const f = S.f;
+  const rate = RATE_BY_ID[f.unit]||RATE[0];
+  const hasCta = f.unit==='hero' || f.unit==='sticky';
+  const hasTextSize = f.unit==='hero' || f.unit==='popup';
+  const CTA_POS_OPTS = {hero:[['','왼쪽 정렬'],['center','가운데 정렬']], sticky:[['','오른쪽'],['left','왼쪽']]}[f.unit];
+  const fld=(label,node)=>el('div',{class:'field'},[el('label',{},label),node]);
+  const box = el('div',{class:'card',style:'width:100%'});
+  box.appendChild(el('div',{style:'display:flex;align-items:center;gap:10px;margin-bottom:16px'},[
+    el('button',{class:'hbtn',onclick:()=>{ S.page='dash'; render(); }},'← 목록'),
+    el('div',{style:'font-size:13px;font-weight:800;color:#8d8697'},'새 광고 신청')
+  ]));
+  if(S.err) box.appendChild(el('div',{class:'err'},S.err));
+
+  const previewSlot = el('div',{style:'display:flex;justify-content:center'});
+  const refreshPreview = ()=>{
+    const v = S.vendors.find(x=>x.id===f.vendor_id);
+    previewSlot.innerHTML='';
+    previewSlot.appendChild(adPreviewNode(f.unit, {headline:f.headline, sub:f.sub, image_url:f.image_url, bg_preset:f.bg_preset, icon:f.icon, text_size:f.text_size, cta_pos:f.cta_pos, advertiser:v?v.name:'', cta:f.cta, price:v&&v.price_from? won(v.price_from)+'원~':''}));
+  };
+
+  box.appendChild(fld('업체', el('select',{class:'inp',onchange:e=>{ f.vendor_id=e.target.value; refreshPreview(); }},
+    S.vendors.map(v=>el('option',{value:v.id,selected:f.vendor_id===v.id},v.name)))));
+
+  box.appendChild(fld('노출 영역', el('select',{class:'inp',onchange:e=>{ f.unit=e.target.value; form2(box); }},
+    RATE.map(r=>{ const left=(SLOT_CAP[r.id]||0)-(S.adCounts[r.id]||0); return el('option',{value:r.id,selected:f.unit===r.id},r.name+' · '+r.rate+(left<=0?' · 마감':' · 잔여 '+left+'자리')); }))));
+
+  box.appendChild(el('p',{class:'muted',id:'unitHint'},rate.pos+' · 규격 '+rate.size+' · '+(rate.image?'이미지 필요 (문구는 선택)':'문구만 노출')));
+
+  box.appendChild(fld(rate.image?'헤드라인 (선택 · 비워두면 업체명이 표시돼요)':'헤드라인', el('input',{class:'inp',value:f.headline,oninput:e=>{ f.headline=e.target.value; refreshPreview(); },placeholder:'예: 오션뷰 채플, 8월 특가'})));
+  box.appendChild(fld('보조 문구', el('input',{class:'inp',value:f.sub,oninput:e=>{ f.sub=e.target.value; refreshPreview(); }})));
+  if(hasCta) box.appendChild(fld('버튼 문구', el('input',{class:'inp',value:f.cta||'',oninput:e=>{ f.cta=e.target.value; refreshPreview(); },placeholder:f.unit==='hero'?'예: 지금 예약하기':'예: 보기'})));
+  if(hasTextSize) box.appendChild(fld('글자 크기', el('select',{class:'inp',onchange:e=>{ f.text_size=e.target.value; refreshPreview(); }},
+    [['sm','작게'],['md','보통'],['lg','크게']].map(([v,l])=>el('option',{value:v,selected:(f.text_size||'md')===v},l)))));
+  if(CTA_POS_OPTS) box.appendChild(fld('버튼 위치', el('select',{class:'inp',onchange:e=>{ f.cta_pos=e.target.value; refreshPreview(); }},
+    CTA_POS_OPTS.map(([v,l])=>el('option',{value:v,selected:(f.cta_pos||'')===v},l)))));
+
+  const imgWrap = el('div',{id:'imgWrap'});
+  box.appendChild(imgWrap);
+  renderImgField(imgWrap, f, rate, refreshPreview);
+
+  box.appendChild(fld('링크 URL', el('input',{class:'inp',value:f.link_url,oninput:e=>f.link_url=e.target.value,placeholder:'비우면 업체 상세로 연결'})));
+  const costSlot = el('div',{style:'margin:-6px 0 15px'});
+  const refreshCost = ()=>{
+    costSlot.innerHTML='';
+    if(!rate.monthly){ costSlot.appendChild(el('p',{class:'muted'},'이 영역은 실제 노출·클릭 수에 따라 과금됩니다 ('+rate.rate+').')); return; }
+    if(!f.starts_at || !f.ends_at) return;
+    const sD=new Date(f.starts_at), eD=new Date(f.ends_at);
+    const days=Math.round((eD-sD)/86400000)+1;
+    if(days<=0){ costSlot.appendChild(el('p',{style:'color:#c3283f;font-size:12.5px;font-weight:700'},'종료일이 시작일보다 빠릅니다.')); return; }
+    const months=Math.ceil(days/30);
+    const amount=rate.monthly*months;
+    costSlot.appendChild(el('div',{style:'background:#fff5f7;border:1px solid #ffd3da;border-radius:12px;padding:13px 15px;display:flex;justify-content:space-between;align-items:center;gap:10px'},[
+      el('span',{style:'font-size:12.5px;font-weight:700;color:#4a4550'},days+'일 · 30일 단위로 '+months+'개월치 청구 (월 '+won(rate.monthly)+'원)'),
+      el('span',{style:'font-size:16px;font-weight:800;color:#ff4d6d;white-space:nowrap'},won(amount)+'원')
+    ]));
+  };
+
+  box.appendChild(el('div',{class:'row c2'},[
+    fld('시작 희망일', el('input',{class:'inp',type:'date',value:f.starts_at,oninput:e=>{ f.starts_at=e.target.value; refreshCost(); }})),
+    fld('종료 희망일', el('input',{class:'inp',type:'date',value:f.ends_at,oninput:e=>{ f.ends_at=e.target.value; refreshCost(); }}))
+  ]));
+  box.appendChild(costSlot);
+  refreshCost();
+
+  box.appendChild(el('div',{class:'btnrow'},[
+    el('button',{class:'btn ghost',onclick:()=>{ S.page='dash'; render(); }},'취소'),
+    el('button',{class:'btn',disabled:S.busy,onclick:submitAd}, S.busy?'제출 중…':'승인 요청하기')
+  ]));
+
+  const previewCard = el('div',{class:'card',style:'width:100%;position:sticky;top:0;z-index:10;box-shadow:0 8px 16px -8px rgba(0,0,0,.08)'},[
+    el('h2',{class:'sec',style:'font-size:15px'},'미리보기'),
+    el('p',{class:'seclead'},rate.pos+'에 이렇게 보여요'),
+    el('div',{style:'background:#f4f3f6;border-radius:16px;padding:32px 16px'}, previewSlot)
+  ]);
+  refreshPreview();
+
+  return el('div',{style:'display:flex;flex-direction:column;gap:16px'},[previewCard, box]);
+}
+function form2(box){ S.page='form'; render(); }
+function renderImgField(wrap, f, rate, refreshPreview){
+  wrap.innerHTML='';
+  if(!rate.image){ wrap.appendChild(el('p',{class:'muted',style:'margin:-6px 0 15px'},'이 영역은 이미지 없이 문구만 노출됩니다.')); return; }
+  const field = el('div',{class:'field'},[el('label',{},'이미지'),
+    f.image_url? el('div',{class:'cover'},el('img',{src:f.image_url,alt:''})) : null,
+    el('label',{class:'btn ghost sm',style:'display:inline-flex;cursor:pointer'},[
+      f.image_url?'이미지 변경':'이미지 업로드',
+      el('input',{type:'file',accept:'image/*',style:'display:none',onchange:async e=>{
+        const file=e.target.files[0]; if(!file) return;
+        try{ f.image_url=await DB.uploadMedia(file,'ad','vendor-media'); f.bg_preset=''; toast('업로드했습니다'); render(); }
+        catch(err){ toast(friendly(err)); }
+      }})
+    ])
+  ]);
+  wrap.appendChild(field);
+
+  const bgField = el('div',{class:'field'},[
+    el('label',{},'사진이 없다면 기본 배경 선택'),
+    el('div',{style:'display:flex;gap:8px;flex-wrap:wrap'}, BG_PRESETS.map(([id,label,css])=>
+      el('button',{type:'button',style:'width:44px;height:44px;border-radius:10px;border:'+(f.bg_preset===id?'3px solid #ff4d6d':'1px solid #e6e3ec')+';background:'+css+';cursor:pointer;padding:0',title:label,onclick:()=>{ f.bg_preset = f.bg_preset===id? '' : id; if(f.bg_preset) f.image_url=''; render(); }})
+    ))
+  ]);
+  wrap.appendChild(bgField);
+
+  const iconField = el('div',{class:'field'},[
+    el('label',{},'아이콘 (선택)'),
+    el('div',{style:'display:flex;gap:8px;flex-wrap:wrap'}, ['',...ICONS].map(ic=>
+      el('button',{type:'button',style:'width:40px;height:40px;border-radius:10px;border:'+(( f.icon||'')===ic?'2px solid #ff4d6d':'1px solid #e6e3ec')+';background:#faf9fb;font-size:18px;cursor:pointer',onclick:()=>{ f.icon=ic; render(); }}, ic||'✕')
+    ))
+  ]);
+  wrap.appendChild(iconField);
+}
+
+async function submitAd(){
+  const f = S.f;
+  if(!f.vendor_id){ S.err='업체를 선택해 주세요.'; return render(); }
+  const rate = RATE_BY_ID[f.unit];
+  if(rate.image){
+    if(!f.image_url && !f.bg_preset){ S.err='이미지를 업로드하거나 기본 배경을 선택해 주세요.'; return render(); }
+  } else if(!f.headline){
+    S.err='헤드라인을 입력해 주세요.'; return render();
+  }
+  S.busy=true; S.err=''; render();
+  try{
+    const saved = await DB.saveAdSlot({
+      unit:f.unit, vendor_id:f.vendor_id, headline:f.headline, sub:f.sub||'', cta:f.cta||null, image_url:f.image_url||null,
+      bg_preset:f.bg_preset||null, icon:f.icon||null, text_size:f.text_size||null, cta_pos:f.cta_pos||null,
+      link_url:f.link_url||null, starts_at:f.starts_at||null, ends_at:f.ends_at||null,
+      status:'pending', active:false, price:0, sort:0
+    });
+    if(saved) S.slots.unshift(saved);
+    S.busy=false; S.page='dash'; toast('광고 승인 요청을 보냈습니다'); render();
+  }catch(e){ S.busy=false; S.err=friendly(e); render(); }
+}
+</script>
+</body>
+</html>

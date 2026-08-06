@@ -12,6 +12,7 @@
 <link rel="apple-touch-icon" href="./icon.jpg">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://js.tosspayments.com/v1"></script>
 <style>
 @font-face{font-family:'Paperlogy';font-weight:400;font-style:normal;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-4Regular.woff2') format('woff2')}
 @font-face{font-family:'Paperlogy';font-weight:500;font-style:normal;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-5Medium.woff2') format('woff2')}
@@ -132,6 +133,48 @@ a{color:inherit}
 
   <main style="min-height:60vh">
 
+  <!-- ============ ONBOARDING ============ -->
+  <sc-if value="{{ isOnboard }}" hint-placeholder-val="{{ false }}">
+  <div style="max-width:520px;margin:0 auto;padding:clamp(20px,4vw,44px) clamp(16px,4vw,28px)">
+    <div style="background:#fff;border:1px solid #ecebf0;border-radius:22px;padding:clamp(22px,3.4vw,32px)">
+      <div style="display:flex;gap:6px;margin-bottom:20px"><sc-for list="{{ onbBars }}" as="ob" hint-placeholder-count="5"><div style="{{ ob.style }}"></div></sc-for></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:12px;font-weight:800;color:#ff4d6d">{{ onbStepLabel }}</span>
+        <span style="{{ onbRecStyle }}">{{ onbRecommend }}</span>
+      </div>
+      <h1 style="font-size:clamp(21px,3.2vw,26px);font-weight:800;margin:0 0 8px;letter-spacing:-.02em">{{ onbTitle }}</h1>
+      <p style="font-size:14px;line-height:1.7;color:#8b8592;margin:0 0 24px">{{ onbLead }}</p>
+
+      <sc-if value="{{ onbIs0 }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <input type="date" value="{{ onbDate }}" onChange="{{ onOnbDate }}" style="width:100%;background:#faf9fb;border:1px solid #e6e3ec;border-radius:12px;padding:14px 15px;font-size:16px;font-weight:600;color:#2b2530;outline:none"/>
+          <button onClick="{{ onOnbTbd }}" style="{{ onbTbdStyle }}">아직 정하지 않았어요</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ onbIs1 }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ onbRegions }}" as="orx" hint-placeholder-count="7"><button onClick="{{ orx.onClick }}" style="{{ orx.style }}">{{ orx.name }}</button></sc-for></div>
+      </sc-if>
+      <sc-if value="{{ onbIs2 }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:9px"><sc-for list="{{ onbBudgets }}" as="obg" hint-placeholder-count="5"><button onClick="{{ obg.onClick }}" style="{{ obg.style }}">{{ obg.label }}</button></sc-for></div>
+      </sc-if>
+      <sc-if value="{{ onbIs3 }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:9px"><sc-for list="{{ onbGuests }}" as="ogx" hint-placeholder-count="5"><button onClick="{{ ogx.onClick }}" style="{{ ogx.style }}">{{ ogx.label }}</button></sc-for></div>
+      </sc-if>
+      <sc-if value="{{ onbIs4 }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ onbCats }}" as="ocx" hint-placeholder-count="6"><button onClick="{{ ocx.onClick }}" style="{{ ocx.style }}">{{ ocx.label }}</button></sc-for></div>
+      </sc-if>
+
+      <div style="display:flex;gap:10px;margin-top:26px">
+        <sc-if value="{{ onbCanBack }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ onbPrev }}" style="flex:none;background:#f4f3f6;border:none;border-radius:14px;padding:15px 20px;font-size:15px;font-weight:800;color:#2b2530;cursor:pointer">이전</button>
+        </sc-if>
+        <button onClick="{{ onbPrimary }}" style="{{ onbNextStyle }}">{{ onbNextLabel }}</button>
+      </div>
+      <button onClick="{{ onbSkip }}" style="width:100%;background:none;border:none;color:#a49dae;font-size:13px;font-weight:700;cursor:pointer;padding:16px 0 0">건너뛰고 둘러보기</button>
+    </div>
+  </div>
+  </sc-if>
+
   <!-- ============ HOME ============ -->
   <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
   <div>
@@ -163,11 +206,113 @@ a{color:inherit}
       </div>
     </div>
 
+    <!-- 온보딩 유도 배너 -->
+    <sc-if value="{{ onbBanner }}" hint-placeholder-val="{{ false }}">
+    <div data-m="secpad" style="max-width:1180px;margin:0 auto;padding:8px clamp(16px,4vw,40px) 4px">
+      <button onClick="{{ goOnboard }}" style="width:100%;display:flex;align-items:center;gap:14px;background:linear-gradient(100deg,#fff5f7,#fff);border:1px solid #ffd9e1;border-radius:18px;padding:16px 18px;cursor:pointer;text-align:left">
+        <span style="width:42px;height:42px;flex:none;border-radius:13px;background:#ff4d6d;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px">✨</span>
+        <span style="flex:1;min-width:0">
+          <span style="display:block;font-size:15px;font-weight:800;color:#2b2530">예식일·예산만 알려주시면 맞춤 추천을 시작해요</span>
+          <span style="display:block;font-size:12.5px;color:#8b8592;font-weight:600;margin-top:3px">1분 · 건너뛸 수 있어요</span>
+        </span>
+        <span style="flex:none;font-size:13px;font-weight:800;color:#ff4d6d">시작 →</span>
+      </button>
+    </div>
+    </sc-if>
+
+    <!-- D-day + 진행률 -->
+    <sc-if value="{{ hasDday }}" hint-placeholder-val="{{ false }}">
+    <div data-m="secpad" style="max-width:1180px;margin:0 auto;padding:10px clamp(16px,4vw,40px) 4px">
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;background:#2b2530;border-radius:20px;padding:20px 22px">
+        <div style="text-align:center;flex:none">
+          <div style="font-size:11.5px;font-weight:800;color:#8b8496;letter-spacing:.06em">우리 결혼식</div>
+          <div style="font-size:clamp(28px,4vw,36px);font-weight:800;color:#fff;line-height:1.1;margin-top:2px">{{ ddayLabel }}</div>
+          <div style="font-size:12px;color:#8b8496;font-weight:700;margin-top:3px">{{ ddayDate }}</div>
+        </div>
+        <div style="min-width:0">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:8px">
+            <span style="font-size:13px;font-weight:700;color:#d5cfdd">다음 할 일 · {{ nextTask }}</span>
+            <span style="font-size:12px;font-weight:800;color:#ff8ba0;flex:none">{{ ddayProgress }}</span>
+          </div>
+          <div style="height:8px;border-radius:99px;background:rgba(255,255,255,.14);overflow:hidden"><div style="{{ ddayProgressStyle }}"></div></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px">
+            <span style="font-size:12px;color:#8b8496;font-weight:700">{{ ddayTaskCount }}</span>
+            <button onClick="{{ goChecklist }}" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:10px;padding:8px 14px;font-size:12.5px;font-weight:700;cursor:pointer;flex:none">체크리스트 열기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- 맞춤 추천 -->
+    <sc-if value="{{ hasReco }}" hint-placeholder-val="{{ false }}">
+    <div data-m="secpad" style="max-width:1180px;margin:0 auto;padding:22px clamp(16px,4vw,40px) 4px">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px">
+        <div>
+          <h2 style="font-size:clamp(18px,2.4vw,22px);font-weight:800;margin:0;letter-spacing:-.02em">{{ recoOwner }} 조건에 맞는 곳</h2>
+          <div style="font-size:12.5px;color:#8b8592;font-weight:600;margin-top:4px">{{ recoConds }}</div>
+        </div>
+        <button onClick="{{ goEditConds }}" style="flex:none;background:#fff;border:1px solid #e6e3ec;border-radius:10px;padding:9px 14px;font-size:12.5px;font-weight:700;color:#4b4455;cursor:pointer">조건 수정</button>
+      </div>
+      <div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:6px" class="hscroll">
+        <sc-for list="{{ recoCards }}" as="rc" hint-placeholder-count="4">
+          <div data-m="hcard" onClick="{{ rc.onOpen }}" style="flex:none;width:206px;background:#fff;border:1px solid #ecebf0;border-radius:16px;overflow:hidden;cursor:pointer" style-hover="border-color:#ffc2ce">
+            <div style="position:relative;aspect-ratio:4/3;background:linear-gradient(135deg,#efe6ee,#e3d6dd)">{{ rc.imgEl }}</div>
+            <div style="padding:12px 13px 14px">
+              <div style="font-size:11px;font-weight:800;color:#ff4d6d">{{ rc.tagLabel }}</div>
+              <div style="font-size:14.5px;font-weight:800;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ rc.name }}</div>
+              <div style="font-size:12px;color:#8b8592;font-weight:600;margin-top:3px">{{ rc.regionLabel }}</div>
+              <div style="font-size:14px;font-weight:800;color:#2b2530;margin-top:8px">{{ rc.priceLabel }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- 최근 본 업체 -->
+    <sc-if value="{{ hasRecent }}" hint-placeholder-val="{{ false }}">
+    <div data-m="secpad" style="max-width:1180px;margin:0 auto;padding:22px clamp(16px,4vw,40px) 4px">
+      <h2 style="font-size:clamp(17px,2.2vw,20px);font-weight:800;margin:0 0 4px;letter-spacing:-.02em">최근 본 업체</h2>
+      <div style="font-size:12.5px;color:#8b8592;font-weight:600;margin-bottom:14px">이어서 비교해 보세요</div>
+      <div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:6px" class="hscroll">
+        <sc-for list="{{ recentCards }}" as="rv" hint-placeholder-count="4">
+          <div onClick="{{ rv.onOpen }}" style="flex:none;width:154px;cursor:pointer" style-hover="opacity:.86">
+            <div style="position:relative;aspect-ratio:1/1;border-radius:14px;overflow:hidden;background:linear-gradient(135deg,#efe6ee,#e3d6dd)">{{ rv.imgEl }}</div>
+            <div style="font-size:13.5px;font-weight:800;margin-top:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ rv.name }}</div>
+            <div style="font-size:12px;color:#8b8592;font-weight:600;margin-top:2px">{{ rv.priceLabel }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- 찜 기반 유사 추천 -->
+    <sc-if value="{{ hasSimilar }}" hint-placeholder-val="{{ false }}">
+    <div data-m="secpad" style="max-width:1180px;margin:0 auto;padding:22px clamp(16px,4vw,40px) 4px">
+      <h2 style="font-size:clamp(17px,2.2vw,20px);font-weight:800;margin:0 0 4px;letter-spacing:-.02em">{{ similarLead }}</h2>
+      <div style="font-size:12.5px;color:#8b8592;font-weight:600;margin-bottom:14px">같은 카테고리에서 함께 많이 보는 곳</div>
+      <div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:6px" class="hscroll">
+        <sc-for list="{{ similarCards }}" as="sv" hint-placeholder-count="4">
+          <div data-m="hcard" onClick="{{ sv.onOpen }}" style="flex:none;width:206px;background:#fff;border:1px solid #ecebf0;border-radius:16px;overflow:hidden;cursor:pointer" style-hover="border-color:#ffc2ce">
+            <div style="position:relative;aspect-ratio:4/3;background:linear-gradient(135deg,#efe6ee,#e3d6dd)">{{ sv.imgEl }}</div>
+            <div style="padding:12px 13px 14px">
+              <div style="font-size:11px;font-weight:800;color:#7c5cff">{{ sv.tagLabel }}</div>
+              <div style="font-size:14.5px;font-weight:800;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ sv.name }}</div>
+              <div style="font-size:12px;color:#8b8592;font-weight:600;margin-top:3px">{{ sv.regionLabel }}</div>
+              <div style="font-size:14px;font-weight:800;color:#2b2530;margin-top:8px">{{ sv.priceLabel }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
     <!-- AD · 띠배너 -->
     <sc-if value="{{ adStrip }}" hint-placeholder-val="{{ true }}">
     <div style="background:#fff;border-top:1px solid #f2f0f5;border-bottom:1px solid #ecebf0">
       <div style="max-width:1180px;margin:0 auto;padding:12px clamp(16px,4vw,40px)">
-        <div onClick="{{ onAdClick }}" style="display:flex;align-items:center;gap:14px;background:linear-gradient(100deg,#fff4f6,#f6f0ff);border:1px solid #f0e6f2;border-radius:14px;padding:13px 18px;cursor:pointer;position:relative;overflow:hidden">
+        <div onClick="{{ onStripClick }}" style="display:flex;align-items:center;gap:14px;background:linear-gradient(100deg,#fff4f6,#f6f0ff);border:1px solid #f0e6f2;border-radius:14px;padding:13px 18px;cursor:pointer;position:relative;overflow:hidden">
           <span style="font-size:22px">💍</span>
           <div style="flex:1;min-width:0">
             <div style="font-size:14px;font-weight:800;letter-spacing:-.02em">{{ adStripTitle }}</div>
@@ -185,14 +330,21 @@ a{color:inherit}
       <!-- AD · 히어로 캐러셀 -->
       <sc-if value="{{ adHero }}" hint-placeholder-val="{{ true }}">
       <div style="position:relative;border-radius:20px;overflow:hidden;background:#2b2530">
-        <div onClick="{{ onAdClick }}" style="{{ heroBg }}">
-          <div style="flex:1;min-width:0;position:relative;z-index:2">
+        <div onClick="{{ onHeroClick }}" style="{{ heroBg }}">
+          <sc-if value="{{ heroTextless }}" hint-placeholder-val="{{ false }}">
+            <span style="position:absolute;left:14px;top:14px;background:rgba(0,0,0,.4);color:#fff;font-size:10px;font-weight:700;padding:4px 10px;border-radius:999px;z-index:2">광고</span>
+          </sc-if>
+          <sc-if value="{{ heroHasText }}" hint-placeholder-val="{{ true }}">
+          <div style="{{ heroTextBlockStyle }}">
             <div style="display:inline-block;background:rgba(255,255,255,.22);border-radius:999px;padding:4px 11px;font-size:11px;font-weight:800">{{ heroTag }}</div>
-            <div style="font-weight:800;font-size:clamp(20px,3vw,30px);margin-top:10px;line-height:1.25;white-space:pre-line">{{ heroTitle }}</div>
+            <div style="font-weight:800;font-size:{{ heroTitleSize }};margin-top:10px;line-height:1.25;white-space:pre-line">{{ heroTitle }}</div>
             <div style="font-size:13.5px;opacity:.92;margin-top:7px;line-height:1.5">{{ heroSub }}</div>
             <div style="display:inline-flex;align-items:center;gap:6px;background:#fff;color:#2b2530;border-radius:10px;padding:10px 16px;font-size:13.5px;font-weight:800;margin-top:16px">{{ heroCta }} →</div>
           </div>
+          </sc-if>
+          <sc-if value="{{ heroIconShow }}" hint-placeholder-val="{{ false }}">
           <span style="flex:none;font-size:clamp(44px,7vw,80px);opacity:.9;position:relative;z-index:2">{{ heroEmoji }}</span>
+          </sc-if>
         </div>
         <div style="position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:space-between;padding:12px 18px;z-index:3">
           <div style="display:flex;gap:5px">
@@ -234,12 +386,12 @@ a{color:inherit}
         </div>
       </div>
 
-      <!-- 묶음 비교 진입 -->
-      <button onClick="{{ goBundle }}" style="width:100%;display:flex;align-items:center;gap:13px;background:linear-gradient(100deg,#fff4f6,#f4f0ff);border:1px solid #f0e6f2;border-radius:16px;padding:16px 18px;margin-top:12px;cursor:pointer;text-align:left" style-hover="border-color:#ff4d6d">
-        <span style="width:42px;height:42px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;flex:none">🧳</span>
+      <!-- 스드메 할인권 -->
+      <button onClick="{{ goSdm }}" style="width:100%;display:flex;align-items:center;gap:13px;background:linear-gradient(100deg,#fff4f6,#f4f0ff);border:1px solid #f0e6f2;border-radius:16px;padding:16px 18px;margin-top:12px;cursor:pointer;text-align:left" style-hover="border-color:#ff4d6d">
+        <span style="width:42px;height:42px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;flex:none">🎟️</span>
         <div style="flex:1;min-width:0">
-          <div style="font-size:15px;font-weight:800;letter-spacing:-.02em">스드메 묶음 비교</div>
-          <div style="font-size:12.5px;color:#8b8592;margin-top:2px">3개 모두 고르면 10% 할인 · 지역 평균가와 비교</div>
+          <div style="font-size:15px;font-weight:800;letter-spacing:-.02em">스드메 할인권</div>
+          <div style="font-size:12.5px;color:#8b8592;margin-top:2px">스튜디오 10만원 · 드레스 10만원 할인권 + 결제액 1% 적립</div>
         </div>
         <span style="flex:none;color:#a49dae;font-size:18px">›</span>
       </button>
@@ -253,6 +405,56 @@ a{color:inherit}
         </div>
         <span style="flex:none;color:#a49dae;font-size:18px">›</span>
       </a>
+
+      <!-- 꿀팁 자료실 -->
+      <div style="margin:32px 0 0">
+        <h2 style="font-weight:800;font-size:clamp(19px,2.3vw,24px);color:#2b2530;margin:0 0 4px;letter-spacing:-.03em">📥 결혼준비 꿀팁 자료실</h2>
+        <div style="font-size:13px;color:#8b8592;margin-bottom:14px">카드를 누르면 미리보기가 열려요 — 인쇄·PDF 저장 무료.</div>
+        <sc-if value="{{ tipHasDday }}" hint-placeholder-val="{{ false }}">
+          <div style="background:linear-gradient(100deg,#fff4f6,#f7f0ff);border:1px solid #ffd9e2;border-radius:14px;padding:14px 16px;margin-bottom:12px">
+            <div style="font-size:13px;font-weight:800;color:#ff4d6d">📌 {{ tipDdayLabel }} — 지금 시기에 딱 맞는 자료</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">
+              <sc-for list="{{ tipRecs }}" as="rg" hint-placeholder-count="3">
+                <button onClick="{{ rg.onOpen }}" style="background:#fff;border:1px solid #ffd9e2;border-radius:999px;padding:9px 15px;font-size:12.5px;font-weight:800;color:#ff4d6d;cursor:pointer;font-family:inherit">{{ rg.title }} ›</button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ tipNoDday }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ tipSetup }}" style="width:100%;text-align:left;background:linear-gradient(100deg,#fff4f6,#f7f0ff);border:1px solid #ffd9e2;border-radius:14px;padding:14px 16px;margin-bottom:12px;cursor:pointer;font-family:inherit">
+            <span style="font-size:13.5px;font-weight:800;color:#ff4d6d">예식일을 입력하면 지금 봐야 할 자료를 골라드려요 ›</span>
+          </button>
+        </sc-if>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:10px">
+          <sc-for list="{{ tipCards }}" as="tg" hint-placeholder-count="9">
+            <button onClick="{{ tg.onOpen }}" style="display:block;text-align:left;background:#fff;border:1px solid #ecebf0;border-radius:14px;padding:15px 16px;cursor:pointer;font-family:inherit" style-hover="border-color:#ff4d6d">
+              <div style="font-size:14px;font-weight:800;color:#2b2530">{{ tg.title }}</div>
+              <div style="font-size:12px;color:#8b8592;margin-top:3px;line-height:1.5">{{ tg.desc }}</div>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- 꿀팁 미리보기 모달 -->
+      <sc-if value="{{ gvOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position:fixed;inset:0;z-index:400;background:rgba(24,18,30,.6);display:flex;flex-direction:column">
+          <div style="background:#fff;border-bottom:1px solid #ecebf0;display:flex;align-items:center;gap:10px;padding:10px 14px;flex-wrap:wrap">
+            <div style="flex:1;min-width:140px;font-size:14px;font-weight:800;color:#2b2530;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ gvTitle }}</div>
+            <div style="display:flex;align-items:center;gap:6px;flex:none;flex-wrap:wrap">
+              <button onClick="{{ gvZoomOut }}" style="width:36px;height:36px;background:#f4f3f6;border:1px solid #ecebf0;border-radius:10px;font-size:17px;font-weight:800;cursor:pointer;color:#4a4550">−</button>
+              <span style="min-width:46px;text-align:center;font-size:12.5px;font-weight:800;color:#4a4550">{{ gvZoomLabel }}</span>
+              <button onClick="{{ gvZoomIn }}" style="width:36px;height:36px;background:#f4f3f6;border:1px solid #ecebf0;border-radius:10px;font-size:17px;font-weight:800;cursor:pointer;color:#4a4550">+</button>
+              <button onClick="{{ gvPrint }}" style="background:#ff4d6d;color:#fff;border:none;border-radius:10px;padding:9px 15px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit">🖨 인쇄 · PDF 저장</button>
+              <button onClick="{{ gvClose }}" style="background:#fff;border:1px solid #e6e3ec;border-radius:10px;padding:9px 13px;font-size:13px;font-weight:700;color:#4a4550;cursor:pointer;font-family:inherit">닫기 ✕</button>
+            </div>
+          </div>
+          <div style="flex:1;overflow:auto;padding:18px;-webkit-overflow-scrolling:touch">
+            <div style="{{ gvWrapStyle }}">
+              <iframe data-gv="1" src="{{ gvSrc }}" style="{{ gvFrameStyle }}"></iframe>
+            </div>
+          </div>
+        </div>
+      </sc-if>
 
       <!-- 지금 인기 -->
       <div style="display:flex;align-items:baseline;justify-content:space-between;margin:32px 0 14px;gap:10px">
@@ -293,10 +495,12 @@ a{color:inherit}
                 <sc-if value="{{ b.showImg }}" hint-placeholder-val="{{ true }}"><img src="{{ b.thumb }}" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" alt=""/></sc-if>
                 <span style="position:absolute;left:10px;top:10px;background:{{ b.color }};color:#fff;font-size:10.5px;font-weight:800;padding:4px 9px;border-radius:999px">{{ b.badge }}</span>
               </div>
+              <sc-if value="{{ b.hasText }}" hint-placeholder-val="{{ true }}">
               <div style="padding:13px 15px 15px">
                 <div style="font-size:15px;font-weight:800;letter-spacing:-.02em">{{ b.name }}</div>
                 <div style="font-size:12.5px;color:#8b8592;margin-top:3px;line-height:1.45">{{ b.copy }}</div>
               </div>
+              </sc-if>
             </div>
           </sc-for>
         </div>
@@ -304,6 +508,7 @@ a{color:inherit}
       </sc-if>
 
       <!-- 랭킹 -->
+      <sc-if value="{{ hasRankData }}" hint-placeholder-val="{{ true }}">
       <div style="margin-top:34px">
         <h2 style="font-weight:800;font-size:clamp(19px,2.3vw,24px);color:#2b2530;margin:0 0 12px;letter-spacing:-.03em">🏆 부산·경남 웨딩 랭킹</h2>
         <div style="display:flex;gap:7px;margin-bottom:12px">
@@ -325,32 +530,23 @@ a{color:inherit}
           </sc-for>
         </div>
       </div>
-
-      <!-- 기획전 -->
-      <h2 style="font-weight:800;font-size:clamp(19px,2.3vw,24px);color:#2b2530;margin:34px 0 14px;letter-spacing:-.03em">🎁 기획전 모음</h2>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">
-        <sc-for list="{{ curations }}" as="cu" hint-placeholder-count="3">
-          <div onClick="{{ cu.onClick }}" style="{{ cu.style }}">
-            <div style="display:inline-block;background:rgba(255,255,255,.24);border-radius:7px;padding:3px 9px;font-size:10.5px;font-weight:800">{{ cu.badge }}</div>
-            <div style="font-weight:800;font-size:18px;margin-top:10px;line-height:1.3;white-space:pre-line">{{ cu.title }}</div>
-            <div style="font-size:12.5px;opacity:.9;margin-top:5px">{{ cu.sub }}</div>
-          </div>
-        </sc-for>
-      </div>
+      </sc-if>
 
       <h2 style="font-weight:800;font-size:clamp(20px,2.4vw,25px);color:#2b2530;margin:34px 0 16px">✨ 부산·경남 웨딩 피드</h2>
 
       <!-- AD · 인피드 네이티브 -->
       <sc-if value="{{ adInfeed }}" hint-placeholder-val="{{ true }}">
-      <div onClick="{{ onAdClick }}" style="display:flex;align-items:center;gap:14px;background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:14px 16px;margin-bottom:16px;cursor:pointer;position:relative">
+      <div onClick="{{ onInfeedClick }}" style="display:flex;align-items:center;gap:14px;background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:14px 16px;margin-bottom:16px;cursor:pointer;position:relative">
         <div style="width:74px;height:74px;border-radius:12px;overflow:hidden;background:#efe6ee;flex:none">
           <div style="{{ adInfeedImgStyle }}"></div>
         </div>
+        <sc-if value="{{ adInfeedHasText }}" hint-placeholder-val="{{ true }}">
         <div style="flex:1;min-width:0">
           <div style="font-size:11.5px;color:#a49dae;font-weight:700">{{ adInfeedAdvertiser }} · 스폰서</div>
           <div style="font-size:15px;font-weight:800;letter-spacing:-.02em;margin-top:2px">{{ adInfeedTitle }}</div>
           <div style="font-size:12.5px;color:#8b8592;margin-top:3px;line-height:1.45">{{ adInfeedSub }}</div>
         </div>
+        </sc-if>
         <span style="position:absolute;right:8px;top:7px;font-size:9.5px;color:#b6aebd;font-weight:700">광고</span>
       </div>
       </sc-if>
@@ -383,6 +579,27 @@ a{color:inherit}
       <span style="font-size:18px">🔍</span>
       <input value="{{ searchQuery }}" onChange="{{ onSearch }}" placeholder="업체명·지역으로 검색" autoFocus="{{ true }}" style="flex:1;border:none;outline:none;font-size:15px;background:none;color:#2b2530"/>
     </div>
+    <!-- AD · 검색 스폰서(파워링크) — 검색창에 진입하면 입력 전이라도 바로 노출 -->
+    <sc-if value="{{ adSponsor }}" hint-placeholder-val="{{ true }}">
+      <div style="margin-top:18px;background:#fff;border:1px solid #f0e6f2;border-radius:16px;padding:6px 16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0 8px;border-bottom:1px solid #f4f2f6">
+          <span style="font-size:12.5px;font-weight:800;color:#4b4455">{{ sponsorHeading }}</span>
+          <span style="font-size:9.5px;color:#b6aebd;font-weight:700">광고</span>
+        </div>
+        <sc-for list="{{ sponsorRows }}" as="sp" hint-placeholder-count="2">
+          <div onClick="{{ sp.onClick }}" style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #f8f6fa;cursor:pointer">
+            <div style="width:46px;height:46px;border-radius:10px;overflow:hidden;background:#efe6ee;flex:none"><sc-if value="{{ sp.showImg }}" hint-placeholder-val="{{ false }}"><img src="{{ sp.thumb }}" loading="lazy" style="width:100%;height:100%;object-fit:cover" alt=""/></sc-if></div>
+            <sc-if value="{{ sp.hasText }}" hint-placeholder-val="{{ true }}">
+            <div style="flex:1;min-width:0">
+              <div style="font-size:14px;font-weight:800;letter-spacing:-.02em">{{ sp.name }}</div>
+              <div style="font-size:12px;color:#8b8592;margin-top:2px">{{ sp.copy }}</div>
+            </div>
+            <span style="font-size:13.5px;font-weight:800;color:#ff4d6d;white-space:nowrap">{{ sp.price }}</span>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
     <sc-if value="{{ searchEmpty }}" hint-placeholder-val="{{ true }}">
       <div style="margin-top:22px">
         <div style="font-size:13px;font-weight:700;color:#8b8592;margin-bottom:10px">추천 검색어</div>
@@ -392,25 +609,6 @@ a{color:inherit}
       </div>
     </sc-if>
     <sc-if value="{{ searchHasQuery }}" hint-placeholder-val="{{ false }}">
-      <!-- AD · 검색 스폰서(파워링크) -->
-      <sc-if value="{{ adSponsor }}" hint-placeholder-val="{{ true }}">
-        <div style="margin-top:18px;background:#fff;border:1px solid #f0e6f2;border-radius:16px;padding:6px 16px">
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0 8px;border-bottom:1px solid #f4f2f6">
-            <span style="font-size:12.5px;font-weight:800;color:#4b4455">스폰서 링크</span>
-            <span style="font-size:9.5px;color:#b6aebd;font-weight:700">광고</span>
-          </div>
-          <sc-for list="{{ sponsorRows }}" as="sp" hint-placeholder-count="2">
-            <div onClick="{{ sp.onClick }}" style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #f8f6fa;cursor:pointer">
-              <div style="width:46px;height:46px;border-radius:10px;overflow:hidden;background:#efe6ee;flex:none"><sc-if value="{{ sp.showImg }}" hint-placeholder-val="{{ false }}"><img src="{{ sp.thumb }}" loading="lazy" style="width:100%;height:100%;object-fit:cover" alt=""/></sc-if></div>
-              <div style="flex:1;min-width:0">
-                <div style="font-size:14px;font-weight:800;letter-spacing:-.02em">{{ sp.name }}</div>
-                <div style="font-size:12px;color:#8b8592;margin-top:2px">{{ sp.copy }}</div>
-              </div>
-              <span style="font-size:13.5px;font-weight:800;color:#ff4d6d;white-space:nowrap">{{ sp.price }}</span>
-            </div>
-          </sc-for>
-        </div>
-      </sc-if>
       <div style="font-size:14px;color:#8b8592;margin:20px 0 14px"><b style="color:#2b2530">{{ searchCount }}</b>건의 검색 결과</div>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(264px,1fr));gap:18px">
         <sc-for list="{{ searchResults }}" as="v" hint-placeholder-count="4">
@@ -476,6 +674,13 @@ a{color:inherit}
       <sc-for list="{{ sortChips }}" as="sc" hint-placeholder-count="3"><button onClick="{{ sc.onClick }}" style="{{ sc.style }}">{{ sc.label }}</button></sc-for>
     </div>
     <div style="font-size:14px;color:#8b8592;margin-bottom:14px">총 <b style="color:#2b2530">{{ hallCount }}</b>개 웨딩홀</div>
+    <sc-if value="{{ hallEmpty }}" hint-placeholder-val="{{ false }}">
+      <div style="text-align:center;padding:60px 20px;color:#a49dae">
+        <div style="font-size:36px;margin-bottom:10px">💒</div>
+        <div style="font-size:15px;font-weight:700;color:#6b6475">아직 등록된 웨딩홀이 없어요</div>
+        <div style="font-size:13px;margin-top:6px">곳 좋은 웨딩홀들을 만나보실 수 있어요</div>
+      </div>
+    </sc-if>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(264px,1fr));gap:18px">
       <sc-for list="{{ halls }}" as="h" hint-placeholder-count="6">
         <div style="background:#fff;border:1px solid #ecebf0;border-radius:20px;overflow:hidden;box-shadow:0 4px 18px rgba(30,20,40,.05);display:flex;flex-direction:column">
@@ -573,6 +778,13 @@ a{color:inherit}
       <sc-for list="{{ sortChips }}" as="sc" hint-placeholder-count="3"><button onClick="{{ sc.onClick }}" style="{{ sc.style }}">{{ sc.label }}</button></sc-for>
     </div>
     <div style="font-size:14px;color:#8b8592;margin-bottom:14px">총 <b style="color:#2b2530">{{ vendorCount }}</b>개 업체</div>
+    <sc-if value="{{ vendorEmpty }}" hint-placeholder-val="{{ false }}">
+      <div style="text-align:center;padding:60px 20px;color:#a49dae">
+        <div style="font-size:36px;margin-bottom:10px">💒</div>
+        <div style="font-size:15px;font-weight:700;color:#6b6475">아직 등록된 업체가 없어요</div>
+        <div style="font-size:13px;margin-top:6px">곳 좋은 업체들을 만나보실 수 있어요</div>
+      </div>
+    </sc-if>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(264px,1fr));gap:18px">
       <sc-for list="{{ vendors }}" as="v" hint-placeholder-count="6">
         <div style="background:#fff;border:1px solid #ecebf0;border-radius:20px;overflow:hidden;box-shadow:0 4px 18px rgba(30,20,40,.05);display:flex;flex-direction:column">
@@ -834,7 +1046,12 @@ a{color:inherit}
       </sc-if>
 
       <button onClick="{{ onLoginSubmit }}" style="{{ authBtnStyle }}">{{ authBtnLabel }}</button>
-      <div style="font-size:12px;color:#a49dae;text-align:center;margin-top:12px;line-height:1.5">{{ authFootnote }}</div>
+      <div style="font-size:12px;color:#a49dae;text-align:center;margin-top:12px;line-height:1.6">{{ authFootnote }}</div>
+      <sc-if value="{{ isSignupMode }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size:12px;color:#a49dae;text-align:center;margin-top:4px;line-height:1.6">
+          <a href="terms.html" target="_blank" style="color:#8b8592;font-weight:700">이용약관</a> · <a href="privacy.html" target="_blank" style="color:#8b8592;font-weight:700">개인정보처리방침</a>
+        </div>
+      </sc-if>
     </div>
 
     <div style="{{ dbBadgeStyle }}">{{ dbBadge }}</div>
@@ -853,7 +1070,125 @@ a{color:inherit}
       <div style="background:#2b2530;color:#fff;border-radius:18px;padding:18px 20px"><div style="font-size:12px;opacity:.7;font-weight:600">쿠폰</div><div style="font-weight:800;font-size:22px;margin-top:4px">{{ couponCountLabel }}</div></div>
       <div style="background:#fff;border:1px solid #ecebf0;border-radius:18px;padding:18px 20px"><div style="font-size:12px;color:#a49dae;font-weight:600">찜</div><div style="font-weight:800;font-size:22px;margin-top:4px;color:#ff4d6d">{{ wishCountLabel }}</div></div>
     </div>
-    <div style="display:flex;gap:6px;border-bottom:1px solid #ecebf0;margin-bottom:18px"><sc-for list="{{ myTabs }}" as="mt" hint-placeholder-count="3"><button onClick="{{ mt.onClick }}" style="{{ mt.style }}">{{ mt.label }}</button></sc-for></div>
+    <div class="hscroll" style="display:flex;gap:6px;border-bottom:1px solid #ecebf0;margin-bottom:18px;overflow-x:auto"><sc-for list="{{ myTabs }}" as="mt" hint-placeholder-count="6"><button onClick="{{ mt.onClick }}" style="{{ mt.style }}">{{ mt.label }}</button></sc-for></div>
+
+    <!-- 준비 · 체크리스트 -->
+    <sc-if value="{{ myPrepTab }}" hint-placeholder-val="{{ false }}">
+      <sc-if value="{{ myHasDday }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#2b2530;border-radius:18px;padding:20px 22px;margin-bottom:14px;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center">
+        <div style="text-align:center;flex:none">
+          <div style="font-size:11.5px;font-weight:800;color:#8b8496;letter-spacing:.06em">D-DAY</div>
+          <div style="font-size:30px;font-weight:800;color:#fff;line-height:1.1;margin-top:2px">{{ myDdayLabel }}</div>
+          <div style="font-size:12px;color:#8b8496;font-weight:700;margin-top:3px">{{ myDdayDate }}</div>
+        </div>
+        <div style="min-width:0">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+            <span style="font-size:13px;font-weight:700;color:#d5cfdd">준비 진행률</span>
+            <span style="font-size:13px;font-weight:800;color:#ff8ba0">{{ prepPct }} · {{ prepCount }}</span>
+          </div>
+          <div style="height:8px;border-radius:99px;background:rgba(255,255,255,.14);overflow:hidden"><div style="{{ prepBarStyle }}"></div></div>
+        </div>
+      </div>
+      </sc-if>
+      <sc-if value="{{ prepEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:44px 24px;text-align:center">
+          <div style="font-size:34px;margin-bottom:10px">🗓️</div>
+          <div style="font-size:15.5px;font-weight:800;margin-bottom:6px">예식일을 입력하면 체크리스트가 만들어져요</div>
+          <div style="font-size:13px;color:#8b8592;line-height:1.7;margin-bottom:18px">남은 기간에 맞춰 14개 준비 항목의 기한을 자동으로 계산합니다.</div>
+          <button onClick="{{ prepSetup }}" style="background:#ff4d6d;border:none;border-radius:12px;padding:13px 22px;font-size:14px;font-weight:800;color:#fff;cursor:pointer">예식일 입력하기</button>
+        </div>
+      </sc-if>
+      <div style="display:flex;flex-direction:column;gap:9px">
+        <sc-for list="{{ prepItems }}" as="pi" hint-placeholder-count="5">
+          <div style="{{ pi.rowStyle }}">
+            <button onClick="{{ pi.onToggle }}" style="{{ pi.boxStyle }}">{{ pi.mark }}</button>
+            <div style="flex:1;min-width:0">
+              <div style="{{ pi.titleStyle }}">{{ pi.title }}</div>
+              <div style="font-size:12px;color:#a49dae;font-weight:600;margin-top:2px">{{ pi.cat }} · {{ pi.due }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <!-- 예산 트래커 -->
+    <sc-if value="{{ myBudgetTab }}" hint-placeholder-val="{{ false }}">
+      <sc-if value="{{ budgetEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:44px 24px;text-align:center">
+          <div style="font-size:34px;margin-bottom:10px">💰</div>
+          <div style="font-size:15.5px;font-weight:800;margin-bottom:6px">총 예산을 정하면 항목별로 나눠드려요</div>
+          <div style="font-size:13px;color:#8b8592;line-height:1.7;margin-bottom:18px">예식장·스드메·예단·신혼여행 비중을 자동 배분한 뒤 직접 조정할 수 있습니다.</div>
+          <button onClick="{{ budgetSetup }}" style="background:#ff4d6d;border:none;border-radius:12px;padding:13px 22px;font-size:14px;font-weight:800;color:#fff;cursor:pointer">예산 정하기</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ hasBudget }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px">
+        <div style="background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:16px 18px"><div style="font-size:12px;color:#a49dae;font-weight:700">총 예산</div><div style="font-weight:800;font-size:19px;margin-top:4px">{{ budgetTotalLabel }}</div></div>
+        <div style="background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:16px 18px"><div style="font-size:12px;color:#a49dae;font-weight:700">지출</div><div style="font-weight:800;font-size:19px;margin-top:4px;color:#ff4d6d">{{ budgetSpentLabel }}</div></div>
+        <div style="background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:16px 18px"><div style="font-size:12px;color:#a49dae;font-weight:700">남은 예산</div><div style="font-weight:800;font-size:19px;margin-top:4px;color:#12b3a6">{{ budgetLeftLabel }}</div></div>
+      </div>
+      <div style="background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:18px 20px;margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:9px">
+          <span style="font-size:13px;font-weight:700;color:#4a4550">예산 소진율</span>
+          <span style="display:flex;align-items:center;gap:8px;flex:none">
+            <sc-if value="{{ budgetOver }}" hint-placeholder-val="{{ false }}">
+              <span style="font-size:11px;font-weight:800;color:#c3283f;background:#fff1f3;border-radius:999px;padding:3px 9px">예산 초과</span>
+            </sc-if>
+            <span style="font-size:13px;font-weight:800;color:#ff4d6d">{{ budgetPctLabel }}</span>
+          </span>
+        </div>
+        <div style="height:9px;border-radius:99px;background:#f2f0f5;overflow:hidden"><div style="{{ budgetBarStyle }}"></div></div>
+      </div>
+      </sc-if>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <sc-for list="{{ budgetRows }}" as="br" hint-placeholder-count="6">
+          <div style="background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:16px 18px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px">
+              <span style="font-size:15px;font-weight:800">{{ br.cat }}</span>
+              <span style="font-size:12.5px;font-weight:800;color:#8b8592;flex:none">{{ br.pctLabel }}</span>
+            </div>
+            <div style="height:7px;border-radius:99px;background:#f2f0f5;overflow:hidden;margin-bottom:12px"><div style="{{ br.barStyle }}"></div></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <label style="display:block">
+                <span style="display:block;font-size:11.5px;font-weight:800;color:#a49dae;margin-bottom:5px">예상</span>
+                <input type="text" inputmode="numeric" value="{{ br.plannedValue }}" onChange="{{ br.onPlanned }}" placeholder="0" style="width:100%;background:#faf9fb;border:1px solid #e6e3ec;border-radius:10px;padding:11px 12px;font-size:15px;font-weight:700;color:#2b2530;outline:none"/>
+              </label>
+              <label style="display:block">
+                <span style="display:block;font-size:11.5px;font-weight:800;color:#a49dae;margin-bottom:5px">실제 지출</span>
+                <input type="text" inputmode="numeric" value="{{ br.actualValue }}" onChange="{{ br.onActual }}" placeholder="0" style="width:100%;background:#faf9fb;border:1px solid #e6e3ec;border-radius:10px;padding:11px 12px;font-size:15px;font-weight:700;color:#ff4d6d;outline:none"/>
+              </label>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <!-- 커플 연동 -->
+    <sc-if value="{{ myCoupleTab }}" hint-placeholder-val="{{ false }}">
+      <sc-if value="{{ hasPartner }}" hint-placeholder-val="{{ false }}">
+        <div style="background:linear-gradient(120deg,#fff5f7,#fff);border:1px solid #ffd9e1;border-radius:18px;padding:24px 22px;display:flex;align-items:center;gap:16px">
+          <span style="width:52px;height:52px;flex:none;border-radius:16px;background:#ff4d6d;color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px">💞</span>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:800;color:#ff4d6d">연결됨</div>
+            <div style="font-size:17px;font-weight:800;margin-top:3px">{{ partnerName }}</div>
+            <div style="font-size:13px;color:#8b8592;font-weight:600;margin-top:2px">{{ partnerPhone }}</div>
+          </div>
+          <button onClick="{{ onUnlinkCouple }}" style="flex:none;background:#fff;border:1px solid #e6e3ec;border-radius:10px;padding:10px 14px;font-size:12.5px;font-weight:700;color:#8b8592;cursor:pointer">연결 해제</button>
+        </div>
+        <div style="background:#f7f5f9;border-radius:14px;padding:16px 18px;font-size:13px;color:#8b8592;line-height:1.7;margin-top:12px">찜 목록, 체크리스트, 예산을 함께 보고 함께 수정할 수 있습니다.</div>
+      </sc-if>
+      <div style="background:#fff;border:1px solid #ecebf0;border-radius:18px;padding:22px;margin-top:12px">
+        <h3 style="font-size:15.5px;font-weight:800;margin:0 0 6px">내 초대코드</h3>
+        <p style="font-size:13px;color:#8b8592;line-height:1.7;margin:0 0 14px">이 코드를 상대방에게 전달하면 함께 준비할 수 있어요.</p>
+        <div style="background:#faf9fb;border:1.5px dashed #ffc2ce;border-radius:14px;padding:18px;text-align:center;font-size:26px;font-weight:800;letter-spacing:.18em;color:#ff4d6d">{{ coupleCode }}</div>
+        <h3 style="font-size:15.5px;font-weight:800;margin:24px 0 6px">상대방 코드 입력</h3>
+        <p style="font-size:13px;color:#8b8592;line-height:1.7;margin:0 0 12px">받은 코드를 입력하면 바로 연결됩니다.</p>
+        <div style="display:flex;gap:9px">
+          <input type="text" value="{{ coupleInput }}" onInput="{{ onCoupleInput }}" placeholder="ABC123" style="flex:1;min-width:0;background:#faf9fb;border:1px solid #e6e3ec;border-radius:12px;padding:13px 15px;font-size:16px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#2b2530;outline:none"/>
+          <button onClick="{{ onLinkCouple }}" style="flex:none;background:#ff4d6d;border:none;border-radius:12px;padding:13px 20px;font-size:14.5px;font-weight:800;color:#fff;cursor:pointer">연결</button>
+        </div>
+      </div>
+    </sc-if>
     <sc-if value="{{ myOrdersTab }}" hint-placeholder-val="{{ true }}">
       <sc-if value="{{ ordersEmpty }}" hint-placeholder-val="{{ false }}"><div style="background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:44px;text-align:center;color:#8b8592;font-size:14px">아직 주문 내역이 없어요.</div></sc-if>
       <div style="display:flex;flex-direction:column;gap:12px">
@@ -870,124 +1205,6 @@ a{color:inherit}
   </div>
   </sc-if>
 
-  <!-- ============ ADMIN (광고 관리) ============ -->
-  <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width:1180px;margin:0 auto;padding:clamp(20px,3.5vw,40px) clamp(16px,4vw,40px)">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-      <div>
-        <div style="font-size:12px;font-weight:800;color:#ff4d6d;letter-spacing:.04em">ADMIN</div>
-        <h1 style="font-weight:800;font-size:clamp(22px,3vw,30px);margin:4px 0 0;letter-spacing:-.03em">광고 관리</h1>
-        <div style="font-size:13.5px;color:#8b8592;margin-top:5px">광고 지부대를 상태별로 켜고 끔 수 있어요. 설정은 및다로 반영됩니다.</div>
-      </div>
-      <button onClick="{{ goHome }}" style="background:#fff;border:1px solid #e6e3ec;border-radius:11px;padding:11px 17px;font-size:13px;font-weight:700;cursor:pointer;color:#4b4455">사이트로 돌아가기</button>
-    </div>
-
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-top:20px">
-      <div style="background:linear-gradient(120deg,#ff4d6d,#ff8095);color:#fff;border-radius:16px;padding:18px 20px"><div style="font-size:12.5px;opacity:.9;font-weight:700">집통 광고</div><div style="font-weight:800;font-size:26px;margin-top:4px">{{ adOnCount }}</div></div>
-      <div style="background:#2b2530;color:#fff;border-radius:16px;padding:18px 20px"><div style="font-size:12.5px;opacity:.75;font-weight:700">이번 달 노출수</div><div style="font-weight:800;font-size:26px;margin-top:4px">{{ adTotalImp }}</div></div>
-      <div style="background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:18px 20px"><div style="font-size:12.5px;color:#8b8592;font-weight:700">예상 월 매출</div><div style="font-weight:800;font-size:26px;margin-top:4px;color:#ff4d6d">{{ adRevenue }}</div></div>
-      <div style="background:#fff;border:1px solid #ecebf0;border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;justify-content:space-between">
-        <div style="font-size:12.5px;color:#8b8592;font-weight:700">전역 광고 스위치</div>
-        <button onClick="{{ onToggleMaster }}" style="{{ masterBtnStyle }}">{{ masterLabel }}</button>
-      </div>
-    </div>
-
-    <div style="background:#fff;border:1px solid #ecebf0;border-radius:16px;margin-top:16px;overflow:hidden">
-      <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid #f2f0f5;background:#faf9fb">
-        <span style="flex:1;font-size:12.5px;font-weight:800;color:#8b8592">광고 지부대</span>
-        <span style="width:96px;font-size:12.5px;font-weight:800;color:#8b8592;text-align:right">노출수</span>
-        <span style="width:64px;font-size:12.5px;font-weight:800;color:#8b8592;text-align:right">상태</span>
-      </div>
-      <sc-for list="{{ adUnits }}" as="a" hint-placeholder-count="7">
-        <div style="display:flex;align-items:center;gap:12px;padding:15px 18px;border-bottom:1px solid #f6f4f8">
-          <div style="flex:1;min-width:0">
-            <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
-              <span style="font-size:14.5px;font-weight:800;letter-spacing:-.02em">{{ a.name }}</span>
-              <span style="{{ a.typeStyle }}">{{ a.type }}</span>
-            </div>
-            <div style="font-size:12px;color:#8b8592;margin-top:4px;line-height:1.5">{{ a.pos }} · {{ a.size }}<br>광고주 <b style="color:#4b4455">{{ a.advertiser }}</b> · {{ a.period }} · {{ a.rate }}</div>
-          </div>
-          <span style="width:96px;text-align:right;font-size:13.5px;font-weight:800;color:#4b4455">{{ a.imp }}</span>
-          <button onClick="{{ a.onToggle }}" style="{{ a.switchStyle }}"><span style="{{ a.knobStyle }}"></span></button>
-        </div>
-      </sc-for>
-    </div>
-    <div style="background:#f0edf7;border-radius:14px;padding:15px 18px;margin-top:14px;font-size:12.5px;color:#5c5468;line-height:1.6">💡 데모 환경이므로 노출수·매출은 샘플 집계입니다. 실제 운영 시 광고주·기간·단가는 관리자 DB에서 관리하고, 노출/클릭은 집계 테이봐에 기록합니다.</div>
-  </div>
-  </sc-if>
-
-  <!-- ============ BUNDLE (스드메 묶음 비교) ============ -->
-  <sc-if value="{{ isBundle }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width:1180px;margin:0 auto;padding:clamp(20px,3.5vw,40px) clamp(16px,4vw,40px)">
-    <div style="font-size:12px;font-weight:800;color:#ff4d6d;letter-spacing:.04em">BUNDLE</div>
-    <h1 style="font-weight:800;font-size:clamp(24px,3vw,32px);color:#2b2530;margin:5px 0 4px">스드메 묶음 비교 🧳</h1>
-    <p style="color:#8b8592;font-size:15px;margin:0 0 20px">스튜디오·드레스·메이크업을 골라 총액을 한 번에 비교하세요. 3개를 모두 담으면 묶음 할인이 적용됩니다.</p>
-
-    <div data-m="split" style="display:grid;grid-template-columns:minmax(0,1.7fr) minmax(300px,1fr);gap:24px;align-items:start">
-      <div style="display:flex;flex-direction:column;gap:18px">
-        <sc-for list="{{ bundleSlots }}" as="bs" hint-placeholder-count="3">
-          <div>
-            <div style="display:flex;align-items:center;gap:9px;margin-bottom:11px">
-              <span style="{{ bs.dotStyle }}">{{ bs.icon }}</span>
-              <span style="font-size:16px;font-weight:800;letter-spacing:-.02em">{{ bs.title }}</span>
-              <sc-if value="{{ bs.picked }}" hint-placeholder-val="{{ false }}">
-                <span style="font-size:11.5px;font-weight:800;color:#12b3a6;background:#e6f7f5;border-radius:6px;padding:3px 8px">선택됨</span>
-              </sc-if>
-            </div>
-            <div class="hscroll" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:4px">
-              <sc-for list="{{ bs.options }}" as="bo" hint-placeholder-count="3">
-                <button onClick="{{ bo.onPick }}" style="{{ bo.style }}">
-                  <div style="position:relative;aspect-ratio:4/3;border-radius:11px;overflow:hidden;background:#efe6ee">
-                    <sc-if value="{{ bo.showImg }}" hint-placeholder-val="{{ false }}"><img src="{{ bo.thumb }}" loading="lazy" style="width:100%;height:100%;object-fit:cover" alt=""/></sc-if>
-                    <sc-if value="{{ bo.on }}" hint-placeholder-val="{{ false }}">
-                      <span style="position:absolute;right:7px;top:7px;width:22px;height:22px;border-radius:50%;background:#ff4d6d;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center">✓</span>
-                    </sc-if>
-                  </div>
-                  <div style="font-size:11.5px;color:#a49dae;font-weight:700;margin-top:8px">📍 {{ bo.region }}</div>
-                  <div style="font-size:14px;font-weight:800;letter-spacing:-.02em;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ bo.name }}</div>
-                  <div style="font-size:12px;color:#6d6579;font-weight:600;margin-top:3px">⭐ {{ bo.rate }}</div>
-                  <div style="font-weight:800;font-size:15px;color:#ff4d6d;margin-top:6px">{{ bo.price }}</div>
-                </button>
-              </sc-for>
-            </div>
-          </div>
-        </sc-for>
-
-        <div style="background:#fff;border:1px solid #ecebf0;border-radius:18px;padding:18px 20px">
-          <div style="font-size:15px;font-weight:800;margin-bottom:12px">지역별 평균 묶음가와 비교</div>
-          <sc-for list="{{ bundleCompare }}" as="bc" hint-placeholder-count="4">
-            <div style="display:flex;align-items:center;gap:11px;padding:9px 0">
-              <span style="width:44px;font-size:12.5px;font-weight:700;color:#4a4550;flex:none">{{ bc.label }}</span>
-              <div style="flex:1;height:9px;background:#f2f0f5;border-radius:999px;overflow:hidden"><span style="{{ bc.barStyle }}"></span></div>
-              <span style="{{ bc.valStyle }}">{{ bc.value }}</span>
-            </div>
-          </sc-for>
-        </div>
-      </div>
-
-      <div data-m="rail" style="position:sticky;top:84px;background:#fff;border:1px solid #ecebf0;border-radius:22px;padding:22px;box-shadow:0 8px 28px rgba(30,20,40,.07)">
-        <div style="font-size:15px;font-weight:800;margin-bottom:13px">내 묶음 견적</div>
-        <sc-for list="{{ bundleLines }}" as="bl" hint-placeholder-count="3">
-          <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #f4f2f6">
-            <div style="min-width:0">
-              <div style="font-size:11.5px;color:#a49dae;font-weight:700">{{ bl.cat }}</div>
-              <div style="font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ bl.name }}</div>
-            </div>
-            <span style="{{ bl.valStyle }}">{{ bl.price }}</span>
-          </div>
-        </sc-for>
-        <div style="display:flex;justify-content:space-between;font-size:13.5px;margin-top:13px"><span style="color:#8b8592">합계</span><span style="font-weight:700">{{ bundleSubtotal }}</span></div>
-        <div style="display:flex;justify-content:space-between;font-size:13.5px;margin-top:7px"><span style="color:#8b8592">묶음 할인 {{ bundleRate }}</span><span style="font-weight:800;color:#ff4d6d">{{ bundleDiscount }}</span></div>
-        <div style="height:1px;background:#f0eef4;margin:14px 0"></div>
-        <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:15px;font-weight:800">총액</span><span style="font-weight:800;font-size:26px;color:#ff4d6d">{{ bundleTotal }}</span></div>
-        <div style="{{ bundleHintStyle }}">{{ bundleHint }}</div>
-        <button onClick="{{ onBundleCart }}" style="{{ bundleBtnStyle }}">{{ bundleBtnLabel }}</button>
-        <button onClick="{{ onBundleReset }}" style="width:100%;margin-top:8px;background:none;border:none;color:#a49dae;font-size:12.5px;font-weight:600;cursor:pointer;padding:7px 0">다시 고르기</button>
-      </div>
-    </div>
-  </div>
-  </sc-if>
-
   </main>
 
   <!-- ============ FOOTER ============ -->
@@ -998,9 +1215,12 @@ a{color:inherit}
         <p style="font-size:13px;line-height:1.7;margin:12px 0 0;color:#8b8496">부산·창원·마산·김해·양산·진주·울산<br>웨딩홀 · 스드메 · 혼수 통합 플랫폼</p>
       </div>
       <div><div style="color:#fff;font-weight:700;font-size:14px;margin-bottom:12px">카테고리</div><div style="display:flex;flex-direction:column;gap:8px;font-size:13px"><button onClick="{{ goHall }}" style="background:none;border:none;color:#8b8496;text-align:left;cursor:pointer;padding:0;font-size:13px">웨딩홀</button><button onClick="{{ goSdm }}" style="background:none;border:none;color:#8b8496;text-align:left;cursor:pointer;padding:0;font-size:13px">스드메</button><button onClick="{{ goHonsu }}" style="background:none;border:none;color:#8b8496;text-align:left;cursor:pointer;padding:0;font-size:13px">혼수</button></div></div>
-      <div><div style="color:#fff;font-weight:700;font-size:14px;margin-bottom:12px">고객센터</div><div style="font-weight:800;font-size:22px;color:#fff">1668-0000</div><div style="font-size:12px;color:#8b8496;margin-top:6px;line-height:1.6">평일 10:00–19:00<br>주말·공휴일 10:00–17:00</div></div>
-      <div style="font-size:12px;color:#6f6a7a;line-height:1.7">(주)부산경남웨딩 | 대표 김태현<br>사업자등록 000-00-00000<br>부산광역시 부산진구 자유평화로 17, 3층<br style="margin-bottom:8px">© 2026 Busan·Gyeongnam Wedding
-        <button onClick="{{ goAdmin }}" style="display:block;margin-top:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#b7b0c0;border-radius:8px;padding:7px 12px;font-size:11.5px;font-weight:700;cursor:pointer">⚙︎ 관리자 · 광고 관리</button>
+      <div><div style="color:#fff;font-weight:700;font-size:14px;margin-bottom:12px">파트너센터</div><div style="display:flex;flex-direction:column;gap:8px;font-size:13px"><a href="vendor.html" style="color:#8b8496;text-decoration:none">업체 입점 신청</a><a href="ad-center.html" style="color:#8b8496;text-decoration:none">광고센터</a></div></div>
+      <div><div style="color:#fff;font-weight:700;font-size:14px;margin-bottom:12px">고객센터</div><div style="font-weight:800;font-size:22px;color:#fff">1668-0000</div><div style="font-size:12px;color:#8b8496;margin-top:6px;line-height:1.6">평일 10:00–19:00<br>주말·공휴일 휴무</div></div>
+      <div><div style="color:#fff;font-weight:700;font-size:14px;margin-bottom:12px">약관·정책</div><div style="display:flex;flex-direction:column;gap:8px;font-size:13px"><a href="terms.html" style="color:#8b8496;text-decoration:none">이용약관</a><a href="privacy.html" style="color:#8b8496;text-decoration:none">개인정보처리방침</a><a href="refund.html" style="color:#8b8496;text-decoration:none">환불·취소 정책</a></div></div>
+      <div style="font-size:12px;color:#6f6a7a;line-height:1.7">(주)웨딩여기 | 대표 김태현<br>사업자등록 000-00-00000<br>통신판매업 제0000-부산진-0000호<br>부산광역시 부산진구 자유평화로 17, 3층<br style="margin-bottom:8px">© 2026 Busan·Gyeongnam Wedding
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.08);font-size:11px;line-height:1.65;color:#5f5a69">웨딩여기는 통신판매중개자이며 통신판매의 당사자가 아닙니다. 예약·이행·환불의 책임은 각 업체에 있습니다.</div>
+        <div style="margin-top:12px"></div>
       </div></div>
     </div>
   </footer>
@@ -1014,8 +1234,8 @@ a{color:inherit}
         <div style="font-size:13.5px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ adStickyTitle }}</div>
         <div style="font-size:11.5px;color:#b7b0c0;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ adStickySub }}</div>
       </div>
-      <button onClick="{{ onAdClick }}" style="flex:none;background:#ff4d6d;color:#fff;border:none;border-radius:9px;padding:9px 15px;font-size:12.5px;font-weight:800;cursor:pointer">{{ adStickyCta }}</button>
-      <button onClick="{{ onCloseSticky }}" style="flex:none;background:none;border:none;color:#8b8592;font-size:17px;cursor:pointer;padding:0 2px">×</button>
+      <button onClick="{{ onStickyClick }}" style="{{ adStickyCtaStyle }}">{{ adStickyCta }}</button>
+      <button onClick="{{ onCloseSticky }}" style="flex:none;order:2;background:none;border:none;color:#8b8592;font-size:17px;cursor:pointer;padding:0 2px">×</button>
     </div>
   </div>
   </sc-if>
@@ -1026,13 +1246,18 @@ a{color:inherit}
     <div data-m="modal" onClick="{{ stop }}" style="width:100%;max-width:330px;background:#fff;border-radius:20px;overflow:hidden;animation:pop .25s ease;position:relative">
       <div style="position:relative;aspect-ratio:4/3;background:linear-gradient(135deg,#efe6ee,#ddd0d8)">
         <div style="{{ adPopupImgStyle }}"></div>
+        <sc-if value="{{ adPopupIconShow }}" hint-placeholder-val="{{ false }}">
+          <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:64px">{{ adPopupIcon }}</span>
+        </sc-if>
         <span style="position:absolute;right:10px;top:10px;background:rgba(0,0,0,.4);color:#fff;font-size:9.5px;font-weight:700;padding:3px 7px;border-radius:5px">광고</span>
       </div>
       <div style="padding:18px 20px 20px">
+        <sc-if value="{{ adPopupHasText }}" hint-placeholder-val="{{ true }}">
         <div style="font-size:11.5px;color:#a49dae;font-weight:700">{{ adPopupAdvertiser }}</div>
-        <div style="font-weight:800;font-size:19px;margin-top:5px;line-height:1.3;letter-spacing:-.02em;white-space:pre-line">{{ adPopupTitle }}</div>
+        <div style="font-weight:800;font-size:{{ adPopupTitleSize }};margin-top:5px;line-height:1.3;letter-spacing:-.02em;white-space:pre-line">{{ adPopupTitle }}</div>
         <div style="font-size:13px;color:#8b8592;margin-top:6px;line-height:1.5">{{ adPopupSub }}</div>
-        <button onClick="{{ onAdClick }}" style="width:100%;margin-top:15px;background:#ff4d6d;color:#fff;border:none;border-radius:12px;padding:14px 0;font-size:14.5px;font-weight:800;cursor:pointer">자세히 보기</button>
+        </sc-if>
+        <button onClick="{{ onPopupClick }}" style="width:100%;margin-top:15px;background:#ff4d6d;color:#fff;border:none;border-radius:12px;padding:14px 0;font-size:14.5px;font-weight:800;cursor:pointer">{{ adPopupCta }}</button>
         <button onClick="{{ onClosePopup }}" style="width:100%;margin-top:7px;background:none;border:none;color:#a49dae;font-size:12.5px;font-weight:600;cursor:pointer;padding:6px 0">오늘 하루 보지 않기</button>
       </div>
     </div>
@@ -1096,16 +1321,9 @@ class Component extends DCLogic {
     this.COORD = {'부산':[35.157,129.059],'창원':[35.227,128.681],'마산':[35.199,128.569],'김해':[35.234,128.889],'양산':[35.335,129.037],'진주':[35.180,128.108],'울산':[35.538,129.311]};
     const area = {'부산':'051','울산':'052','창원':'055','마산':'055','김해':'055','양산':'055','진주':'055'};
 
-    const rawHalls = [
-      ['h1','그랜디스 웨딩홀','부산','부산 부산진구 중앙대로 668','5F 채플홀',1500000,59000,250,'건물 300대 · 발렛 가능'],
-      ['h2','라움 컨벤션','부산','부산 해운대구 센텀남대로 35','3F 그랜드볼룸',2000000,68000,300,'지하 500대 · 발렛 무료'],
-      ['h3','아펠가모 창원','창원','창원 성산구 상남로 71','4F 크리스탈홀',1200000,52000,200,'건물 250대'],
-      ['h4','김해 더컨벤션','김해','김해 내외중앙로 40','2F 아이보리홀',1000000,49000,180,'200대 · 발렛'],
-      ['h5','양산 노블레스','양산','양산 물금읍 청운로 15','3F 노블홀',900000,45000,150,'150대'],
-      ['h6','진주 라비아채플','진주','진주 진주대로 1350','1F 가든채플',1100000,48000,170,'180대 · 발렛'],
-      ['h7','울산 메종드루체','울산','울산 남구 삼산로 280','5F 루체홀',1300000,55000,220,'250대 · 발렛 가능'],
-    ];
+    const rawHalls = [];
     this.HALLS = rawHalls.map((a,i)=>({id:a[0],name:a[1],region:a[2],addr:a[3],floor:a[4],rental:a[5],buffet:a[6],guarantee:a[7],parking:a[8],phone:area[a[2]]+'-'+(300+i)+'-'+(1200+i*11)}));
+    this._mockHalls = this.HALLS;
 
     const COMP = {
       '스튜디오':{A:['원본 300컷 제공','액자 1개 (11x14)','실내 촬영 2시간'],B:['원본 500컷','수정본 30컷','액자 2개','실내+야외 스냅','촬영 3시간'],C:['원본 800컷','수정본 60컷','액자 3개','고급 앨범 제작','반일 촬영','헤어·메이크업 연계']},
@@ -1146,25 +1364,7 @@ class Component extends DCLogic {
       ym1:1500000, ym2:1850000,
       hm1:2500000, hm2:3100000
     };
-    const rawV = [
-      ['sd1','세렌디피티 스튜디오','스튜디오','부산','부산 수영구 광안해변로 200','따뜻한 감성의 자연광 스튜디오'],
-      ['sd2','모먼트필름 스튜디오','스튜디오','창원','창원 성산구 상남로 45','필름 감성 원판 전문'],
-      ['sd3','화이트룸 스튜디오','스튜디오','김해','김해 내외로 88','모던 미니멀 화이트톤'],
-      ['dr1','끌로에 웨딩드레스','드레스','부산','부산 부산진구 서면로 60','유럽 임포트 라인 다수 보유'],
-      ['dr2','아뜰리에 브라이드','드레스','울산','울산 남구 삼산로 120','슬림·머메이드 라인 강점'],
-      ['dr3','벨라지오 드레스','드레스','진주','진주 진양호로 300','볼륨 드레스·클래식 라인'],
-      ['mk1','라뷰티 메이크업','메이크업','부산','부산 해운대구 해운대로 570','생기 있는 물광 신부 메이크업'],
-      ['mk2','제니하우스 창원점','메이크업','창원','창원 성산구 중앙대로 90','원장 지정 예약 가능'],
-      ['mk3','뮤즈 메이크업','메이크업','양산','양산 물금읍 증산역로 25','내추럴·화사 메이크업'],
-      ['hb1','예단 한복','한복','부산','부산 부산진구 진양로 15','전통 혼례·폐백 전문'],
-      ['hb2','곱디 한복','한복','김해','김해 분성로 210','모던 생활한복까지'],
-      ['yb1','로얄 예복','예복','부산','부산 부산진구 중앙대로 700','신랑 맞춤 예복 전문'],
-      ['yb2','신사의품격 예복','예복','창원','창원 의창구 원이대로 450','이탈리아 원단 셀렉션'],
-      ['ym1','골든듀 예물','예물','부산','부산 부산진구 가야대로 780','다이아·커플링 전문'],
-      ['ym2','티파니로드 예물','예물','울산','울산 중구 성남동 40','명품 예물 시계 취급'],
-      ['hm1','허니문리조트 여행사','신혼여행','부산','부산 해운대구 센텀중앙로 100','동남아·몰디브 허니문'],
-      ['hm2','스카이허니문','신혼여행','창원','창원 성산구 마디미로 30','유럽·하와이 장거리 전문'],
-    ];
+    const rawV = [];
     this.VENDORS = rawV.map((a,i)=>({
       id:a[0],name:a[1],sub:a[2],region:a[3],addr:a[4],summary:a[5],
       phone:area[a[3]]+'-'+(500+i)+'-'+(2000+i*7),
@@ -1172,10 +1372,13 @@ class Component extends DCLogic {
       galleryCount:GCOUNT[a[2]], travel:a[2]==='신혼여행'?'다낭 · 발리 · 몰디브 · 하와이':'',
       packages:mkPkgs(a[2], VPRICE[a[0]]), options:OPT[a[2]].map((o,j)=>({id:a[0]+'-o'+j,title:o[0],price:o[1]})),
     }));
+    this._mockVendors = this.VENDORS;
 
     this.COUPONS = [
       {code:'WEDDING10',label:'웨딩 10% 할인',type:'percent',value:10,min:1000000,cond:'100만원 이상'},
       {code:'FIRST50',label:'첫 예약 5만원 할인',type:'amount',value:50000,min:500000,cond:'50만원 이상'},
+      {code:'STUDIO10',label:'스튜디오 10만원 할인권',type:'amount',value:100000,min:800000,cat:'스튜디오',cond:'스튜디오 상품 80만원 이상'},
+      {code:'DRESS10',label:'드레스 10만원 할인권',type:'amount',value:100000,min:800000,cat:'드레스',cond:'드레스 상품 80만원 이상'},
     ];
     this.TIMES = ['가능한 빨리','오전 (10–12시)','오후 (13–17시)','저녁 (18–20시)','주말'];
     this.PAYS = [['card','신용/체크카드'],['kakao','카카오페이'],['toss','토스페이'],['bank','무통장입금']];
@@ -1185,16 +1388,185 @@ class Component extends DCLogic {
       vendorId:null, hallId:null, sel:{pkgId:'A', optIds:[]},
       cart:[], wish:[], user:null, orders:[], consults:[],
       couponCode:null, useAllPoints:false, pay:'card',
-      consult:{open:false,target:'',name:'',phone:'',time:'가능한 빨리'},
+      consult:{open:false,target:'',vendorId:null,name:'',phone:'',time:'가능한 빨리'},
       lightbox:{open:false,seeds:[],i:0,title:''},
-      ads:this.loadAds(), heroIdx:0, rankTab:'hall', stickyClosed:false, popupClosed:false,
+      heroIdx:0, rankTab:'hall', stickyClosed:false, popupClosed:false,
       bundle:{'스튜디오':null,'드레스':null,'메이크업':null},
       checks:this.loadChecks(),
       toast:'', mytab:'orders', lastOrder:null,
+      gv:{open:false,src:'',title:'',zoom:1,h:1400},
       login:{name:'',phone:'',date:'',tbd:false,email:'',pw:''},
       authMode:'signup', authErr:'', authBusy:false,
+      prof:null, recent:[], plist:[], budget:[], partner:null,
+      onb:{step:0, date:'', tbd:false, region:'', budget:'', guests:'', cats:[]},
+      onbBusy:false, coupleInput:'', budgetEdit:null,
     };
   }
+
+  /* ══════════ 개인화 ══════════ */
+  ONB_STEPS = ['예식 예정일','희망 지역','예산','하객 규모','관심 항목'];
+  BUDGET_OPTS = [[20000000,'2천만원 이하'],[30000000,'3천만원대'],[40000000,'4천만원대'],[50000000,'5천만원대'],[70000000,'7천만원 이상']];
+  GUEST_OPTS = [[100,'100명 이하'],[150,'150명'],[200,'200명'],[250,'250명'],[350,'350명 이상']];
+  ONB_CATS = [['hall','웨딩홀'],['studio','스튜디오'],['dress','드레스'],['makeup','메이크업'],['hanbok','한복'],['honsu','혼수·예단']];
+
+  dday(){
+    const d = this.state.prof && this.state.prof.wedding_date;
+    if(!d) return null;
+    const t = new Date(d+'T00:00:00'), now = new Date();
+    now.setHours(0,0,0,0);
+    const diff = Math.round((t-now)/86400000);
+    return {days:diff, date:d.replace(/-/g,'.'),
+      label: diff>0? 'D-'+diff : (diff===0? 'D-DAY' : 'D+'+Math.abs(diff))};
+  }
+
+  onbSet = (patch)=> this.setState(s=>({onb:Object.assign({},s.onb,patch)}));
+  onbNext = ()=> this.setState(s=>({onb:Object.assign({},s.onb,{step:Math.min(4,s.onb.step+1)})}));
+  onbPrev = ()=> this.setState(s=>({onb:Object.assign({},s.onb,{step:Math.max(0,s.onb.step-1)})}));
+  onbToggleCat = (k)=> this.setState(s=>{
+    const cs = s.onb.cats.includes(k)? s.onb.cats.filter(x=>x!==k) : s.onb.cats.concat([k]);
+    return {onb:Object.assign({},s.onb,{cats:cs})};
+  });
+
+  finishOnboard = async (skipped)=>{
+    const o = this.state.onb, u = this.state.user;
+    this.setState({onbBusy:true});
+    const patch = {
+      onboarded:true, onboard_step:o.step,
+      wedding_date: o.tbd||!o.date? null : o.date,
+      is_date_tbd: !!o.tbd,
+      region: o.region||null,
+      budget: o.budget? +o.budget : null,
+      guests: o.guests? +o.guests : null,
+      interests: o.cats||[]
+    };
+    const db = await this.db();
+    if(db && u && u.id){
+      try{
+        const saved = await db.upsertProfile(u.id, patch);
+        if(saved) this.setState({prof:saved});
+        if(patch.wedding_date){
+          const cl = await db.listChecklist(u.id);
+          if(!cl.length) await db.seedChecklist(u.id, patch.wedding_date);
+        }
+        if(patch.budget){
+          const bg = await db.listBudget(u.id);
+          if(!bg.length) await db.seedBudget(u.id, patch.budget);
+        }
+        await this.loadPersonal(u.id);
+      }catch(e){ console.warn('온보딩 저장 실패', e); }
+    }
+    this.setState(s=>({
+      onbBusy:false, screen:'home',
+      prof: s.prof? Object.assign({},s.prof,patch) : patch,
+      user: s.user? Object.assign({},s.user,{date: patch.wedding_date? patch.wedding_date : '미정'}) : s.user
+    }));
+    this.showToast(skipped? '나중에 마이페이지에서 채울 수 있어요' : '조건에 맞는 곳을 먼저 보여드릴게요 ✨');
+    try{ requestAnimationFrame(()=>window.scrollTo(0,0)); }catch(e){}
+  };
+
+  async loadPersonal(userId){
+    const db = await this.db(); if(!db || !userId) return;
+    try{
+      const [recent, plist, budget, prof] = await Promise.all([
+        db.listRecent? db.listRecent(userId) : [],
+        db.listChecklist? db.listChecklist(userId) : [],
+        db.listBudget? db.listBudget(userId) : [],
+        db.getProfile(userId)
+      ]);
+      let partner = null;
+      if(prof && prof.partner_id){ try{ partner = await db.getProfile(prof.partner_id); }catch(e){} }
+      this.setState({recent, plist, budget, prof:prof||this.state.prof, partner});
+    }catch(e){ console.warn('개인화 로드 실패', e); }
+  }
+
+  touchRecent = async (kind, id, cat)=>{
+    const key = kind+':'+id;
+    this.setState(s=>({recent:[{vendor_id:key, cat:cat||null}].concat(s.recent.filter(r=>r.vendor_id!==key)).slice(0,12)}));
+    const u = this.state.user; if(!u || !u.id) return;
+    const db = await this.db(); if(db && db.touchRecent){ try{ await db.touchRecent(u.id, key, cat); }catch(e){} }
+  };
+
+  railVM(vm){
+    return {name:vm.name, tagLabel:vm.tag, regionLabel:vm.region, priceLabel:vm.price, onOpen:vm.onOpen,
+      imgEl: vm.showImg? this.imgEl(vm.thumb,{width:'100%',height:'100%',objectFit:'cover',display:'block'}) : null};
+  }
+  recentItems(){
+    return this.state.recent.map(r=>{
+      const [t,id] = String(r.vendor_id).split(':');
+      if(t==='v'){ const v=this.vendorById(id); return v? this.railVM(this.vendorCardVM(v)) : null; }
+      if(t==='h'){ const h=this.hallById(id); return h? this.railVM(this.hallCardVM(h)) : null; }
+      return null;
+    }).filter(Boolean).slice(0,8);
+  }
+
+  // 프로필 조건(지역·예산·하객수)에 맞는 추천
+  recoItems(){
+    const p = this.state.prof; if(!p) return [];
+    const reg = p.region, gs = p.guests, bd = p.budget;
+    let halls = this.HALLS.slice();
+    if(reg && reg!=='전체') halls = halls.filter(h=>h.region===reg);
+    if(gs) halls = halls.filter(h=>!h.guarantee || h.guarantee<=gs+50);
+    if(bd) halls = halls.filter(h=>!h.rental || h.rental<=bd*0.5);
+    let vs = this.VENDORS.slice();
+    const ints = (p.interests||[]);
+    if(ints.length){
+      const map={studio:'스튜디오',dress:'드레스',makeup:'메이크업',hanbok:'한복'};
+      const subs = ints.map(k=>map[k]).filter(Boolean);
+      if(subs.length) vs = vs.filter(v=>subs.includes(v.sub));
+    }
+    if(bd) vs = vs.filter(v=>{ const p=v.packages&&v.packages[0]&&v.packages[0].price; return !p || p<=bd*0.25; });
+    const out = [];
+    halls.slice(0,3).forEach(h=>out.push(this.railVM(this.hallCardVM(h))));
+    vs.slice(0,5).forEach(v=>out.push(this.railVM(this.vendorCardVM(v))));
+    return out.slice(0,8);
+  }
+
+  // 찜한 업체와 같은 카테고리·지역의 다른 업체
+  similarItems(){
+    const w = this.state.wish; if(!w.length) return [];
+    const subs = {}, regs = {};
+    w.forEach(k=>{
+      const [t,id]=k.split(':');
+      if(t==='v'){ const v=this.vendorById(id); if(v){ subs[v.sub]=1; regs[v.region]=1; } }
+      if(t==='h'){ const h=this.hallById(id); if(h){ regs[h.region]=1; } }
+    });
+    return this.VENDORS
+      .filter(v=>subs[v.sub] && !w.includes('v:'+v.id))
+      .sort((a,b)=>(regs[b.region]?1:0)-(regs[a.region]?1:0))
+      .slice(0,6).map(v=>this.railVM(this.vendorCardVM(v)));
+  }
+
+  toggleTask = async (item)=>{
+    const done = !item.done;
+    this.setState(s=>({plist:s.plist.map(x=>x.id===item.id? Object.assign({},x,{done}) : x)}));
+    const db = await this.db(); if(db && db.toggleChecklist){ try{ await db.toggleChecklist(item.id, done); }catch(e){} }
+  };
+
+  editBudget = (id)=> this.setState({budgetEdit:id});
+  saveBudgetRow = async (row, field, value)=>{
+    const v = String(value).replace(/[^0-9]/g,'')|0;
+    this.setState(s=>({budget:s.budget.map(x=>x.id===row.id? Object.assign({},x,{[field]:v}) : x)}));
+    const db = await this.db(); if(db && db.saveBudgetItem){ try{ await db.saveBudgetItem({id:row.id, [field]:v}); }catch(e){} }
+  };
+
+  linkCouple = async ()=>{
+    const code = this.state.coupleInput.trim();
+    if(!code){ this.showToast('초대코드를 입력해 주세요'); return; }
+    const u = this.state.user; const db = await this.db();
+    if(!db || !u){ this.showToast('로그인이 필요합니다'); return; }
+    try{
+      const mate = await db.linkPartner(u.id, code);
+      await this.loadPersonal(u.id);
+      this.setState({coupleInput:''});
+      this.showToast(mate.name+'님과 연결됐어요 💞');
+    }catch(e){ this.showToast(e.message||'연결에 실패했어요'); }
+  };
+  unlinkCouple = async ()=>{
+    const u=this.state.user; const db=await this.db(); if(!db||!u) return;
+    try{ await db.unlinkPartner(u.id); await this.loadPersonal(u.id); this.setState({partner:null}); this.showToast('연결을 해제했어요'); }
+    catch(e){ this.showToast('해제에 실패했어요'); }
+  };
+  onCoupleInput = (e)=> this.setState({coupleInput:e.target.value});
 
   fmt(n){ return Number(n||0).toLocaleString('ko-KR')+'원'; }
   priceLabel(n){ return this.props.priceDisplay==='확정가' ? this.fmt(n) : this.fmt(n)+'~'; }
@@ -1215,54 +1587,36 @@ class Component extends DCLogic {
     const sub = this.state.cart.reduce((s,it)=>s+this.itemUnit(it)*it.qty,0);
     let couponAmt=0, couponLabel='적용된 쿠폰 없음';
     const cp = this.COUPONS.find(c=>c.code===this.state.couponCode);
-    if(cp && sub>=cp.min){ couponAmt = cp.type==='percent'? Math.floor(sub*cp.value/100) : cp.value; couponLabel=cp.label; }
+    if(cp){
+      const eligible = cp.cat? this.state.cart.filter(it=>it.sub===cp.cat).reduce((s,it)=>s+this.itemUnit(it)*it.qty,0) : sub;
+      if(eligible>=cp.min){ couponAmt = cp.type==='percent'? Math.floor(eligible*cp.value/100) : Math.min(cp.value, eligible); couponLabel=cp.label; }
+    }
     const afterCoupon = sub-couponAmt;
     const pts = this.state.useAllPoints? Math.min(this.availPoints(), afterCoupon) : 0;
     return {sub,couponAmt,couponLabel,pts,total:Math.max(0, afterCoupon-pts)};
   }
 
-  AD_UNITS = [
-    {id:'hero',   name:'메인 히어로 배너', type:'디스플레이', pos:'홈 최상단 캐러셀', size:'1200×420', advertiser:'라움 컨벤션', period:'2026.07~09', rate:'월 300만원', imp:128400},
-    {id:'strip',  name:'띠배너',           type:'디스플레이', pos:'카테고리 하단',   size:'1200×90',  advertiser:'골든듀 예물', period:'2026.07~08', rate:'월 120만원', imp:93100},
-    {id:'brand',  name:'스폰서 브랜드관', type:'브랜딩',     pos:'홈 중간 3칸',     size:'400×260',  advertiser:'세렌디피티 외 2', period:'2026.07~12', rate:'월 200만원', imp:61200},
-    {id:'infeed', name:'인피드 네이티브', type:'네이티브',   pos:'피드 첫 카드 위', size:'카드형',    advertiser:'끌로에 웨딩드레스', period:'2026.07~09', rate:'CPM 8,000원', imp:152000},
-    {id:'sponsor',name:'검색 스폰서 링크', type:'검색광고',   pos:'검색결과 최상단', size:'리스트형',  advertiser:'제니하우스 외 1', period:'상시',       rate:'CPC 900원',  imp:44800},
-    {id:'sticky', name:'하단 스티키 바',   type:'디스플레이', pos:'전 화면 하단 고정', size:'1200×64', advertiser:'허니문리조트', period:'2026.07~08', rate:'월 180만원', imp:221000},
-    {id:'popup',  name:'첫 방문 팝업',     type:'인터스티셜', pos:'홈 진입 시 1회',   size:'330×440',  advertiser:'라비아채플', period:'2026.07',    rate:'월 90만원',  imp:30500}
-  ];
-  AD_CREATIVE = {
-    hero:[
-      {tag:'라움 컨벤션 · 단독 프로모션', title:'센텀 그랜드볼룸\n2026 가을 예약 오픈', sub:'300명 보증 · 대관료 20% 할인 + 뷔페 업그레이드', cta:'프로모션 보기', emoji:'💒', bg:'linear-gradient(115deg,#c0395c,#7e2340)'},
-      {tag:'세렌디피티 스튜디오', title:'광안리 자연광 스튜디오\n원본 500컷 이벤트', sub:'야외 스냅 + 수정본 30컷 무료 업그레이드', cta:'패키지 보기', emoji:'📸', bg:'linear-gradient(115deg,#5b45c9,#33246e)'},
-      {tag:'허니문리조트', title:'몰디브 허니문\n5박7일 특가', sub:'수상빌라 + 올인클루시브 · 계약금 10%로 예약', cta:'상품 보기', emoji:'🏝️', bg:'linear-gradient(115deg,#0f9d90,#0a5a56)'}
-    ],
-    strip:{title:'골든듀 예물 · 커플링 최대 30% 할인', sub:'7월 한 달간, 방문 상담 시 각인 무료'},
-    brand:[
-      {name:'라움 컨벤션', copy:'센텀 최대 규모 그랜드볼룸', badge:'단독혜택', color:'#ff4d6d', seed:'ad-brand-1'},
-      {name:'끌로에 웨딩드레스', copy:'유럽 임포트 라인 신규 입고', badge:'MD추천', color:'#7c5cff', seed:'ad-brand-2'},
-      {name:'제니하우스 서면', copy:'원장 지정 예약 오픈', badge:'이벤트', color:'#12b3a6', seed:'ad-brand-3'}
-    ],
-    infeed:{advertiser:'끌로에 웨딩드레스', title:'본식 2벌 + 촬영 2벌, 이번 달만 89만원', sub:'서면 본점 · 전담 실장 피팅 포함', seed:'ad-infeed'},
-    sponsor:[
-      {name:'제니하우스 서면', copy:'원장 지정 · 혼주 메이크업 포함', price:'62만원~', seed:'ad-sp-1'},
-      {name:'라뷰티 메이크업', copy:'해운대 · 헬퍼 동행 무료', price:'50만원~', seed:'ad-sp-2'}
-    ],
-    sticky:{emoji:'🏝️', title:'허니문리조트 · 몰디브 5박7일 특가', sub:'계약금 10%로 먼저 예약하세요', cta:'보기'},
-    popup:{advertiser:'라비아채플 · 진주', title:'가든 채플 웨딩\n7월 예약 특별가', sub:'보증 170명 · 대관료 15% 할인 + 폐백실 무료', seed:'ad-popup'}
-  };
+  AD_CREATIVE = { hero:[], strip:{title:'',sub:''}, brand:[], infeed:{advertiser:'',title:'',sub:'',seed:null}, sponsor:[], sticky:{emoji:'',title:'',sub:'',cta:''}, popup:{advertiser:'',title:'',sub:'',seed:null} };
 
   man(n){ return Math.round(Number(n||0)/10000).toLocaleString('ko-KR')+'만'; }
-  loadAds(){
-    var def = {hero:true,strip:true,brand:true,infeed:true,sponsor:true,sticky:true,popup:true,_master:true};
-    try{ var raw=localStorage.getItem('bskn_ads_v1'); if(raw){ return Object.assign(def, JSON.parse(raw)); } }catch(e){}
-    return def;
-  }
-  saveAds(ads){ try{ localStorage.setItem('bskn_ads_v1', JSON.stringify(ads)); }catch(e){} }
-  adOn(id){ var a=this.state.ads; return !!(a._master && a[id]); }
-  toggleAd = (id)=> this.setState(s=>{ var ads=Object.assign({},s.ads); ads[id]=!ads[id]; this.saveAds(ads); return {ads}; });
-  toggleMaster = ()=> this.setState(s=>{ var ads=Object.assign({},s.ads); ads._master=!ads._master; this.saveAds(ads); return {ads}; });
-  goAdmin = ()=> this.nav({screen:'admin'});
-  goBundle = ()=> this.nav({screen:'bundle'});
+  adOn(id){ const u=this.AD_UNITS_ON||{}; return u._master!==false && u[id]!==false; }
+  goBundle = ()=> this.goSdm();
+  GUIDES=[
+    ['guide-budget','비용 분담표','양가 분담 기준 한 장 정리'],
+    ['guide-checklist','결혼준비 체크리스트','D-12개월부터 당일까지'],
+    ['guide-timeline','꿀팁 일정표','시기별 놓치기 쉬운 포인트'],
+    ['guide-studio','스튜디오 촬영 전','추가금 없이 만족스럽게'],
+    ['guide-dress','드레스 보기 전','피팅에서 후회 안 하는 법'],
+    ['guide-hall','웨딩홀 비교체크','3곳 비교표 + 필수 질문'],
+    ['guide-onemonth','결혼식 한달 전','마지막 4주 운영 체크'],
+    ['guide-sanggyeonrye','상견례 꿀팁','첫 만남을 편안하게'],
+    ['guide-pyebaek','폐백 가이드','할지 말지부터 준비까지']];
+  openGuide=(file,title)=>{ const z=Math.min(1,Math.max(.45,(window.innerWidth-36)/820)); this.setState({gv:{open:true,src:'guides/'+file+'.html',title,zoom:+z.toFixed(2),h:1400}}); [400,1000,2000].forEach(t=>setTimeout(this.gvLoaded,t)); };
+  closeGuide=()=>this.setState(s=>({gv:Object.assign({},s.gv,{open:false})}));
+  gvZoom=(d)=>this.setState(s=>({gv:Object.assign({},s.gv,{zoom:Math.min(2,Math.max(.4,+(s.gv.zoom+d).toFixed(2)))})}));
+  _gvEl=()=>document.querySelector('iframe[data-gv]');
+  gvLoaded=()=>{ try{ const f=this._gvEl(); const b=f&&f.contentDocument&&f.contentDocument.body; if(b&&b.scrollHeight>200) this.setState(s=>({gv:Object.assign({},s.gv,{h:Math.max(900,b.scrollHeight+60)})})); }catch(e){} };
+  gvPrint=()=>{ try{ const f=this._gvEl(); f.contentWindow.focus(); f.contentWindow.print(); }catch(e){ window.open(this.state.gv.src,'_blank'); } };
 
   CHECKLIST = [
     {id:'c1', title:'예산 정하고 양가 상견례',        from:12, to:9, go:null},
@@ -1304,21 +1658,75 @@ class Component extends DCLogic {
     this.showToast('묶음 3건을 장바구니에 담았어요 🎉');
     this.nav({screen:'cart'});
   };
-  onAdClick = ()=> this.showToast('광고 랜딩으로 이동합니다 (데모)');
+  onAdClick = (linkUrl)=> { if(linkUrl){ if(/^https?:\/\//.test(linkUrl)) window.open(linkUrl,'_blank'); else this.setState({search:linkUrl}); } else this.showToast('광고 랜딩으로 이동합니다 (데모)'); };
+  markAdImpression = (id)=>{
+    if(!id) return;
+    this._seenAds = this._seenAds || new Set();
+    if(this._seenAds.has(id)) return;
+    this._seenAds.add(id);
+    (async()=>{ try{ const db=await this.db(); if(db&&db.ready()) await db.trackAdImpression(id); }catch(e){} })();
+  };
+  markAdClick = (id)=>{
+    if(!id) return;
+    (async()=>{ try{ const db=await this.db(); if(db&&db.ready()) await db.trackAdClick(id); }catch(e){} })();
+  };
+  // 실 광고 슬롯 로드(관리자 설정) — 유닛별로 있으면 그것을, 없으면 데모 크리에이티브를 사용
+  AD_UNITS_ON = {_master:true,hero:true,strip:true,brand:true,infeed:true,sponsor:true,sticky:true,popup:true};
+  loadAdUnits = async ()=>{
+    const db = await this.db(); if(!db || !db.ready()) return;
+    try{
+      const units = await db.loadAdUnits();
+      if(units){ this.AD_UNITS_ON = units; this.setState(s=>({liveAdTick:(s.liveAdTick||0)+1})); }
+    }catch(e){ console.warn('광고 유닛 상태 로드 실패', e); }
+  };
+  loadAdSlots = async ()=>{
+    const db = await this.db(); if(!db || !db.ready()) return;
+    try{
+      const rows = await db.listAdSlots();
+      if(!rows || !rows.length) return;
+      const byUnit = {};
+      rows.forEach(r=>{ (byUnit[r.unit]=byUnit[r.unit]||[]).push(r); });
+      this.LIVE_ADS = byUnit;
+      this.setState(s=>({liveAdTick:(s.liveAdTick||0)+1}));
+    }catch(e){ console.warn('광고 슬롯 로드 실패', e); }
+  };
+  adSlotVM(unit){
+    const live = (this.LIVE_ADS && this.LIVE_ADS[unit]) || [];
+    if(!live.length) return null;
+    const BG = {rose:'linear-gradient(135deg,#ffd6e0,#ff9bb3)', navy:'linear-gradient(135deg,#2b2530,#4a4550)', cream:'linear-gradient(135deg,#fff3e0,#ffd9a0)', sage:'linear-gradient(135deg,#dcece0,#a9cdb3)', lavender:'linear-gradient(135deg,#e8e0f5,#c3aee6)'};
+    return live.map(s=>{
+      const v = s.vendor_id ? this.vendorById(s.vendor_id) || this.hallById(s.vendor_id) : null;
+      const img = s.image_url || (v && v.cover_url) || null;
+      const presetBg = s.bg_preset && BG[s.bg_preset] || null;
+      return {
+        tag:(v?v.name:'광고')+' · 프로모션', title:s.headline||(v?v.name:'광고'), sub:s.sub||'',
+        bg: img? ("linear-gradient(140deg,rgba(20,14,24,.15),rgba(20,14,24,.6)), url('"+img+"') center/cover") : (presetBg||'linear-gradient(120deg,#2b2530,#4a4550)'),
+        name:s.headline||(v?v.name:'광고'), copy:s.sub||'', badge:'광고', color:'#ff4d6d',
+        price: s.price? this.man(s.price)+'원~':'', advertiser: v?v.name:'광고',
+        seed:null, _img:img, bgCss: presetBg, link:s.link_url||null, id:s.id, cta:s.cta||'자세히 보기', hasText: !!(s.headline||s.sub),
+        icon:s.icon||'', textSize:s.text_size||'md', ctaPos:s.cta_pos||null
+      };
+    });
+  };
   closeSticky = ()=> this.setState({stickyClosed:true});
   closePopup = ()=> this.setState({popupClosed:true});
-  heroGo = (i)=> this.setState(s=>({heroIdx:(i+3)%3}));
+  heroGo = (i, len)=> this.setState(s=>({heroIdx:(i+(len||3))%(len||3)}));
   setRankTab = (t)=> this.setState({rankTab:t});
 
   componentDidMount(){
     this._heroTimer = setInterval(()=>{
-      if(this.state.screen==='home' && this.adOn('hero') && !this.state.popupOpenNow) this.setState(s=>({heroIdx:(s.heroIdx+1)%3}));
+      if(this.state.screen==='home' && this.adOn('hero') && !this.state.popupOpenNow){ const n=(this.adSlotVM('hero')||this.AD_CREATIVE.hero).length; this.setState(s=>({heroIdx:(s.heroIdx+1)%n})); }
     }, 5000);
+    // 같은 영역에 광고가 여러 개 경치면 돌아가면서 노출(스트립/인피드/스티키는 6초마다 교체)
+    this._adRotTimer = setInterval(()=>{ this.setState(s=>({adRotTick:(s.adRotTick||0)+1})); }, 6000);
     this._hash = ()=>{
       var h = (location.hash||'').replace(/^#/,''); if(!h) return;
       var p = {}; h.split('&').forEach(function(kv){ var a=kv.split('='); p[a[0]]=decodeURIComponent(a[1]||''); });
-      if(h==='admin'){ this.nav({screen:'admin'}); return; }
-      if(h==='bundle'){ this.nav({screen:'bundle'}); return; }
+      if(h==='bundle'){ this.goSdm(); return; }
+      if(h==='onboard'){ this.nav({screen:'onboard'}); return; }
+      if(h==='prep'){ this.setState({mytab:'prep'}); this.nav({screen: this.state.user?'mypage':'login'}); return; }
+      if(h==='budget'){ this.setState({mytab:'budget'}); this.nav({screen: this.state.user?'mypage':'login'}); return; }
+      if(h==='couple'){ this.setState({mytab:'couple'}); this.nav({screen: this.state.user?'mypage':'login'}); return; }
       if(h==='mypage'){ this.nav({screen: this.state.user?'mypage':'login'}); return; }
       if(h==='cart'){ this.nav({screen:'cart'}); return; }
       if(h==='wish'){ this.nav({screen:'wish'}); return; }
@@ -1334,14 +1742,86 @@ class Component extends DCLogic {
     };
     this._hash();
     window.addEventListener('hashchange', this._hash);
+    this.loadLiveVendors();
+    this.loadAdSlots();
+    this.loadAdUnits();
+
+    // 토스페이먼츠 결제 완료 후 리다이렉트 처리
+    try{
+      const qs = new URLSearchParams(location.search);
+      if(qs.get('paymentKey') && qs.get('orderId')){
+        this.confirmTossPayment(qs.get('paymentKey'), qs.get('orderId'), qs.get('amount'));
+      } else if(location.hash.indexOf('payresult=fail')>=0){
+        this.showToast('결제가 취소되었거나 실패했습니다');
+        history.replaceState(null,'',location.pathname);
+      }
+    }catch(e){}
 
     // 세션 복구 (새로고침해도 로그인 유지)
     this.db().then(db=>{
       if(!db || !db.ready()) return;
-      db.currentUser().then(u=>{ if(u) this.hydrate(u.id); }).catch(()=>{});
+      db.currentUser().then(u=>{
+        if(!u) return;
+        this.hydrate(u.id).then(prof=>{
+          // OAuth 복귀 직후 온보딩이 남아 있으면 안내
+          if(prof && !prof.onboarded && this.state.screen==='home') this.setState({screen:'onboard'});
+        });
+      }).catch(()=>{});
     });
   }
-  componentWillUnmount(){ if(this._hash) window.removeEventListener('hashchange', this._hash); if(this._heroTimer) clearInterval(this._heroTimer); }
+  componentWillUnmount(){ if(this._hash) window.removeEventListener('hashchange', this._hash); if(this._heroTimer) clearInterval(this._heroTimer); if(this._adRotTimer) clearInterval(this._adRotTimer); }
+  // 동일 영역에 여러 광고가 경치면: 단일 노출 영역은 타이머로 돌려가며 공평하게 노출합니다.
+  rotatingAdPick(list){
+    if(!list || !list.length) return null;
+    if(list.length===1) return list[0];
+    const idx = (this.state.adRotTick||0) % list.length;
+    return list[idx];
+  }
+  // 그리드형(브랜드/스폰서) 또는 단번 노출(팝업)은 세션당 랜덤 선정해 특정 광고가 항상 독점하지 않도록 합니다.
+  sessionAdPick(unit, list, n){
+    if(!list || !list.length) return null;
+    this._adPick = this._adPick || {};
+    const key = list.map(x=>x.id).join(',');
+    const cache = this._adPick[unit];
+    if(cache && cache.key===key) return cache.picked;
+    const arr=[...list];
+    for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+    const picked = n? arr.slice(0,n) : arr[0];
+    this._adPick[unit] = {key, picked};
+    return picked;
+  }
+
+  // 실 Supabase vendors 데이터로 교체(카테고리별 부분 대체, 데이터 없으면 데모 유지)
+  loadLiveVendors = async ()=>{
+    const db = await this.db(); if(!db || !db.ready()) return;
+    try{
+      const rows = await db.listPublicVendors({limit:300});
+      if(!rows || !rows.length) return;
+      const CATSUB = {studio:'스튜디오',dress:'드레스',makeup:'메이크업',hanbok:'한복',suit:'예복',jewelry:'예물',honeymoon:'신혼여행'};
+      const liveHalls = rows.filter(v=>v.cat==='hall').map(v=>({
+        id:v.id, name:v.name, region:v.region||'', addr:[v.address,v.address_detail].filter(Boolean).join(' '),
+        floor:(v.hall_types||[]).join('·')||'-', rental:v.price_from||0, buffet:v.meal_price||0,
+        guarantee:v.guarantee||0, parking:v.parking||'-', phone:v.tel||''
+      }));
+      const liveOthers = rows.filter(v=>CATSUB[v.cat]);
+      const prodLists = await Promise.all(liveOthers.map(v=>db.listVendorProducts(v.id).catch(()=>[])));
+      const liveVendors = liveOthers.map((v,i)=>{
+        const prods = prodLists[i];
+        const packages = prods.length? prods.map((p,j)=>({id:'p'+j, tier:p.name, price:p.price,
+            comps:(p.includes? p.includes.split(/[,·]/).map(s=>s.trim()).filter(Boolean) : (p.note?[p.note]:['상세 문의']))}))
+          : [{id:'p0', tier:'기본', price:v.price_from||0, comps:['상세 문의']}];
+        return {id:v.id, name:v.name, sub:CATSUB[v.cat], region:v.region||'', addr:[v.address,v.address_detail].filter(Boolean).join(' '),
+          summary:v.intro||'', phone:v.tel||'', parking:v.parking||'주차 안내 문의', galleryCount:0, travel:'', packages, options:[]};
+      });
+      const mappedSubs = Object.values(CATSUB);
+      const keepMock = this._mockVendors.filter(v=>!mappedSubs.includes(v.sub));
+      const liveSubs = new Set(liveVendors.map(v=>v.sub));
+      const fallbackMock = this._mockVendors.filter(v=>mappedSubs.includes(v.sub) && !liveSubs.has(v.sub));
+      this.HALLS = liveHalls.length? liveHalls : this._mockHalls;
+      this.VENDORS = liveVendors.concat(fallbackMock).concat(keepMock);
+      this.setState(s=>({liveTick:(s.liveTick||0)+1}));
+    }catch(e){ console.warn('실 데이터 로드 실패', e); }
+  };
 
   nav = (patch)=>{ this.setState(patch); try{ requestAnimationFrame(()=>window.scrollTo(0,0)); }catch(e){} };
   goHome = ()=> this.nav({screen:'home'});
@@ -1354,8 +1834,8 @@ class Component extends DCLogic {
   goSearch = ()=> this.nav({screen:'search'});
   goLogin = ()=> this.nav({screen:'login'});
   goMypage = ()=> this.setState(s=> s.user? {screen:'mypage'} : {screen:'login'});
-  openHall = (id)=> this.nav({screen:'hallDetail', hallId:id});
-  openVendor = (id)=> this.nav({screen:'vendorDetail', vendorId:id, sel:{pkgId:'A',optIds:[]}});
+  openHall = (id)=>{ this.touchRecent('h', id, 'hall'); this.nav({screen:'hallDetail', hallId:id}); };
+  openVendor = (id)=>{ const v=this.vendorById(id); this.touchRecent('v', id, v? v.sub : null); this.nav({screen:'vendorDetail', vendorId:id, sel:{pkgId:'A',optIds:[]}}); };
   onRegionChange = (e)=> this.setState({region:e.target.value});
   onSearch = (e)=> this.setState({search:e.target.value});
   setSort = (v)=> this.setState({sort:v});
@@ -1384,23 +1864,69 @@ class Component extends DCLogic {
   togglePoints = ()=> this.setState(s=>({useAllPoints:!s.useAllPoints}));
   onCheckout = ()=>{ if(!this.state.user){ this.showToast('로그인이 필요합니다'); this.nav({screen:'login'}); return; } this.nav({screen:'checkout'}); };
   setPay = (id)=> this.setState({pay:id});
-  placeOrder = ()=>{
+  // 실 결제 연동(토스페이먼츠). 테스트 클라이언트 키 사용 중 — 실 서비스 전 아래 키를 실 클라이언트 키로 교체하세요.
+  TOSS_CLIENT_KEY = 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq';
+  placeOrder = async ()=>{
     const t = this.totals();
     const deposit = (this.props.depositMode ?? true) ? Math.round(t.total*0.1) : t.total;
     const items = this.state.cart.map(it=>({vendorName:it.vendorName, pkgName:it.pkgName, qty:it.qty, line:this.itemUnit(it)*it.qty}));
     const now = new Date();
     const dstr = now.getFullYear()+'.'+String(now.getMonth()+1).padStart(2,'0')+'.'+String(now.getDate()).padStart(2,'0');
-    const order = {id:'ORD-'+(now.getFullYear()%100)+String(now.getMonth()+1).padStart(2,'0')+String(Math.floor(Math.random()*900+100)), date:dstr, total:deposit, status:(this.props.depositMode??true)?'예약금 결제완료':'결제완료', summary: items[0].vendorName + (items.length>1? ' 외 '+(items.length-1)+'건':'')};
+    const orderId = 'ORD-'+(now.getFullYear()%100)+String(now.getMonth()+1).padStart(2,'0')+String(Math.floor(Math.random()*900+100))+'-'+Math.random().toString(36).slice(2,8);
+    const summary = items[0].vendorName + (items.length>1? ' 외 '+(items.length-1)+'건':'');
+    const order = {id:orderId, date:dstr, total:deposit, status:'결제 진행중', summary};
     order.items = items; order.orderTotal = t.total;
-    this.setState(s=>({orders:[order,...s.orders], cart:[], couponCode:null, useAllPoints:false, lastOrder:order, screen:'orderDone'}));
-    try{ requestAnimationFrame(()=>window.scrollTo(0,0)); }catch(e){}
-    const u=this.state.user;
-    if(u) this.db().then(db=>{ if(db) db.createOrder(u.id, order).catch(e=>console.warn('주문 저장 실패',e)); });
+    const cartVendorIds = [...new Set(this.state.cart.map(it=>it.vendorId))];
+    order.vendorId = (cartVendorIds.length===1 && this.isUuid(cartVendorIds[0])) ? cartVendorIds[0] : null;
+    const u = this.state.user;
+    const method = this.state.pay || 'card';
+
+    // 무통장입금은 즉시 입금대기 상태로 저장하고 계좌 안내 화면으로 이동
+    if(method==='bank'){
+      order.status = '입금대기';
+      this.setState(s=>({orders:[order,...s.orders], cart:[], couponCode:null, useAllPoints:false, lastOrder:order, screen:'orderDone'}));
+      try{ requestAnimationFrame(()=>window.scrollTo(0,0)); }catch(e){}
+      if(u) this.db().then(db=>{ if(db) db.createOrder(u.id, {...order, status:'입금대기'}).catch(e=>console.warn('주문 저장 실패',e)); });
+      return;
+    }
+
+    // 카드/카카오페이/토스페이 — 토스페이먼츠 결제창 호출
+    if(!window.TossPayments){ this.showToast('결제 모듈을 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.'); return; }
+    if(u){ try{ const db=await this.db(); if(db) await db.createOrder(u.id, order); }catch(e){ console.warn('주문 저장 실패', e); } }
+    try{ localStorage.setItem('bskn_pending_order', JSON.stringify(order)); }catch(e){}
+    const methodMap = {card:'카드', kakao:'카카오페이', toss:'토스페이'};
+    try{
+      const toss = window.TossPayments(this.TOSS_CLIENT_KEY);
+      await toss.requestPayment(methodMap[method]||'카드', {
+        amount: deposit, orderId: order.id, orderName: summary,
+        customerName: u? u.name : '고객',
+        successUrl: location.origin+location.pathname+'#payresult=success',
+        failUrl: location.origin+location.pathname+'#payresult=fail'
+      });
+    }catch(e){ this.showToast('결제가 취소되었거나 실패했습니다'); }
+  };
+  confirmTossPayment = async (paymentKey, orderId, amount)=>{
+    try{
+      const db = await this.db();
+      const resp = await fetch(db.PROJECT_URL+'/functions/v1/confirm-payment', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({paymentKey, orderId, amount})
+      });
+      const data = await resp.json().catch(()=>({}));
+      if(!resp.ok || !data.ok) throw new Error(data.error||'결제 확인에 실패했습니다');
+      let order=null; try{ order=JSON.parse(localStorage.getItem('bskn_pending_order')||'null'); }catch(e){}
+      if(order) order.status='예약금 결제완료';
+      localStorage.removeItem('bskn_pending_order');
+      this.setState(s=>({orders: order? [order,...s.orders.filter(o=>o.id!==order.id)] : s.orders, cart:[], lastOrder:order||s.lastOrder, screen:'orderDone'}));
+      this.showToast('결제가 완료되었습니다');
+    }catch(e){ this.showToast('결제 확인 중 오류가 발생했습니다: '+(e.message||e)); }
+    finally{ history.replaceState(null,'',location.pathname); }
   };
 
-  openConsult = (target)=> this.setState(s=>({consult:{...s.consult, open:true, target, name:s.user?s.user.name:'', phone:s.user?s.user.phone:''}}));
+  isUuid = (v)=> typeof v==='string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
+  openConsult = (target, vendorId)=> this.setState(s=>({consult:{...s.consult, open:true, target, vendorId:vendorId||null, name:s.user?s.user.name:'', phone:s.user?s.user.phone:''}}));
   closeConsult = ()=> this.setState(s=>({consult:{...s.consult, open:false}}));
-  submitConsult = ()=>{ const c=this.state.consult; const rec={target:c.target, name:c.name||'고객', phone:c.phone||'010-0000-0000', wishTime:c.time, status:'접수완료'};
+  submitConsult = ()=>{ const c=this.state.consult; const rec={target:c.target, name:c.name||'고객', phone:c.phone||'010-0000-0000', wishTime:c.time, status:'접수완료', vendorId:this.isUuid(c.vendorId)?c.vendorId:null};
     const u=this.state.user;
     this.db().then(db=>{ if(db) db.createConsult(u? u.id : null, rec).catch(e=>console.warn('상담 저장 실패',e)); }); this.setState(s=>({consults:[rec,...s.consults], consult:{...s.consult, open:false, name:'', phone:''}})); this.showToast('상담 신청이 접수되었어요 📞'); };
   onConsultName = (e)=>{ const v=e.target.value; this.setState(s=>({consult:{...s.consult,name:v}})); };
@@ -1449,9 +1975,15 @@ class Component extends DCLogic {
         orders: orders.map(o=>({ id:o.id, date:(o.created_at||'').slice(0,10).replace(/-/g,'.'),
           status:o.status, summary:o.summary, total:o.total, orderTotal:o.order_total, items:o.items||[] })),
         consults: consults.map(c=>({ target:c.target, name:c.name, phone:c.phone, wishTime:c.wish_time, status:c.status })),
-        wish: wishes
+        wish: wishes,
+        prof: prof||null,
+        onb: prof? {step:0, date:prof.wedding_date||'', tbd:!!prof.is_date_tbd, region:prof.region||'',
+                    budget:prof.budget||'', guests:prof.guests||'', cats:prof.interests||[]} : this.state.onb
       });
+      await this.loadPersonal(userId);
+      return prof;
     }catch(e){ console.warn('hydrate 실패', e); }
+    return null;
   }
 
   submitAuth = async ()=>{
@@ -1469,8 +2001,9 @@ class Component extends DCLogic {
       } else {
         user = await db.signIn({ email:f.email, password:f.pw });
       }
-      await this.hydrate(user.id);
-      this.setState({authBusy:false, screen:'home', login:{...f, pw:''}});
+      const prof = await this.hydrate(user.id);
+      const needOnb = !prof || !prof.onboarded;
+      this.setState({authBusy:false, screen: needOnb? 'onboard':'home', login:{...f, pw:''}});
       this.showToast((this.state.user? this.state.user.name : '회원')+'님, 환영합니다 👋');
     }catch(err){
       const m = String(err && err.message || err);
@@ -1529,7 +2062,7 @@ class Component extends DCLogic {
       price: isHall? this.priceLabel(e.rental) : this.priceLabel(e.packages[0].price),
       bigThumb: this.img((isHall?'hall-'+e.id:'v-'+e.id+'-0'),640,820), showImg:this.useReal(),
       onOpen: isHall? ()=>this.openHall(e.id) : ()=>this.openVendor(e.id),
-      onConsult: ()=>this.openConsult(e.name+(isHall?' (웨딩홀)':' ('+e.sub+')')),
+      onConsult: ()=>this.openConsult(e.name+(isHall?' (웨딩홀)':' ('+e.sub+')'), e.id),
       onWish:this.toggleWish(key), heartCorner:this.heartStyle(on),
       heartBig:(on?'width:48px;height:48px;border-radius:50%;background:#fff;color:#ff4d6d;border:none;cursor:pointer;font-size:20px;box-shadow:0 2px 10px rgba(0,0,0,.2);animation:heartpop .3s ease':'width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,.42);color:#fff;border:none;cursor:pointer;font-size:20px;backdrop-filter:blur(4px)')};
   }
@@ -1538,7 +2071,7 @@ class Component extends DCLogic {
     return {id:v.id, name:v.name, region:v.region, sub:v.sub, summary:v.summary, tag:v.sub, galleryCount:v.galleryCount,
       price:this.priceLabel(v.packages[0].price), fromLabel:this.priceLabel(v.packages[0].price),
       thumb:this.img('v-'+v.id+'-0', ctx==='feed'?500:500, ctx==='feed'?360:360), showImg:this.useReal(),
-      telHref:'tel:'+v.phone, onOpen:()=>this.openVendor(v.id), onConsult:()=>this.openConsult(v.name+' ('+v.sub+')'),
+      telHref:'tel:'+v.phone, onOpen:()=>this.openVendor(v.id), onConsult:()=>this.openConsult(v.name+' ('+v.sub+')', v.id),
       onWish:this.toggleWish(key), heartStyle:this.heartStyle(on)};
   }
   hallCardVM(h){
@@ -1546,12 +2079,16 @@ class Component extends DCLogic {
     return {id:h.id, name:h.name, region:h.region, floor:h.floor, addr:h.addr, tag:'웨딩홀',
       rentalLabel:this.priceLabel(h.rental), buffetLabel:this.fmt(h.buffet), guaranteeLabel:h.guarantee+'명',
       price:this.priceLabel(h.rental), thumb:this.img('hall-'+h.id,600,400), showImg:this.useReal(),
-      telHref:'tel:'+h.phone, onOpen:()=>this.openHall(h.id), onConsult:()=>this.openConsult(h.name+' (웨딩홀)'),
+      telHref:'tel:'+h.phone, onOpen:()=>this.openHall(h.id), onConsult:()=>this.openConsult(h.name+' (웨딩홀)', h.id),
       onWish:this.toggleWish(key), heartStyle:this.heartStyle(on)};
   }
 
   renderVals(){
     const s = this.state; const useReal = this.useReal();
+    const strip = this.rotatingAdPick(this.adSlotVM('strip')) || this.AD_CREATIVE.strip;
+    const infeed = this.rotatingAdPick(this.adSlotVM('infeed')) || this.AD_CREATIVE.infeed;
+    const sticky = this.rotatingAdPick(this.adSlotVM('sticky')) || this.AD_CREATIVE.sticky;
+    const popup = this.sessionAdPick('popup', this.adSlotVM('popup')) || this.AD_CREATIVE.popup;
     const depositMode = this.props.depositMode ?? true; const showMap = this.props.showMap ?? true;
     const tabOf = {home:'home',search:'search',wish:'wish',mypage:'my',login:'my'}; const at = tabOf[s.screen]||'';
     const bottomTabs = [['home','홈','🏠',this.goHome],['search','검색','🔍',this.goSearch],['wish','찜','♥',this.goWish],['my','마이','👤',this.goMypage]].map(t=>({label:t[1], icon:t[2], onClick:t[3],
@@ -1565,6 +2102,12 @@ class Component extends DCLogic {
       isLoggedIn:!!s.user, isGuest:!s.user, userName:s.user?s.user.name:'',
       goHome:this.goHome, goHall:this.goHall, goSdm:this.goSdm, goHonsu:this.goHonsu, goCart:this.goCart, goWish:this.goWish, goSearch:this.goSearch, goLogin:this.goLogin, goMypage:this.goMypage,
       showMap, bottomTabs,
+      gvOpen:s.gv.open, gvTitle:s.gv.title, gvSrc:s.gv.src,
+      gvZoomLabel:Math.round(s.gv.zoom*100)+'%',
+      gvZoomIn:()=>this.gvZoom(.15), gvZoomOut:()=>this.gvZoom(-.15),
+      gvClose:this.closeGuide, gvPrint:this.gvPrint,
+      gvWrapStyle:'margin:0 auto;width:'+Math.round(820*s.gv.zoom)+'px;height:'+Math.round(s.gv.h*s.gv.zoom)+'px;position:relative',
+      gvFrameStyle:'width:820px;height:'+s.gv.h+'px;transform:scale('+s.gv.zoom+');transform-origin:top left;border:none;background:#fff;box-shadow:0 10px 40px rgba(20,10,30,.25);border-radius:8px',
       tabs:[
         {icon:'🏠', label:'홈',       key:'home',   go:this.goHome},
         {icon:'🔍', label:'검색',     key:'search', go:this.goSearch},
@@ -1579,30 +2122,35 @@ class Component extends DCLogic {
           badge: t.badge,
           style:'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:none;border:none;cursor:pointer;padding:9px 0 7px;min-height:56px;color:'+(active?'#ff4d6d':'#a49dae')};
       }),
-      isAdmin:s.screen==='admin', isBundle:s.screen==='bundle', goBundle:this.goBundle,
-      goAdmin:this.goAdmin, onAdClick:this.onAdClick,
-      adStrip:this.adOn('strip'), adHero:this.adOn('hero'), adBrand:this.adOn('brand'),
-      adInfeed:this.adOn('infeed'), adSponsor:this.adOn('sponsor'),
-      adSticky:this.adOn('sticky') && !s.stickyClosed,
-      adPopupOpen:this.adOn('popup') && !s.popupClosed && s.screen==='home',
+      isBundle:s.screen==='bundle', goBundle:this.goBundle,
+      onAdClick:this.onAdClick,
+      adStrip:this.adOn('strip') && !!strip.title, adHero:this.adOn('hero'), adBrand:this.adOn('brand'),
+      adInfeed:this.adOn('infeed') && !!(infeed.title || infeed._img), adSponsor:this.adOn('sponsor'),
+      adSticky:this.adOn('sticky') && !!sticky.title && !s.stickyClosed,
+      adPopupOpen:this.adOn('popup') && !!(popup.title || popup._img) && !s.popupClosed && s.screen==='home',
       onCloseSticky:this.closeSticky, onClosePopup:this.closePopup,
-      adStripTitle:this.AD_CREATIVE.strip.title, adStripSub:this.AD_CREATIVE.strip.sub,
-      adInfeedAdvertiser:this.AD_CREATIVE.infeed.advertiser, adInfeedTitle:this.AD_CREATIVE.infeed.title,
-      adInfeedSub:this.AD_CREATIVE.infeed.sub, adInfeedImg:this.img(this.AD_CREATIVE.infeed.seed,200,200),
-      adStickyEmoji:this.AD_CREATIVE.sticky.emoji, adStickyTitle:this.AD_CREATIVE.sticky.title,
-      adStickySub:this.AD_CREATIVE.sticky.sub, adStickyCta:this.AD_CREATIVE.sticky.cta,
-      adPopupAdvertiser:this.AD_CREATIVE.popup.advertiser, adPopupTitle:this.AD_CREATIVE.popup.title,
-      adPopupSub:this.AD_CREATIVE.popup.sub, adPopupImg:this.img(this.AD_CREATIVE.popup.seed,600,450),
+      adStripTitle:strip.title, adStripSub:strip.sub, onStripClick:()=>{ this.markAdClick(strip.id); this.onAdClick(strip.link); },
+      adInfeedAdvertiser:infeed.advertiser, adInfeedTitle:infeed.title,
+      adInfeedSub:infeed.sub, adInfeedImg:infeed._img||'', onInfeedClick:()=>{ this.markAdClick(infeed.id); this.onAdClick(infeed.link); },
+      adInfeedHasText: infeed.hasText !== false,
+      adStickyEmoji:sticky.icon||sticky.emoji||'', adStickyTitle:sticky.title,
+      adStickySub:sticky.sub, adStickyCta:sticky.cta, onStickyClick:()=>{ this.markAdClick(sticky.id); this.onAdClick(sticky.link); },
+      adStickyCtaStyle:'flex:none;order:'+(sticky.ctaPos==='left'?-1:1)+';background:#ff4d6d;color:#fff;border:none;border-radius:9px;padding:9px 15px;font-size:12.5px;font-weight:800;cursor:pointer',
+      adPopupAdvertiser:popup.advertiser, adPopupTitle:popup.title,
+      adPopupSub:popup.sub, adPopupImg:popup._img||'', onPopupClick:()=>{ this.markAdClick(popup.id); this.onAdClick(popup.link); },
+      adPopupHasText: popup.hasText !== false, adPopupIconShow: !popup._img && !!popup.icon, adPopupIcon: popup.icon||'',
+      adPopupCta: popup.cta||'자세히 보기',
+      adPopupTitleSize: {sm:'16px', md:'19px', lg:'23px'}[popup.textSize||'md'],
       adPopupShow:useReal, adInfeedShow:useReal,
-      adPopupImgStyle:'width:100%;height:100%;background-size:cover;background-position:center'+(useReal?";background-image:url('"+this.img(this.AD_CREATIVE.popup.seed,600,450)+"')":''),
-      adInfeedImgStyle:'width:100%;height:100%;background-size:cover;background-position:center'+(useReal?";background-image:url('"+this.img(this.AD_CREATIVE.infeed.seed,200,200)+"')":''),
+      adPopupImgStyle:'width:100%;height:100%;background-size:cover;background-position:center;'+(popup._img?("background-image:url('"+popup._img+"')"):(popup.bgCss?'background:'+popup.bgCss:'background:linear-gradient(135deg,#efe6ee,#ddd0d8)')),
+      adInfeedImgStyle:'width:100%;height:100%;background-size:cover;background-position:center'+(infeed._img?(";background-image:url('"+infeed._img+"')"):''),
       rootStyle:'min-height:100dvh;background:#f4f3f6;color:#2b2530'+((this.adOn('sticky') && !s.stickyClosed)?';padding-bottom:76px':''),
       mobilePad:true,
       isHome:s.screen==='home', isSearch:s.screen==='search', isWish:s.screen==='wish',
       isHallList:s.screen==='hallList', isHallDetail:s.screen==='hallDetail',
       isVendorList:s.screen==='vendorList', isVendorDetail:s.screen==='vendorDetail',
       isCart:s.screen==='cart', isCheckout:s.screen==='checkout', isOrderDone:s.screen==='orderDone',
-      isLogin:s.screen==='login', isMypage:s.screen==='mypage',
+      isLogin:s.screen==='login', isMypage:s.screen==='mypage', isOnboard:s.screen==='onboard',
       stop:this.stop, depositMode,
       consultOpen:s.consult.open, consultTarget:s.consult.target, consultName:s.consult.name, consultPhone:s.consult.phone, consultTime:s.consult.time,
       closeConsult:this.closeConsult, submitConsult:this.submitConsult, onConsultName:this.onConsultName, onConsultPhone:this.onConsultPhone, onConsultTime:this.onConsultTime, timeSlots:this.TIMES,
@@ -1612,8 +2160,76 @@ class Component extends DCLogic {
       toastShow:!!s.toast, toast:s.toast,
     };
 
+    /* ── 온보딩 ── */
+    if(s.screen==='onboard'){
+      const o=s.onb, st=o.step;
+      base.onbName = s.user? s.user.name : '회원';
+      base.onbStepLabel = 'STEP '+(st+1)+' / 5';
+      base.onbTitle = this.ONB_STEPS[st];
+      base.onbLead = [
+        '날짜가 정해지면 남은 기간에 맞춰 준비 순서를 알려드려요.',
+        '가까운 지역부터 지도에 먼저 띄워드릴게요.',
+        '예산 안에 들어오는 곳만 골라 보여드려요.',
+        '보증인원을 충족하는 웨딩홀만 추천합니다.',
+        '먼저 준비할 항목을 골라주세요.'
+      ][st];
+      base.onbBars = [0,1,2,3,4].map(i=>({style:'flex:1;height:5px;border-radius:99px;background:'+(i<=st?'#ff4d6d':'#ecebf0')}));
+      base.onbIs0=st===0; base.onbIs1=st===1; base.onbIs2=st===2; base.onbIs3=st===3; base.onbIs4=st===4;
+      base.onbDate=o.date; base.onbTbd=o.tbd;
+      base.onOnbDate=(e)=>this.onbSet({date:e.target.value, tbd:false});
+      base.onOnbTbd=()=>this.onbSet({tbd:!o.tbd, date:''});
+      base.onbTbdStyle='display:flex;align-items:center;gap:8px;border:1px solid '+(o.tbd?'#ff4d6d':'#e6e3ec')+';background:'+(o.tbd?'#fff5f7':'#faf9fb')+';border-radius:12px;padding:13px 15px;font-size:14px;font-weight:700;color:'+(o.tbd?'#ff4d6d':'#4a4550')+';cursor:pointer;width:100%';
+      base.onbRegions = ['전체',...this.R].map(r=>({name:r, onClick:()=>this.onbSet({region:r==='전체'?'':r}),
+        style:'border-radius:999px;padding:11px 17px;font-size:14px;font-weight:700;cursor:pointer;border:1px solid '+((o.region===r||(r==='전체'&&!o.region))?'#ff4d6d':'#e6e3ec')+';background:'+((o.region===r||(r==='전체'&&!o.region))?'#ff4d6d':'#fff')+';color:'+((o.region===r||(r==='전체'&&!o.region))?'#fff':'#4a4550')}));
+      base.onbBudgets = this.BUDGET_OPTS.map(b=>({label:b[1], onClick:()=>this.onbSet({budget:b[0]}),
+        style:'border-radius:14px;padding:15px 18px;font-size:14.5px;font-weight:700;cursor:pointer;text-align:left;width:100%;border:1.5px solid '+(+o.budget===b[0]?'#ff4d6d':'#e6e3ec')+';background:'+(+o.budget===b[0]?'#fff5f7':'#fff')+';color:#2b2530'}));
+      base.onbGuests = this.GUEST_OPTS.map(g=>({label:g[1], onClick:()=>this.onbSet({guests:g[0]}),
+        style:'border-radius:14px;padding:15px 18px;font-size:14.5px;font-weight:700;cursor:pointer;text-align:left;width:100%;border:1.5px solid '+(+o.guests===g[0]?'#ff4d6d':'#e6e3ec')+';background:'+(+o.guests===g[0]?'#fff5f7':'#fff')+';color:#2b2530'}));
+      base.onbCats = this.ONB_CATS.map(c=>({label:c[1], onClick:()=>this.onbToggleCat(c[0]),
+        style:'border-radius:999px;padding:12px 18px;font-size:14px;font-weight:700;cursor:pointer;border:1px solid '+(o.cats.includes(c[0])?'#ff4d6d':'#e6e3ec')+';background:'+(o.cats.includes(c[0])?'#ff4d6d':'#fff')+';color:'+(o.cats.includes(c[0])?'#fff':'#4a4550')}));
+      base.onbCanBack = st>0;
+      base.onbLast = st===4;
+      base.onbNext = this.onbNext; base.onbPrev = this.onbPrev;
+      base.onbFinish = ()=>this.finishOnboard(false);
+      base.onbSkip = ()=>this.finishOnboard(true);
+      base.onbPrimary = st===4? (()=>this.finishOnboard(false)) : this.onbNext;
+      base.onbNextLabel = s.onbBusy? '저장 중…' : (st===4? '맞춤 추천 받기' : '다음');
+      base.onbNextStyle = 'flex:1;border:none;border-radius:14px;padding:15px 0;font-size:15px;font-weight:800;cursor:pointer;background:'+(s.onbBusy?'#f2f0f5':'#ff4d6d')+';color:'+(s.onbBusy?'#b6aebd':'#fff');
+      base.onbRecommend = ['권장','권장','권장','권장','선택'][st];
+      base.onbRecStyle = 'font-size:11px;font-weight:800;border-radius:999px;padding:3px 9px;background:'+(st===4?'#f2f0f5':'#ffe9ee')+';color:'+(st===4?'#8d8697':'#ff4d6d');
+    }
+
     if(s.screen==='home'){
       base.greetName = s.user? s.user.name+'님,' : '설레는';
+      /* ── 개인화 홈 ── */
+      const dd = this.dday();
+      base.hasDday = !!dd;
+      base.ddayLabel = dd? dd.label : '';
+      base.ddayDate = dd? dd.date : '';
+      const doneN = s.plist.filter(x=>x.done).length;
+      base.ddayProgress = s.plist.length? Math.round(doneN/s.plist.length*100)+'%' : '0%';
+      base.ddayProgressStyle = 'height:100%;border-radius:99px;background:#ff4d6d;width:'+(s.plist.length? Math.round(doneN/s.plist.length*100):0)+'%';
+      base.ddayTaskCount = s.plist.length? doneN+' / '+s.plist.length+' 완료' : '체크리스트 준비 중';
+      base.nextTask = (s.plist.filter(x=>!x.done)[0]||{}).title || '모든 준비를 마쳤어요 🎉';
+      base.goChecklist = ()=>this.setState({screen:'mypage', mytab:'prep'});
+
+      const reco = this.recoItems();
+      base.recoOwner = s.user? s.user.name+'님' : '내';
+      base.hasReco = !!(s.prof && s.prof.onboarded && reco.length);
+      base.recoCards = reco;
+      const rp=[]; if(s.prof){ if(s.prof.region) rp.push(s.prof.region); if(s.prof.guests) rp.push(s.prof.guests+'명'); if(s.prof.budget) rp.push(Math.round(s.prof.budget/10000000)+'천만원대'); }
+      base.recoConds = rp.join(' · ') || '조건 미설정';
+      base.goEditConds = ()=>this.setState({screen:'onboard', onb:Object.assign({},s.onb,{step:0})});
+
+      const rec = this.recentItems();
+      base.hasRecent = rec.length>0; base.recentCards = rec;
+
+      const sim = this.similarItems();
+      base.hasSimilar = sim.length>0; base.similarCards = sim;
+      base.similarLead = '찜한 업체와 비슷한 곳';
+
+      base.onbBanner = !!(s.user && s.prof && !s.prof.onboarded);
+      base.goOnboard = ()=>this.nav({screen:'onboard'});
       const pills = [
         ['웨딩홀','🏛️', ()=>this.goHall()],
         ['스튜디오','📷', ()=>this.openSub('sdm','스튜디오')],
@@ -1628,6 +2244,7 @@ class Component extends DCLogic {
       base.categoryCircles = pills.map((p,i)=>({label:p[0], icon:p[1], onClick:p[2],
         iconStyle:'width:100%;max-width:78px;aspect-ratio:1/1;border-radius:24px;background:'+pastels[i%pastels.length]+';display:flex;align-items:center;justify-content:center;font-size:clamp(28px,3.4vw,36px);line-height:1'}));
       const H=this.regionFilter(this.HALLS), S=this.regionFilter(this.vendorsForCat('sdm')), N=this.regionFilter(this.vendorsForCat('honsu'));
+      const HB=this.regionFilter(this.VENDORS.filter(v=>v.sub==='한복'));
       const pools=[H.map(x=>['hall',x]), S.map(x=>['v',x]), N.map(x=>['v',x])];
       const feed=[]; let idx=0; while(feed.length<16){ let added=false; for(const p of pools){ if(p[idx]){ feed.push(p[idx]); added=true; } } if(!added) break; idx++; }
       const aspects=['3/4','1/1','4/5','5/6','3/4','1/1','4/5','3/4','4/3','1/1','5/6','3/4','1/1','4/5','3/4','5/6'];
@@ -1649,7 +2266,14 @@ class Component extends DCLogic {
         : '예식까지 약 '+ml+'개월 · '+done+'/'+this.CHECKLIST.length+'단계 완료';
       base.ddPct = pct+'%';
       base.ddBarStyle='display:block;height:100%;border-radius:999px;transition:width .3s;width:'+pct+'%;background:linear-gradient(90deg,#ff4d6d,#ff8095)';
-      const goMap={hall:this.goHall, bundle:this.goBundle, honsu:this.goHonsu, travel:this.goHonsu};
+      let tipRec=null;
+      if(ml!=null){ tipRec= ml>=9?[0,7,1] : ml>=6?[5,2,0] : ml>=4?[3,4,2] : ml>=2?[4,8,1] : [6,1,8]; }
+      base.tipHasDday=!!tipRec; base.tipNoDday=!tipRec;
+      base.tipDdayLabel= tipRec? (ml>=1? '예식까지 약 '+ml+'개월' : '예식이 코앞이에요') : '';
+      base.tipRecs=(tipRec||[]).map(i=>{ const g=this.GUIDES[i]; return {title:g[1], onOpen:()=>this.openGuide(g[0],g[1])}; });
+      base.tipCards=this.GUIDES.map(g=>({title:g[1], desc:g[2], onOpen:()=>this.openGuide(g[0],g[1])}));
+      base.tipSetup=()=>this.setState({screen:'onboard', onb:Object.assign({},s.onb,{step:0})});
+      const goMap={hall:this.goHall, bundle:this.goSdm, honsu:this.goHonsu, travel:this.goHonsu};
       base.checklist=this.CHECKLIST.map(c=>{
         const dn=!!s.checks[c.id];
         const now = ml!=null && ml<=c.from && ml>=c.to;
@@ -1661,13 +2285,23 @@ class Component extends DCLogic {
       });
 
       // hero carousel (ad)
-      const hero = this.AD_CREATIVE.hero[s.heroIdx % 3];
-      base.heroTag=hero.tag; base.heroTitle=hero.title; base.heroSub=hero.sub; base.heroCta=hero.cta; base.heroEmoji=hero.emoji;
+      const heroList = (this.adSlotVM('hero') || this.AD_CREATIVE.hero).filter(Boolean);
+      base.adHero = base.adHero && heroList.length>0;
+      const hero = heroList.length? heroList[s.heroIdx % heroList.length] : {tag:'',title:'',sub:'',cta:'',emoji:'',bg:''};
+      base.heroTag=hero.tag; base.heroTitle=hero.title; base.heroSub=hero.sub; base.heroCta=hero.cta; base.heroEmoji=hero.icon||'';
+      base.heroHasText = hero.hasText !== false; base.heroTextless = hero.hasText === false;
+      base.heroIconShow = !!hero.icon;
+      base.heroTitleSize = {sm:'18px', md:'clamp(20px,3vw,30px)', lg:'clamp(26px,4vw,38px)'}[hero.textSize||'md'];
+      base.heroTextBlockStyle = hero.ctaPos==='center'
+        ? 'flex:1;min-width:0;position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center'
+        : 'flex:1;min-width:0;position:relative;z-index:2';
       base.heroBg='display:flex;align-items:center;gap:18px;padding:clamp(24px,3.4vw,40px) clamp(20px,3vw,34px) 52px;color:#fff;cursor:pointer;background:'+hero.bg;
-      base.heroCounter=(s.heroIdx%3+1)+' / 3';
-      base.heroDots=[0,1,2].map(i=>({onClick:()=>this.heroGo(i),
-        style:(i===s.heroIdx%3?'width:20px;height:6px;border-radius:999px;background:#fff;border:none;cursor:pointer;padding:0':'width:6px;height:6px;border-radius:999px;background:rgba(255,255,255,.45);border:none;cursor:pointer;padding:0')}));
-      base.heroPrev=()=>this.heroGo(s.heroIdx-1); base.heroNext=()=>this.heroGo(s.heroIdx+1);
+      base.onHeroClick=()=>{ this.markAdClick(hero.id); this.onAdClick(hero.link); };
+      if(base.adHero) this.markAdImpression(hero.id);
+      base.heroCounter=(s.heroIdx%heroList.length+1)+' / '+heroList.length;
+      base.heroDots=heroList.map((_,i)=>({onClick:()=>this.heroGo(i,heroList.length),
+        style:(i===s.heroIdx%heroList.length?'width:20px;height:6px;border-radius:999px;background:#fff;border:none;cursor:pointer;padding:0':'width:6px;height:6px;border-radius:999px;background:rgba(255,255,255,.45);border:none;cursor:pointer;padding:0')}));
+      base.heroPrev=()=>this.heroGo(s.heroIdx-1,heroList.length); base.heroNext=()=>this.heroGo(s.heroIdx+1,heroList.length);
 
       // 인기 (hot) — rating/discount like accommodation cards
       const hotPool=[...S,...N].slice(0,10);
@@ -1679,17 +2313,24 @@ class Component extends DCLogic {
       }));
 
       // 스폰서 브랜드관
-      base.brandAds = this.AD_CREATIVE.brand.map(b=>({
-        name:b.name, copy:b.copy, badge:b.badge, color:b.color,
-        showImg:useReal, thumb:this.img(b.seed,480,270), onClick:this.onAdClick
+      base.brandAds = (this.sessionAdPick('brand', this.adSlotVM('brand'), 3) || this.AD_CREATIVE.brand).map(b=>({
+        name:b.name, copy:b.copy, badge:b.badge, color:b.color, hasText: b.hasText !== false,
+        showImg:!!b._img, thumb:b._img||'', onClick:()=>{ this.markAdClick(b.id); this.onAdClick(b.link); }
       }));
+      base.adBrand = base.adBrand && base.brandAds.length>0;
+      if(base.adBrand) base.brandAds.forEach(b=>this.markAdImpression(b.id));
+      if(base.adStrip) this.markAdImpression(strip.id);
+      if(base.adInfeed) this.markAdImpression(infeed.id);
+      if(base.adSticky) this.markAdImpression(sticky.id);
+      if(base.adPopupOpen) this.markAdImpression(popup.id);
 
       // 랭킹
-      const rankSets={hall:H, sdm:S, honsu:N};
-      base.rankTabs=[['hall','웨딩홀'],['sdm','스드메'],['honsu','혼수']].map(t=>({label:t[1], onClick:()=>this.setRankTab(t[0]),
+      const rankSets={hall:H, sdm:S, honsu:N, hanbok:HB};
+      base.rankTabs=[['hall','웨딩홀'],['sdm','스드메'],['honsu','혼수'],['hanbok','한복']].map(t=>({label:t[1], onClick:()=>this.setRankTab(t[0]),
         style:(s.rankTab===t[0]
           ?'background:#2b2530;color:#fff;border:1px solid #2b2530;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer'
           :'background:#fff;color:#4b4455;border:1px solid #ecebf0;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer')}));
+      base.hasRankData = this.HALLS.length>0 || this.VENDORS.length>0;
       base.rankRows=(rankSets[s.rankTab]||[]).slice(0,5).map((x,i)=>{
         const isHall=s.rankTab==='hall';
         return {num:i+1, name:x.name, region:x.region, rate:(4.9-i*0.1).toFixed(1),
@@ -1699,13 +2340,7 @@ class Component extends DCLogic {
           onOpen:()=> isHall? this.openHall(x.id) : this.openVendor(x.id)};
       });
 
-      // 기획전
-      base.curations=[
-        {badge:'쿠폰혜택', title:'7월 웨딩 페어\n최대 30% 할인', sub:'부산·창원 참여 업체 12곳', bg:'linear-gradient(120deg,#ff4d6d,#ff8095)', onClick:this.goSdm},
-        {badge:'MD추천', title:'가성비 스드메\n300만원 이하', sub:'전 지역 · 15개 패키지', bg:'linear-gradient(120deg,#7c5cff,#a68bff)', onClick:this.goSdm},
-        {badge:'이벤트', title:'혼수 한 번에\n예물+한복+예복', sub:'묶음 예약 시 추가 할인', bg:'linear-gradient(120deg,#12b3a6,#4fd1c5)', onClick:this.goHonsu}
-      ].map(c=>({badge:c.badge, title:c.title, sub:c.sub, onClick:c.onClick,
-        style:'color:#fff;border-radius:18px;padding:20px 22px;cursor:pointer;min-height:140px;display:flex;flex-direction:column;justify-content:flex-end;background:'+c.bg}));
+      // (기획전 섹션 제거됨 — 실 프로모션 시스템 없이는 표시할 데이터가 없음)
     }
 
     if(s.screen==='bundle'){
@@ -1755,31 +2390,15 @@ class Component extends DCLogic {
         valStyle:'width:64px;text-align:right;font-size:12.5px;font-weight:800;flex:none;color:'+(r.me?'#ff4d6d':'#6d6579')}));
     }
 
-    if(s.screen==='admin'){
-      const on=this.AD_UNITS.filter(u=>s.ads[u.id]).length;
-      base.adOnCount=on+' / '+this.AD_UNITS.length;
-      base.adTotalImp=(this.AD_UNITS.filter(u=>s.ads[u.id]).reduce((a,u)=>a+u.imp,0)/10000).toFixed(1)+'만';
-      base.adRevenue='1,190만원';
-      base.masterLabel=s.ads._master? '광고 송출 중 · 켜짐' : '전체 중단됨';
-      base.masterBtnStyle='margin-top:9px;width:100%;border:none;border-radius:11px;padding:12px 0;font-size:13px;font-weight:800;cursor:pointer;'+(s.ads._master?'background:#12b3a6;color:#fff':'background:#f4f3f6;color:#8b8592');
-      const typeColors={'디스플레이':'#ff4d6d','브랜딩':'#7c5cff','네이티브':'#12b3a6','검색광고':'#f5a623','인터스티셜':'#5b8def'};
-      base.adUnits=this.AD_UNITS.map(u=>{
-        const isOn=!!s.ads[u.id];
-        return {name:u.name, type:u.type, pos:u.pos, size:u.size, advertiser:u.advertiser, period:u.period, rate:u.rate,
-          imp:u.imp.toLocaleString('ko-KR'), onToggle:()=>this.toggleAd(u.id),
-          typeStyle:'font-size:10.5px;font-weight:800;color:#fff;padding:3px 8px;border-radius:6px;background:'+(typeColors[u.type]||'#8b8592'),
-          switchStyle:'width:46px;height:26px;border-radius:999px;border:none;cursor:pointer;padding:3px;display:flex;justify-content:'+(isOn?'flex-end':'flex-start')+';background:'+(isOn?'#12b3a6':'#dcd6e0'),
-          knobStyle:'width:20px;height:20px;border-radius:50%;background:#fff;display:block;box-shadow:0 1px 3px rgba(0,0,0,.2)'};
-      });
-      base.onToggleMaster=this.toggleMaster;
-    }
-
     if(s.screen==='search'){
       const q = s.search.trim();
       base.searchQuery = s.search; base.onSearch = this.onSearch;
       base.searchEmpty = q.length===0; base.searchHasQuery = q.length>0;
       base.searchSuggest = ['드레스','스튜디오','해운대','창원','신혼여행'].map(x=>({label:x, onClick:()=>this.setState({search:x})}));
-      base.sponsorRows = this.AD_CREATIVE.sponsor.map(sp=>({name:sp.name, copy:sp.copy, price:sp.price, thumb:this.img(sp.seed,120,120), showImg:useReal, onClick:this.onAdClick}));
+      base.sponsorRows = (this.sessionAdPick('sponsor', this.adSlotVM('sponsor'), 3) || this.AD_CREATIVE.sponsor).map(sp=>({name:sp.name, copy:sp.copy, price:sp.price, hasText: sp.hasText !== false, thumb:sp._img||'', showImg:!!sp._img, onClick:()=>{ this.markAdClick(sp.id); this.onAdClick(sp.link); }}));
+      base.adSponsor = base.adSponsor && base.sponsorRows.length>0;
+      base.sponsorHeading = q? '스폰서 링크' : '추천 업체';
+      if(base.adSponsor) base.sponsorRows.forEach(sp=>this.markAdImpression(sp.id));
       if(q){
         const vend = this.VENDORS.filter(v=>v.name.includes(q)||v.summary.includes(q)||v.region.includes(q)||v.sub.includes(q)).map(v=>this.vendorCardVM(v));
         const halls = this.HALLS.filter(h=>h.name.includes(q)||h.region.includes(q)||'웨딩홀'.includes(q)).map(h=>({...this.hallCardVM(h), sub:'웨딩홀'}));
@@ -1797,7 +2416,7 @@ class Component extends DCLogic {
       base.regionTabs = ['전체',...this.R].map(r=>({name:r, onClick:()=>this.setState({region:r}), style:this.tabStyle(s.region===r)}));
       base.sortChips = [['popular','인기순'],['priceLow','가격 낮은순'],['priceHigh','가격 높은순']].map(x=>({label:x[1], onClick:()=>this.setSort(x[0]), style:this.tabStyle(s.sort===x[0])}));
       const list = this.sortHalls(this.regionFilter(this.HALLS));
-      base.hallCount = list.length; base.halls = list.map(h=>this.hallCardVM(h));
+      base.hallCount = list.length; base.hallEmpty = list.length===0; base.halls = list.map(h=>this.hallCardVM(h));
     }
 
     if(s.screen==='hallDetail'){
@@ -1807,7 +2426,7 @@ class Component extends DCLogic {
           rentalLabel:this.priceLabel(h.rental), buffetLabel:this.fmt(h.buffet), guaranteeLabel:h.guarantee+'명',
           hero:this.img('hall-'+h.id,1000,700), showImg:useReal, heroImgEl: useReal? this.imgEl(this.img('hall-'+h.id,1000,700),{width:'100%',height:'100%',objectFit:'cover'}):null, telHref:'tel:'+h.phone, mapSrc:this.mapSrc(h.region),
           gallery: seeds.map((sd,i)=>({thumb:this.img(sd,300,225), showImg:useReal, onClick:()=>this.openLightbox(seeds,i,h.name)})),
-          onConsult:()=>this.openConsult(h.name+' (웨딩홀)'), onWish:this.toggleWish(key), heartStyle:this.heartStyle(this.isWished(key))};
+          onConsult:()=>this.openConsult(h.name+' (웨딩홀)', h.id), onWish:this.toggleWish(key), heartStyle:this.heartStyle(this.isWished(key))};
       }
     }
 
@@ -1820,7 +2439,7 @@ class Component extends DCLogic {
       base.regionTabs = ['전체',...this.R].map(r=>({name:r, onClick:()=>this.setState({region:r}), style:this.tabStyle(s.region===r)}));
       base.sortChips = [['popular','인기순'],['priceLow','가격 낮은순'],['priceHigh','가격 높은순']].map(x=>({label:x[1], onClick:()=>this.setSort(x[0]), style:this.tabStyle(s.sort===x[0])}));
       let list = this.vendorsForCat(cat); if(s.sub!=='전체') list=list.filter(v=>v.sub===s.sub); list=this.sortVendors(this.regionFilter(list));
-      base.vendorCount = list.length; base.vendors = list.map(v=>this.vendorCardVM(v));
+      base.vendorCount = list.length; base.vendorEmpty = list.length===0; base.vendors = list.map(v=>this.vendorCardVM(v));
     }
 
     if(s.screen==='vendorDetail'){
@@ -1842,7 +2461,7 @@ class Component extends DCLogic {
           selName:'상품 '+selPkg.id+' · '+selPkg.tier, selPkgLabel:this.fmt(selPkg.price),
           selOptList: selOpts.map(o=>({title:o.title, priceLabel:this.fmt(o.price)})), selTotalLabel:this.fmt(selTotal),
           depositHint: depositMode? '결제 시 예약금 10%만 먼저 결제' : '장바구니에서 전액 결제',
-          onAddCart:this.addToCart, onConsult:()=>this.openConsult(v.name+' ('+v.sub+')'),
+          onAddCart:this.addToCart, onConsult:()=>this.openConsult(v.name+' ('+v.sub+')', v.id),
           onWish:this.toggleWish(key), wishBtnLabel: on?'♥ 찜함':'♡ 찜',
           wishBtnStyle:(on?'flex:1;background:#ffe9ee;color:#ff4d6d;border:1.5px solid #ff4d6d;border-radius:14px;padding:13px 0;font-size:14px;font-weight:700;cursor:pointer':'flex:1;background:#fff;color:#2b2530;border:1px solid #e6e2ec;border-radius:14px;padding:13px 0;font-size:14px;font-weight:700;cursor:pointer')};
       }
@@ -1854,7 +2473,11 @@ class Component extends DCLogic {
       base.cartItems = s.cart.map(it=>({vendorName:it.vendorName, sub:it.sub, region:it.region, pkgName:it.pkgName, qty:it.qty,
         optLabels: it.opts.map(o=>o.title+' (+'+this.fmt(o.price)+')'), lineLabel:this.fmt(this.itemUnit(it)*it.qty),
         thumb:this.img('v-'+it.vendorId+'-0',200,200), showImg:useReal, thumbEl: useReal? this.imgEl(this.img('v-'+it.vendorId+'-0',200,200),{width:'100%',height:'100%',objectFit:'cover'}):null, onInc:()=>this.incQty(it.key), onDec:()=>this.decQty(it.key), onRemove:()=>this.removeItem(it.key)}));
-      base.couponList = this.COUPONS.map(c=>({label:c.label, cond:c.cond, onApply:()=>this.applyCoupon(c.code),
+      base.couponList = this.COUPONS.map(c=>({label:c.label, cond:c.cond, onApply:()=>{
+        if(c.cat && !s.cart.some(it=>it.sub===c.cat)){ this.showToast(c.cat+' 상품이 장바구니에 있어야 쓸 수 있는 할인권이에요'); return; }
+        const el2 = c.cat? s.cart.filter(it=>it.sub===c.cat).reduce((a,it)=>a+this.itemUnit(it)*it.qty,0) : s.cart.reduce((a,it)=>a+this.itemUnit(it)*it.qty,0);
+        if(el2<c.min){ this.showToast((c.cat? c.cat+' 상품 ':'결제액 ')+this.man(c.min)+'원 이상부터 사용 가능해요'); return; }
+        this.applyCoupon(c.code); },
         style:(s.couponCode===c.code?'display:flex;justify-content:space-between;align-items:center;gap:8px;background:#ffe9ee;border:1.5px solid #ff4d6d;border-radius:12px;padding:11px 14px;cursor:pointer;text-align:left':'display:flex;justify-content:space-between;align-items:center;gap:8px;background:#fff;border:1px solid #e6e2ec;border-radius:12px;padding:11px 14px;cursor:pointer;text-align:left')}));
       base.useAllPoints=s.useAllPoints; base.onTogglePoints=this.togglePoints; base.pointsLabel=this.fmt(this.availPoints());
       base.cartSubtotal=this.fmt(t.sub); base.cartCouponLabel = t.couponAmt>0?'-'+this.fmt(t.couponAmt):'-0원'; base.cartPointLabel = t.pts>0?'-'+this.fmt(t.pts):'-0원';
@@ -1894,7 +2517,7 @@ class Component extends DCLogic {
       base.authError=!!s.authErr; base.authErrorMsg=s.authErr;
       base.authBtnLabel = s.authBusy? '처리 중…' : (su? '가입하고 시작하기' : '로그인');
       base.authBtnStyle='width:100%;border:none;border-radius:14px;padding:15px 0;font-size:15px;font-weight:800;'+(s.authBusy?'background:#f2f0f5;color:#b6aebd;cursor:wait':'background:#ff4d6d;color:#fff;cursor:pointer');
-      base.authFootnote = su? '가입 시 이용약관 및 개인정보처리방침에 동의합니다.' : '비밀번호를 잊으셨다면 다시 가입해 주세요.';
+      base.authFootnote = su? '가입 시 아래 약관에 동의하는 것으로 봅니다.' : '비밀번호를 잊으셨다면 다시 가입해 주세요.';
       base.dbBadge='🔒 Supabase에 안전하게 저장됩니다';
       base.dbBadgeStyle='text-align:center;font-size:11.5px;color:#a49dae;margin-top:14px;font-weight:600';
       base.loginName=s.login.name; base.loginPhone=s.login.phone; base.loginDate=s.login.date; base.loginTbd=s.login.tbd;
@@ -1906,9 +2529,60 @@ class Component extends DCLogic {
     if(s.screen==='mypage'){
       base.userName=s.user?s.user.name:''; base.userPhone=s.user?s.user.phone:''; base.userDate=s.user?s.user.date:'';
       base.pointsLabel=this.fmt(this.availPoints()); base.couponCountLabel=this.COUPONS.length+'장'; base.wishCountLabel=s.wish.length+'개';
-      base.myTabs=[['orders','주문내역'],['consults','상담내역'],['rewards','쿠폰·적립금']].map(t=>({label:t[1], onClick:()=>this.setMyTab(t[0]),
-        style:(s.mytab===t[0]?'background:none;border:none;border-bottom:2px solid #ff4d6d;color:#ff4d6d;font-size:14px;font-weight:800;cursor:pointer;padding:11px 14px;margin-bottom:-1px':'background:none;border:none;border-bottom:2px solid transparent;color:#8b8592;font-size:14px;font-weight:600;cursor:pointer;padding:11px 14px;margin-bottom:-1px')}));
+      base.myTabs=[['prep','준비'],['budget','예산'],['orders','주문내역'],['consults','상담내역'],['rewards','쿠폰·적립금'],['couple','커플']].map(t=>({label:t[1], onClick:()=>this.setMyTab(t[0]),
+        style:(s.mytab===t[0]?'background:none;border:none;border-bottom:2px solid #ff4d6d;color:#ff4d6d;font-size:14px;font-weight:800;cursor:pointer;padding:11px 14px;margin-bottom:-1px;white-space:nowrap;flex:none':'background:none;border:none;border-bottom:2px solid transparent;color:#8b8592;font-size:14px;font-weight:600;cursor:pointer;padding:11px 14px;margin-bottom:-1px;white-space:nowrap;flex:none')}));
       base.myOrdersTab=s.mytab==='orders'; base.myConsultsTab=s.mytab==='consults'; base.myRewardsTab=s.mytab==='rewards';
+      base.myPrepTab=s.mytab==='prep'; base.myBudgetTab=s.mytab==='budget'; base.myCoupleTab=s.mytab==='couple';
+
+      /* 준비 · 체크리스트 */
+      const dd2=this.dday();
+      base.myHasDday=!!dd2; base.myDdayLabel=dd2?dd2.label:''; base.myDdayDate=dd2?dd2.date:'예식일 미정';
+      const dn=s.plist.filter(x=>x.done).length, tot=s.plist.length;
+      base.prepPct=(tot? Math.round(dn/tot*100):0)+'%';
+      base.prepBarStyle='height:100%;border-radius:99px;background:#ff4d6d;width:'+(tot?Math.round(dn/tot*100):0)+'%';
+      base.prepCount=dn+' / '+tot;
+      base.prepEmpty=tot===0;
+      base.prepSetup=()=>this.setState({screen:'onboard', onb:Object.assign({},s.onb,{step:0})});
+      base.prepItems=s.plist.map(it=>({
+        title:it.title, cat:it.cat||'기타',
+        due: it.due_date? String(it.due_date).slice(2).replace(/-/g,'.') : '기한 없음',
+        onToggle:()=>this.toggleTask(it),
+        boxStyle:'width:24px;height:24px;flex:none;border-radius:8px;border:1.5px solid '+(it.done?'#ff4d6d':'#dcd8e4')+';background:'+(it.done?'#ff4d6d':'#fff')+';color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center;cursor:pointer',
+        mark: it.done? '✓' : '',
+        titleStyle:'font-size:14.5px;font-weight:700;color:'+(it.done?'#b6aebd':'#2b2530')+';'+(it.done?'text-decoration:line-through':''),
+        rowStyle:'display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #ecebf0;border-radius:14px;padding:14px 16px'
+      }));
+
+      /* 예산 트래커 */
+      const planned=s.budget.reduce((a,b)=>a+(b.planned|0),0);
+      const actual=s.budget.reduce((a,b)=>a+(b.actual|0),0);
+      base.budgetEmpty=s.budget.length===0; base.hasBudget=s.budget.length>0;
+      base.budgetTotalLabel=this.fmt(planned);
+      base.budgetSpentLabel=this.fmt(actual);
+      base.budgetLeftLabel=this.fmt(Math.max(0,planned-actual));
+      base.budgetOver=actual>planned;
+      base.budgetPctLabel=(planned? Math.round(actual/planned*100):0)+'%';
+      base.budgetBarStyle='height:100%;border-radius:99px;background:'+(actual>planned?'#e0405c':'#ff4d6d')+';width:'+Math.min(100, planned? Math.round(actual/planned*100):0)+'%';
+      base.budgetRows=s.budget.map(b=>{
+        const pct = b.planned? Math.min(100, Math.round((b.actual|0)/b.planned*100)) : 0;
+        return {cat:b.cat, plannedLabel:this.fmt(b.planned), actualValue:b.actual||'',
+          onActual:(e)=>this.saveBudgetRow(b,'actual',e.target.value),
+          onPlanned:(e)=>this.saveBudgetRow(b,'planned',e.target.value),
+          plannedValue:b.planned||'',
+          pctLabel:pct+'%',
+          barStyle:'height:100%;border-radius:99px;background:'+(pct>100?'#e0405c':pct>80?'#f0a020':'#12b3a6')+';width:'+pct+'%'};
+      });
+      base.budgetSetup=()=>this.setState({screen:'onboard', onb:Object.assign({},s.onb,{step:2})});
+
+      /* 커플 연동 */
+      base.coupleCode=(s.prof && s.prof.couple_code)||'—';
+      base.hasPartner=!!s.partner;
+      base.partnerName=s.partner? s.partner.name : '';
+      base.partnerPhone=s.partner? (s.partner.phone||'') : '';
+      base.coupleInput=s.coupleInput;
+      base.onCoupleInput=this.onCoupleInput;
+      base.onLinkCouple=this.linkCouple;
+      base.onUnlinkCouple=this.unlinkCouple;
       base.ordersEmpty=s.orders.length===0; base.orders=s.orders.map(o=>({id:o.id, date:o.date, status:o.status, summary:o.summary, totalLabel:this.fmt(o.total)}));
       base.consultsEmpty=s.consults.length===0; base.consults=s.consults.map(c=>({target:c.target, wishTime:c.wishTime, phone:c.phone, status:c.status}));
       base.myCoupons=this.COUPONS.map(c=>({label:c.label, cond:c.cond+' 사용 가능', code:c.code}));
